@@ -2,17 +2,12 @@
  * Created by toby on 2/22/15.
  */
 
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-
+var io = require('socket.io')({
+    transports: ['websocket']
+});
+io.attach(3000);
 
 var games = {};
-
-
-http.listen(3000, function(){
-    console.log('listening on *:3000');
-});
 io.on('connection', function(socket){
     console.log('a user connected');
     var gameCode = '----';
@@ -36,7 +31,7 @@ io.on('connection', function(socket){
             }
             code = randomString;
         } while(games.hasOwnProperty(code));
-        socket.emit('roomCodeCreated', {userCode:code,userId:socket.id});
+        socket.emit('gameCodeCreated', {gameCode:code,userId:socket.id});
         gameCode = code;
         socket.join(code);
         games[gameCode].host = socket.id;
