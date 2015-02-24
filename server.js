@@ -6,6 +6,7 @@ var io = require('socket.io')({
     transports: ['websocket']
 });
 io.attach(3000);
+console.log("Server is listening for connections on :3000");
 
 var games = {};
 io.on('connection', function(socket){
@@ -13,7 +14,7 @@ io.on('connection', function(socket){
     var gameCode = '----';
     socket.on('disconnect', function(){
         console.log('- user disconnected');
-        if(games.hasOwnProperty(gameCode) &&  games[gameCode].hostID === socket.id) {
+        if(games.hasOwnProperty(gameCode) &&  games[gameCode].host === socket.id) {
             console.log('- deleted ' + games[gameCode]);
             // emit a disconnect to all other connected clients in the room
             io.sockets.in(gameCode).emit('hostDisconnect');
