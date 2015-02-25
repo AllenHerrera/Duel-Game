@@ -8,14 +8,16 @@ public class sockettest : MonoBehaviour {
 	void Start () {
         GameObject go = GameObject.Find("SocketIO");
         socket = go.GetComponent<SocketIOComponent>();
-        socket.On("roomCodeCreated", recieveCode);
+        socket.On("gameCodeCreated", recieveCode);
+        StartCoroutine(GetCode());
 	}
-    private void OnSocketOpen(SocketIOEvent e)
-    {
-        socket.Emit("request Code");
-    }
     private void recieveCode(SocketIOEvent e){
         Debug.Log("recieved code!");
         Debug.Log(e.data);
+    }
+    IEnumerator GetCode()
+    {
+        yield return new WaitForSeconds(2);
+        socket.Emit("requestCode");
     }
 }
