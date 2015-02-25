@@ -34,6 +34,7 @@ io.on('connection', function(socket){
         socket.emit('gameCodeCreated', {gameCode:code,userId:socket.id});
         gameCode = code;
         socket.join(code);
+        games[gameCode] = {};
         games[gameCode].host = socket.id;
         games[gameCode].opponent = null;
     });
