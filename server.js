@@ -1,13 +1,11 @@
 /**
  * Created by toby on 2/22/15.
  */
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
-
-server.listen(3000, function() {
-    console.log('magic on port 3000');
+var io = require('socket.io')({
+    transports: ['websocket']
 });
+
+io.attach(3000);
 
 var games = {};
 io.on('connection', function(socket){
