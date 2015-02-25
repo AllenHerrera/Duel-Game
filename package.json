@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CS370-soft-eng-practicum/krinkleGame",
   "dependencies": {
+    "express": "^4.12.0",
     "socket.io": "^1.3.4"
   },
   "devDependencies": {
