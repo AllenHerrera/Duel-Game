@@ -39,8 +39,10 @@ io.on('connection', function(socket){
         games[gameCode].opponent = null;
     });
     socket.on('challenge', function(challenge) {
+        console.log("recieved a challenge to code " + challenge.code);
         var gameCode = challenge.code;
         if (games.hasOwnProperty(gameCode)) {
+            console.log("code is valid");
             if (games[gameCode].opponent === null) {
                 socket.to(games[gameCode].host).emit('challengePosted');
                 games[gameCode].opponent = challenge.challengerId;
@@ -50,6 +52,7 @@ io.on('connection', function(socket){
             }
         }
         else{
+            console.log("Code is invalid");
             socket.to(challenge.challengerId).emit('invalidCode');
         }
     });
