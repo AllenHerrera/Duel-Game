@@ -44,7 +44,7 @@ io.on('connection', function(socket){
         if (games.hasOwnProperty(gameCode)) {
             console.log("code is valid");
             if (games[gameCode].opponent === null) {
-                io.to(games[gameCode].host).emit('challengePosted',gameCode);
+                io.to(games[gameCode].host).emit('challengePosted',{code:challenge.challengerGameCode});
                 games[gameCode].opponent = challenge.challengerId;
             }
             else {
@@ -56,9 +56,10 @@ io.on('connection', function(socket){
             socket.emit('invalidCode');
         }
     });
+    //Need to also set the users opponent field to match
     socket.on('rejectChallenge', function(code){
         io.to(games[code].host).emit("challengeRejected");
-        games[gameCode].opponent =null;
+        games[code].opponent =null;
     });
     socket.on('acceptChallenge', function(code){
         socket.join(code);
