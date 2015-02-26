@@ -48,12 +48,12 @@ io.on('connection', function(socket){
                 games[gameCode].opponent = challenge.challengerId;
             }
             else {
-                io.to(challenge.challengerId).emit('challengedIsBusy');
+                socket.emit('challengedIsBusy');
             }
         }
         else{
             console.log("Code is invalid");
-            io.to(challenge.challengerId).emit('invalidCode');
+            socket.emit('invalidCode');
         }
     });
     socket.on('rejectChallenge', function(){
