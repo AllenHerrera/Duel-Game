@@ -49,6 +49,9 @@ io.on('connection', function(socket){
                 socket.to(challenge.challengerId).emit('challengedIsBusy');
             }
         }
+        else{
+            socket.to(challenge.challengerId).emit('invalidCode');
+        }
     });
     socket.on('rejectChallenge', function(){
         socket.to(games[gameCode].opponent).emit("challengeRejected");
