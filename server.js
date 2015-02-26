@@ -57,13 +57,13 @@ io.on('connection', function(socket){
         }
     });
     //Need to also set the users opponent field to match
-    socket.on('rejectChallenge', function(code){
-        io.to(games[code].host).emit("challengeRejected");
-        games[code].opponent =null;
+    socket.on('rejectChallenge', function(data){
+        io.to(games[data.code].host).emit("challengeRejected");
+        games[data.code].opponent =null;
     });
-    socket.on('acceptChallenge', function(code){
-        socket.join(code);
-        socket.to(games[code].host).emit("challengeAccepted");
-        io.sockets.in(games[code]).emit('gameBegin');
+    socket.on('acceptChallenge', function(data){
+        socket.join(data.code);
+        socket.to(games[data.code].host).emit("challengeAccepted");
+        io.sockets.in(games[data.code]).emit('gameBegin');
     });
 });
