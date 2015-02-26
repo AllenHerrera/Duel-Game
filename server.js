@@ -44,16 +44,16 @@ io.on('connection', function(socket){
         if (games.hasOwnProperty(gameCode)) {
             console.log("code is valid");
             if (games[gameCode].opponent === null) {
-                socket.to(games[gameCode].host).emit('challengePosted');
+                io.to(games[gameCode].host).emit('challengePosted');
                 games[gameCode].opponent = challenge.challengerId;
             }
             else {
-                socket.to(challenge.challengerId).emit('challengedIsBusy');
+                io.to(challenge.challengerId).emit('challengedIsBusy');
             }
         }
         else{
             console.log("Code is invalid");
-            socket.to(challenge.challengerId).emit('invalidCode');
+            io.to(challenge.challengerId).emit('invalidCode');
         }
     });
     socket.on('rejectChallenge', function(){
