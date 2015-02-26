@@ -126,6 +126,7 @@
      <Compile Include="Assets\SocketIO\WebsocketSharp\WebSocketFrame.cs" />
      <Compile Include="Assets\SocketIO\WebsocketSharp\WebSocketState.cs" />
      <Compile Include="Assets\SocketIO\WebsocketSharp\WebSocketStream.cs" />
+     <Compile Include="Assets\challengeButton.cs" />
      <Compile Include="Assets\sockettest.cs" />
      <None Include="Assets\SocketIO\JSONObject\readme.txt" />
      <None Include="Assets\SocketIO\Readme.txt" />
