@@ -1,0 +1,8 @@
+Demonstration of Code
+	Backend -> assign code for every user 
+	Front end-> Display user’s code and allow them to enter code to challenge
+	Backend -> Relay challenge to other user
+	Frontend -> Accept or reject challenge
+	Backend -> Relay acceptance or rejection
+	Frontend -> On acceptance load game, on Rejection display rejection notification
+	
