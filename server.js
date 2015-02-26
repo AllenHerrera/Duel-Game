@@ -44,7 +44,7 @@ io.on('connection', function(socket){
         if (games.hasOwnProperty(gameCode)) {
             console.log("code is valid");
             if (games[gameCode].opponent === null) {
-                io.to(games[gameCode].host).emit('challengePosted');
+                io.to(games[gameCode].host).emit('challengePosted',gameCode);
                 games[gameCode].opponent = challenge.challengerId;
             }
             else {
@@ -56,13 +56,13 @@ io.on('connection', function(socket){
             socket.emit('invalidCode');
         }
     });
-    socket.on('rejectChallenge', function(){
-        socket.to(games[gameCode].opponent).emit("challengeRejected");
+    socket.on('rejectChallenge', function(code){
+        io.to(games[code].host).emit("challengeRejected");
         games[gameCode].opponent =null;
     });
-    socket.on('acceptChallenge', function(){
-        io.sockets[games[gameCode].opponent].join(gameCode);
-        socket.to(games[gameCode].opponent).emit("challengeAccepted");
-        io.sockets.in(games[gameCode]).emit('gameBegin');
+    socket.on('acceptChallenge', function(code){
+        socket.join(code);
+        socket.to(games[code].host).emit("challengeAccepted");
+        io.sockets.in(games[code]).emit('gameBegin');
     });
 });
