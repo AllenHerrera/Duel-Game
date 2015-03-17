@@ -16,14 +16,23 @@ public class inputController : MonoBehaviour {
 	}
 	#endregion
 
-	//private boolean isTouching= False
+	private boolean isTouching= False
 	// in update loop, if not Touching, and there is a touchcount, then run the method that processes input
 	// if isTouching and TouchCount=0, set touchCount to false 
 
 	// Update is called once per frame
 	void Update () {
+		if (isTouching==false && Input.touchCount > 0 ){
+			isTouching=true
+			#run method that processes input
+		}
+
+		if (isTouching==true && Input.touchCount==0 ) {
+			isTouching= false
+
 	
 	}
 
 
+}
 }
