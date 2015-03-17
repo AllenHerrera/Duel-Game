@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine; 
 using System.Collections; 
 public class uiController : MonoBehaviour {       
-	
+	public GameObject mainPanel, challengePanel, challengedPanel, rejectedPanel, preGamePanel, invalidCodePanel;
 	private static readonly uiController instance = new uiController();
 	//allows one instance of object. Provides static reference to it.
 	private uiController() { }
@@ -31,21 +31,46 @@ public class uiController : MonoBehaviour {
 
 	public void showRejectedPanel(){
 		//shows panel when a challenge is rejected
-
+		rejectedPanel.SetActive (true);
+		preGamePanel.SetActive (false);
+		mainPanel.SetActive (false);
+		challengePanel.SetActive (false);
+		challengedPanel.SetActive (false);
 	}
 
 	public void showAcceptedPanel(){
 		//shows panel when challenge is accepted
-	
+		preGamePanel.SetActive (true);
+		mainPanel.SetActive (false);
+		challengePanel.SetActive (false);
+		challengedPanel.SetActive (false);
+		rejectedPanel.SetActive (false);
 	}
 
 	public void showCode(){
 		//shows panel with personal code
+		mainPanel.SetActive (true);
+		preGamePanel.SetActive(false);
+		challengePanel.SetActive (false);
+		challengedPanel.SetActive (false);
+		rejectedPanel.SetActive (false);
 	}
 
 	public void challenge(){
 		//displays panel that enables challenging of other players
+		challengePanel.SetActive (true);
+		mainPanel.SetActive (false);
+		preGamePanel.SetActive(false);
+		challengedPanel.SetActive (false);
+		rejectedPanel.SetActive (false);
 	}
+	public void challengeResponse(){
+		//displays panel when challenged
+		challengedPanel.SetActive (true);
+		challengePanel.SetActive (false);
+		mainPanel.SetActive (false);
+		preGamePanel.SetActive(false);
+		rejectedPanel.SetActive (false);
 
 }
 
