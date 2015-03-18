@@ -7,10 +7,31 @@ var io = require('socket.io')({
 var Enum = require('enum');
 io.attach(3000);
 
-var playerState = new Enum('idle','jammed','fired','killed');
+var playerState = new Enum(['idle','jammed','fired','killed']);
+var gameState = new Enum(['inactive', 'active','over']);
 var games = {};
 var players = {};
 var channels={};
+
+
+function playGame(data){
+    //Choose random  time in future to enable draw
+    io.to(games[playerCode].channel).emit('beginGame');
+    var delay = Math.random() * 150000;
+    var gameLoop = function(){
+        clearInterval(loop);
+        if(data.game.gameState == 'active') {
+            delay = Math.random() * 150000;
+            //emit draw event
+            io.to(data.game.channel).emit('draw');
+            setTimeout(function () {
+                io.to(data.game.channel).emit('endDraw');
+            }, Math.min(3000, delay-500));
+            loop = setInterval(gameLoop, delay);
+        }
+    };
+    var loop = setInterval(gameLoop, Math.min(delay,5000));
+}
 
 console.log('server started');
 io.on('connection', function(socket){
@@ -60,18 +81,19 @@ io.on('connection', function(socket){
                 do
                 {
                     var channelCode = Math.random().toString(36).slice(2).substring(0,4).toUpperCase();
-                } while(channels.hasOwnProperty(channelCode));	
+                } while(channels.hasOwnProperty(channelCode));
                 var game=
                 {
                     channel:channelCode,
+                    gameState:gameState.inactive,
                     player1:players[playerCode],
-                    player2:null
-                    //player1State:state,
-                    //player2State:state,
+                    player2:null,
+                    player1state: playerState.idle,
+                    player2State: playerState.idle
                 };
-		socket.join(game.channel);
+                socket.join(game.channel);
                 games[playerCode] = game;
-                channels[channelCode]=game;                
+                channels[channelCode]=game;
             }
             else {
                 socket.emit('challengedIsBusy');
@@ -82,7 +104,6 @@ io.on('connection', function(socket){
             socket.emit('invalidCode');
         }
     });
-    //Recieve challenger's id
     socket.on('rejectChallenge', function(data){
         //Delete game object and allow challenges for both players
         delete games[data.challengerId];
@@ -90,18 +111,16 @@ io.on('connection', function(socket){
         players[playerCode].isBusy = false;
         io.to(players[data.challengerId].id).emit("challengeRejected");
     });
-    //recieve challenge id
     socket.on('acceptChallenge', function(data){
         socket.join(games[data.challengerId].channel);
-	games[playerCode] = games[data.challengerId];
+        games[playerCode] = games[data.challengerId];
         games[playerCode].player2=players[playerCode];
         socket.to(games[playerCode].player1.id).emit("challengeAccepted");
-	setTimeout(function(){
-		io.to(games[playerCode].channel).emit('beginGame');
-		}
-	,3000)
-//	console.log(games);
-//	socket.emit('joinChannel');
-//	socket.to(games[playerCode].player1.id).emit('joinChannel');
+        setTimeout(function(){
+                console.log('game is beginning');
+                console.log(games[playerCode]);
+                playGame({game: games[playerCode]});
+            }
+            ,3000);
     });
 });
