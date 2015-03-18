@@ -50,9 +50,10 @@ io.on('connection', function(socket){
     socket.on('challenge', function(data) {
         console.log("received a challenge to code " + data.code);
         var code = data.code;
-        if (players.hasOwnProperty(code)) {
+        if (players.hasOwnProperty(data.code)) {
             console.log("code is valid");
             if (players[data.code].isBusy === false) {
+                console.log('posting challenge!');
                 io.to(players[data.code]).emit('challengePosted',{id:data.challengerId});
                 //Set both players as currently busy until challenge is accepted or declined
                 players[playerCode].isBusy = true;
@@ -75,6 +76,8 @@ io.on('connection', function(socket){
                 socket.join(channelCode);
                 games[playerCode] = game;
                 channels[channelCode]=game;
+                console.log(players);
+                console.log(games);
             }
             else {
                 socket.emit('challengedIsBusy');
