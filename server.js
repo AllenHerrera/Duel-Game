@@ -12,6 +12,7 @@ var games = {};
 var players = {};
 var channels={};
 
+console.log('server started');
 io.on('connection', function(socket){
     console.log('a user connected');
     var playerCode = '----';
@@ -41,6 +42,7 @@ io.on('connection', function(socket){
             code = randomString;
         } while(players.hasOwnProperty(code));
         playerCode = code;
+        players[playerCode]={};
         players[playerCode].id=socket.id;
         players[playerCode].isBusy = false;
         socket.emit('playerCodeCreated', playerCode)
