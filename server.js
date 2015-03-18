@@ -45,11 +45,11 @@ io.on('connection', function(socket){
         players[playerCode]={};
         players[playerCode].id=socket.id;
         players[playerCode].isBusy = false;
-        socket.emit('playerCodeCreated', playerCode)
+        socket.emit('playerCodeCreated', {code:playerCode})
     });
     socket.on('challenge', function(data) {
         console.log("received a challenge to code " + data.code);
-        var code = challenge.code;
+        var code = data.code;
         if (players.hasOwnProperty(code)) {
             console.log("code is valid");
             if (players[data.code].isBusy === false) {
