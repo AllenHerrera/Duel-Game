@@ -5,23 +5,31 @@ var io = require('socket.io')({
     transports: ['websocket']
 });
 var Enum = require('enum');
-var playerState = new Enum('idle','jammed','fired','killed');
 io.attach(3000);
 
+var playerState = new Enum('idle','jammed','fired','killed');
 var games = {};
+var players = {};
+var channels={};
+
 io.on('connection', function(socket){
     console.log('a user connected');
-    var gameCode = '----';
-    socket.on('disconnect', function(){
+    var playerCode = '----';
+
+    socket.on('playerDisconnect', function(){
         console.log('- user disconnected');
-        if(games.hasOwnProperty(gameCode) &&  games[gameCode].host === socket.id) {
-            console.log('- deleted ' + games[gameCode]);
+        if(players.hasOwnProperty(playerCode)){
+            console.log('- deleted ' + players[playerCode]);
+            delete players[playerCode];
+        }
+        if(games.hasOwnProperty(playerCode)){
+            console.log('- deleted ' + games[playerCode].channel);
             // emit a disconnect to all other connected clients in the room
-            io.sockets.in(gameCode).emit('hostDisconnect');
-            delete games[gameCode];
+            io.sockets.in(games[playerCode].channel).emit('playerDisconnected');
+            delete games[playerCode];
         }
     });
-    socket.on('requestCode', function() {
+    socket.on('requestPlayerCode', function() {
         var code;
         do {
             var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -31,22 +39,39 @@ io.on('connection', function(socket){
                 randomString += charSet.substring(randomPoz,randomPoz+1);
             }
             code = randomString;
-        } while(games.hasOwnProperty(code));
-        socket.emit('gameCodeCreated', {gameCode:code,userId:socket.id});
-        gameCode = code;
-        socket.join(code);
-        games[gameCode] = {};
-        games[gameCode].host = socket.id;
-        games[gameCode].opponent = null;
+        } while(players.hasOwnProperty(code));
+        playerCode = code;
+        players[playerCode].id=socket.id;
+        players[playerCode].isBusy = false;
     });
     socket.on('challenge', function(challenge) {
-        console.log("recieved a challenge to code " + challenge.code);
-        var gameCode = challenge.code;
-        if (games.hasOwnProperty(gameCode)) {
+        console.log("received a challenge to code " + challenge.code);
+        var code = challenge.code;
+        if (players.hasOwnProperty(code)) {
             console.log("code is valid");
-            if (games[gameCode].opponent === null) {
-                io.to(games[gameCode].host).emit('challengePosted',{code:challenge.challengerGameCode});
-                games[gameCode].opponent = challenge.challengerId;
+            if (players[playerCode].isBusy === false) {
+                io.to(players[code].id).emit('challengePosted',{code:challenge.challengerId});
+                //Set both players as currently busy until challenge is accepted or declined
+                players[playerCode].isBusy = true;
+                players[challenge.challengeId].isBusy=true;
+                //Create a new game and add it to the games list
+                //generate unique channel code
+                do
+                {
+                    var channelCode = Math.random().toString(36).slice(2).substring(0,4).toUpperCase();
+                } while(channels.hasOwnProperty(channelCode));
+                var game=
+                {
+                    channel:channelCode,
+                    player1:players[playerCode],
+                    player2:null
+                    //player1State:state,
+                    //player2State:state,
+                };
+                //challenger is added to game channel
+                socket.join(channelCode);
+                games[playerCode] = game;
+                channels[channelCode]=game;
             }
             else {
                 socket.emit('challengedIsBusy');
@@ -57,14 +82,20 @@ io.on('connection', function(socket){
             socket.emit('invalidCode');
         }
     });
-    //Need to also set the users opponent field to match
+    //Recieve challenger's id
     socket.on('rejectChallenge', function(data){
-        io.to(games[data.code].host).emit("challengeRejected");
-        games[data.code].opponent =null;
+        //Delete game object and allow challenges for both players
+        delete games[data.id];
+        players[data.id].isBusy = false;
+        players[playerCode].isBusy = false;
+        io.to(players[data.id]).emit("challengeRejected");
     });
+    //recieve challenge id
     socket.on('acceptChallenge', function(data){
-        socket.join(data.code);
-        socket.to(games[data.code].host).emit("challengeAccepted");
-        io.sockets.in(games[data.code]).emit('gameBegin');
+        socket.join(channels[data.id].channel);
+        games[playerCode] = games[data.id];
+        games[playerCode].player2=players[playerCode];
+        socket.to(games[playerCode].player1).emit("challengeAccepted");
+        io.sockets.in(games[playerCode].channel).emit('gameBegin');
     });
 });
