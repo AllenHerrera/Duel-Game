@@ -4,11 +4,15 @@
 var io = require('socket.io')({
     transports: ['websocket']
 });
-var Enum = require('enum');
+//var Enum = require('enum');
 io.attach(3000);
 
-var playerState = new Enum(['idle','jammed','fired','killed']);
-var gameState = new Enum(['inactive', 'active','over']);
+//var playerState = new Enum(['idle','jammed','fired','killed']);
+//var gameState = new Enum(['inactive', 'active','over']);
+//Will implement enums in the future. Currently using ints
+//player state ints(0:idle,1:fired,2:jammed,3:dead)
+//game state ints(0:inactive,1:active,:2,over)
+
 var games = {};
 var players = {};
 var channels={};
@@ -16,17 +20,21 @@ var channels={};
 
 function playGame(data){
     //Choose random  time in future to enable draw
-    io.to(games[playerCode].channel).emit('beginGame');
+    data.game.gameState=1;
     var delay = Math.random() * 150000;
+    console.log("beginning first game loop. Draw will occur in "+Math.min(delay,5000));
     var gameLoop = function(){
         clearInterval(loop);
-        if(data.game.gameState == 'active') {
+        if(data.game.gameState ===1) {
+            io.to(data.game.channel).emit('draw');
+            console.log('draw state entered');
             delay = Math.random() * 150000;
             //emit draw event
-            io.to(data.game.channel).emit('draw');
             setTimeout(function () {
                 io.to(data.game.channel).emit('endDraw');
+                console.log('draw state ended');
             }, Math.min(3000, delay-500));
+            console.log("beginning new game loop. Draw will occur in "+Math.min(delay,5000));
             loop = setInterval(gameLoop, delay);
         }
     };
@@ -85,11 +93,11 @@ io.on('connection', function(socket){
                 var game=
                 {
                     channel:channelCode,
-                    gameState:gameState.inactive,
+                    gameState: 0,
                     player1:players[playerCode],
                     player2:null,
-                    player1state: playerState.idle,
-                    player2State: playerState.idle
+                    player1state: 0,
+                    player2State: 0
                 };
                 socket.join(game.channel);
                 games[playerCode] = game;
@@ -119,6 +127,7 @@ io.on('connection', function(socket){
         setTimeout(function(){
                 console.log('game is beginning');
                 console.log(games[playerCode]);
+                io.to(games[playerCode].channel).emit('beginGame');
                 playGame({game: games[playerCode]});
             }
             ,3000);
