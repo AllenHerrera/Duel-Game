@@ -6,15 +6,17 @@ using System.Collections.Generic;
 public class socketController : MonoBehaviour
 {
     #region singleton
-    private static readonly socketController instance = new socketController();
-   private socketController() { }
-   public static socketController Instance
-   {
-      get 
-      {
-         return instance; 
-      }
-   }
+    private static socketController _instance;
+    //This is the public reference that other classes will use
+    public static socketController instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = GameObject.FindObjectOfType<socketController>();
+            return _instance;
+        }
+    }
    #endregion
    #region variables
    private SocketIOComponent socket;
@@ -23,7 +25,7 @@ public class socketController : MonoBehaviour
    #endregion
    void Start () {
         //set socket reference
-        socket = GetComponent<SocketIOComponent>();
+        socket = FindObjectOfType<SocketIOComponent>();
         //Register UI and other event listeners
         socket.On("playerCodeCreated", recieveCode);
         socket.On("invalidCode", invalidCode);
@@ -31,22 +33,28 @@ public class socketController : MonoBehaviour
         socket.On("challengePosted", challengeRecieved);
         socket.On("challengeAccepted", challengeAccepted);
         socket.On("challengeRejected", challengeRejected);
-        //request player code
-        socket.Emit("requestPlayerCode");
+        StartCoroutine(requestCode());
 	}
+   private IEnumerator requestCode()
+   {
+       yield return new WaitForSeconds(1);
+       //request player code
+       socket.Emit("requestPlayerCode");
+   }
     #region socket listeners
     //recieve events from server and display approrpriate UI elements through UI controller
     private void recieveCode(SocketIOEvent e)
     {
         Debug.Log(e.data);
         //codeField.text = string.Format("{0}", e.data["gameCode"]);
-        playerCode= string.Format("{0}", e.data["userId"]).Substring(1,4);
+        playerCode= string.Format("{0}", e.data["code"]).Substring(1,4);
         //Ask UI Controller to display code
-        uiController.Instance.showCode(playerCode);
+        uiController.instance.showCode(playerCode);
     }
     private void invalidCode(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
+        uiController.instance.showInvalidCodePanel();
 
     }
 

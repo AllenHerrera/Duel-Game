@@ -5,21 +5,20 @@ public class uiController : MonoBehaviour
 {
     public GameObject mainPanel, challengePanel, challengedPanel, rejectedPanel, preGamePanel, invalidCodePanel;
     public Text code;
-    private static readonly uiController instance = new uiController();
-    //allows one instance of object. Provides static reference to it.
-    private uiController() { }
-
-    public static uiController Instance
+    private static uiController _instance;
+    //This is the public reference that other classes will use
+    public static uiController instance
     {
         get
         {
-            return instance;
+            if (_instance == null)
+                _instance = GameObject.FindObjectOfType<uiController>();
+            return _instance;
         }
     }
-    // Use this for initialization
     void Start()
     {
-
+       
     }
 
     // Update is called once per frame
@@ -58,12 +57,18 @@ public class uiController : MonoBehaviour
     {
         code.text = userCode;
         //shows panel with personal code
-        mainPanel.SetActive(true);
-        preGamePanel.SetActive(false);
+        mainPanel.SetActive(true);        
+    }
+    public void showInvalidCodePanel()
+    {
+        mainPanel.SetActive(false);
         challengePanel.SetActive(false);
         challengedPanel.SetActive(false);
         rejectedPanel.SetActive(false);
+        preGamePanel.SetActive(false);
+        invalidCodePanel.SetActive(true);
     }
+
 
     public void challenge()
     {
