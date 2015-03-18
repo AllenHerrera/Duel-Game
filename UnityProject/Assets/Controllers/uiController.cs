@@ -30,9 +30,7 @@ public class uiController : MonoBehaviour
     public void panelUpdate()
     {
         //takes the different events such as rejecting or accepting panels and sets the approriate panel to active.
-
     }
-
     public void showRejectedPanel()
     {
         //shows panel when a challenge is rejected
@@ -42,7 +40,6 @@ public class uiController : MonoBehaviour
         challengePanel.SetActive(false);
         challengedPanel.SetActive(false);
     }
-
     public void showAcceptedPanel()
     {
         //shows panel when challenge is accepted
@@ -52,7 +49,6 @@ public class uiController : MonoBehaviour
         challengedPanel.SetActive(false);
         rejectedPanel.SetActive(false);
     }
-
     public void showCode(string userCode)
     {
         code.text = userCode;
@@ -68,9 +64,7 @@ public class uiController : MonoBehaviour
         preGamePanel.SetActive(false);
         invalidCodePanel.SetActive(true);
     }
-
-
-    public void challenge()
+    public void showChallengingPanel()
     {
         //displays panel that enables challenging of other players
         challengePanel.SetActive(true);
@@ -79,7 +73,7 @@ public class uiController : MonoBehaviour
         challengedPanel.SetActive(false);
         rejectedPanel.SetActive(false);
     }
-    public void challengeResponse()
+    public void showChallengedPanel()
     {
         //displays panel when challenged
         challengedPanel.SetActive(true);
@@ -88,5 +82,13 @@ public class uiController : MonoBehaviour
         preGamePanel.SetActive(false);
         rejectedPanel.SetActive(false);
 
+    }
+    public void hideMenuPanels()
+    {
+        challengedPanel.SetActive(false);
+        challengePanel.SetActive(false);
+        mainPanel.SetActive(false);
+        preGamePanel.SetActive(false);
+        rejectedPanel.SetActive(false);
     }
 }

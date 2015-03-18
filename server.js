@@ -94,7 +94,7 @@ io.on('connection', function(socket){
         delete games[data.challengerId];
         players[data.challengerId].isBusy = false;
         players[playerCode].isBusy = false;
-        io.to(players[data.id].id).emit("challengeRejected");
+        io.to(players[data.challengerId].id).emit("challengeRejected");
     });
     //recieve challenge id
     socket.on('acceptChallenge', function(data){

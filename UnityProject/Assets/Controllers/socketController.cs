@@ -33,6 +33,7 @@ public class socketController : MonoBehaviour
         socket.On("challengePosted", challengeRecieved);
         socket.On("challengeAccepted", challengeAccepted);
         socket.On("challengeRejected", challengeRejected);
+        socket.On("beginGame", beginGame);
         StartCoroutine(requestCode());
 	}
    private IEnumerator requestCode()
@@ -61,18 +62,27 @@ public class socketController : MonoBehaviour
     private void challengeAccepted(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
+        uiController.instance.showAcceptedPanel();
        
     }
     private void challengeRecieved(SocketIOEvent e)
     {
-        challengerCode = string.Format("{0}",e.data["challengerId"]);
+        challengerCode = string.Format("{0}",e.data["id"]).Substring(1,4);
+        Debug.Log("recieved challenge from " + challengerCode);
         //Ask UI Controller to display appropriate screen        
+        uiController.instance.showChallengedPanel();
     }
 
     private void challengeRejected(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
-        
+        uiController.instance.showRejectedPanel();   
+    }
+    private void beginGame(SocketIOEvent e)
+    {
+        //Ask UI Controller to display appropriate screen
+        uiController.instance.hideMenuPanels();
+        gameController.instance.beginGame();
     }
     #endregion
     #region public methods
@@ -81,20 +91,24 @@ public class socketController : MonoBehaviour
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["challengerId"] = challengerCode;
-        socket.Emit("acceptChallenge", new JSONObject(data));  
+        Debug.Log(new JSONObject(data));
+        socket.Emit("acceptChallenge", new JSONObject(data));
     }
     public void rejectChallenge()
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["challengerId"] = challengerCode;
-        socket.Emit("rejectChallenge", new JSONObject(data));  
+        Debug.Log(new JSONObject(data));
+        socket.Emit("rejectChallenge", new JSONObject(data));
     }
     public void challenge(string s)
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["code"] = s;
         data["challengerId"] = playerCode;
-        socket.Emit("challenge", new JSONObject(data));      
+        Debug.Log(new JSONObject(data));
+        socket.Emit("challenge", new JSONObject(data));
+        uiController.instance.showChallengingPanel();
     }
 #endregion
 }

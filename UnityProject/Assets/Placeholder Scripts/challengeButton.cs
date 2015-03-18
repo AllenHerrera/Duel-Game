@@ -1,14 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class challengeButton : MonoBehaviour {
-    public string challengeCode{get;set;}
-    private sockettest socket;
-    private void Start(){
-        socket = FindObjectOfType<sockettest>();
+    public InputField code;
+    private string _challengeCode ="";
+    public string challengeCode
+    {
+        get
+        {
+            return _challengeCode;
+        }
+        set
+        {
+            _challengeCode = value.ToUpper();
+            code.text = _challengeCode;
+
+        }
+    }
+    void Start(){
+        challengeCode ="";
     }
     public void SubmitChallenge()
     {
-        socket.challenge(challengeCode);
+        if(challengeCode.Length ==4)
+            socketController.instance.challenge(challengeCode);
     }
 }

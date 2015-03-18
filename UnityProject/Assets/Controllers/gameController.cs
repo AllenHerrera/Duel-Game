@@ -2,18 +2,18 @@
 using System.Collections;
 
 public class gameController : MonoBehaviour {
-	
-	private static readonly gameController instance = new gameController();
-	private gameController(){}
-	
-	//allows only one instance of this object and provides a static reference to it
-	public static gameController Instance
-	{
-		get 
-		{
-			return instance; 
-		}
-	}
+
+    private static gameController _instance;
+    //This is the public reference that other classes will use
+    public static gameController instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = GameObject.FindObjectOfType<gameController>();
+            return _instance;
+        }
+    }
 	
 	//create possible game states
 	public enum gameState { inMenu, inGame ,inGameDraw }; 
@@ -31,6 +31,7 @@ public class gameController : MonoBehaviour {
 	//enables input controller, hides UI elemtents, begins game loop
 	public void beginGame() 
 	{
+        Debug.Log("Game is beginning!");
 	}
 	
 	//recieve opponent input from server and show result on screen
