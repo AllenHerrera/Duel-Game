@@ -73,11 +73,11 @@ io.on('connection', function(socket){
                     //player2State:state,
                 };
                 //challenger is added to game channel
-                socket.join(channelCode);
+                //socket.join(game.channel);
+		socket.join('test');
+		console.log(socket.rooms);
                 games[playerCode] = game;
-                channels[channelCode]=game;
-                console.log(players);
-                console.log(games);
+                channels[channelCode]=game;                
             }
             else {
                 socket.emit('challengedIsBusy');
@@ -98,10 +98,17 @@ io.on('connection', function(socket){
     });
     //recieve challenge id
     socket.on('acceptChallenge', function(data){
-        socket.join(channels[data.challengerId].channel);
+	socket.join('test');
+        //socket.join(games[data.challengerId].channel);
         games[playerCode] = games[data.challengerId];
         games[playerCode].player2=players[playerCode];
+	console.log(socket.id);
+	console.log(socket.rooms);
         socket.to(games[playerCode].player1.id).emit("challengeAccepted");
-        io.sockets.in(games[playerCode].channel).emit('gameBegin');
+	console.log("Game should be beginning");
+	console.log(games[playerCode]);
+	socket.to(games[playerCode].player1.id).emit("gameBegin");
+	socket.to(games[playerCode].player2.id).emit("gameBegin");       
+	// io.sockets.in(games[playerCode].channel).emit('gameBegin');
     });
 });
