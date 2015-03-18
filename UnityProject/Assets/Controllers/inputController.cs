@@ -16,7 +16,7 @@ public class inputController : MonoBehaviour {
 	}
 	#endregion
 
-	private boolean isTouching= false; 
+	private bool isTouching= false; 
 
 	public void DisableTouchInput(){
 		this.gameObject.SetActive (false);

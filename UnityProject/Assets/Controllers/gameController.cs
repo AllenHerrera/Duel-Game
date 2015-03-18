@@ -18,7 +18,7 @@ public class gameController : MonoBehaviour {
 	//create possible game states
 	public enum gameState { inMenu, inGame ,inGameDraw }; 
 	public enum duelistAction { waiting, firing , jamming };
-	public enum distractionType { 1 , 2 , 3 , 4 , 5 };
+	//public enum distractionType { 1 , 2 , 3 , 4 , 5 };
 	
 	//Variables
 	//initialize the currentstate as Menu
@@ -43,9 +43,9 @@ public class gameController : MonoBehaviour {
 	{
 	}
 	//call a distraction
-	public void spawnDistraction(distractionType type)
+	/*public void spawnDistraction(distractionType type)
 	{
-	}
+	}*/
 	
 	//private methods
 	

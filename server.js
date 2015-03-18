@@ -43,17 +43,18 @@ io.on('connection', function(socket){
         playerCode = code;
         players[playerCode].id=socket.id;
         players[playerCode].isBusy = false;
+        socket.emit('playerCodeCreated', playerCode)
     });
-    socket.on('challenge', function(challenge) {
-        console.log("received a challenge to code " + challenge.code);
+    socket.on('challenge', function(data) {
+        console.log("received a challenge to code " + data.code);
         var code = challenge.code;
         if (players.hasOwnProperty(code)) {
             console.log("code is valid");
-            if (players[playerCode].isBusy === false) {
-                io.to(players[code].id).emit('challengePosted',{code:challenge.challengerId});
+            if (players[data.code].isBusy === false) {
+                io.to(players[data.code]).emit('challengePosted',{id:data.challengerId});
                 //Set both players as currently busy until challenge is accepted or declined
                 players[playerCode].isBusy = true;
-                players[challenge.challengeId].isBusy=true;
+                players[data.code].isBusy=true;
                 //Create a new game and add it to the games list
                 //generate unique channel code
                 do
@@ -85,15 +86,15 @@ io.on('connection', function(socket){
     //Recieve challenger's id
     socket.on('rejectChallenge', function(data){
         //Delete game object and allow challenges for both players
-        delete games[data.id];
-        players[data.id].isBusy = false;
+        delete games[data.challengerId];
+        players[data.challengerId].isBusy = false;
         players[playerCode].isBusy = false;
         io.to(players[data.id]).emit("challengeRejected");
     });
     //recieve challenge id
     socket.on('acceptChallenge', function(data){
-        socket.join(channels[data.id].channel);
-        games[playerCode] = games[data.id];
+        socket.join(channels[data.challengerId].channel);
+        games[playerCode] = games[data.challengerId];
         games[playerCode].player2=players[playerCode];
         socket.to(games[playerCode].player1).emit("challengeAccepted");
         io.sockets.in(games[playerCode].channel).emit('gameBegin');
