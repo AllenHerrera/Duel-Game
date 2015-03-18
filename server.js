@@ -17,7 +17,7 @@ io.on('connection', function(socket){
     console.log('a user connected');
     var playerCode = '----';
 
-    socket.on('playerDisconnect', function(){
+    socket.on('disconnect', function(){
         console.log('- user disconnected');
         if(players.hasOwnProperty(playerCode)){
             console.log('- deleted ' + players[playerCode]);
@@ -54,7 +54,7 @@ io.on('connection', function(socket){
             console.log("code is valid");
             if (players[data.code].isBusy === false) {
                 console.log('posting challenge!');
-                io.to(players[data.code]).emit('challengePosted',{id:data.challengerId});
+                io.to(players[data.code].id).emit('challengePosted',{id:data.challengerId});
                 //Set both players as currently busy until challenge is accepted or declined
                 players[playerCode].isBusy = true;
                 players[data.code].isBusy=true;
@@ -94,14 +94,14 @@ io.on('connection', function(socket){
         delete games[data.challengerId];
         players[data.challengerId].isBusy = false;
         players[playerCode].isBusy = false;
-        io.to(players[data.id]).emit("challengeRejected");
+        io.to(players[data.id].id).emit("challengeRejected");
     });
     //recieve challenge id
     socket.on('acceptChallenge', function(data){
         socket.join(channels[data.challengerId].channel);
         games[playerCode] = games[data.challengerId];
         games[playerCode].player2=players[playerCode];
-        socket.to(games[playerCode].player1).emit("challengeAccepted");
+        socket.to(games[playerCode].player1.id).emit("challengeAccepted");
         io.sockets.in(games[playerCode].channel).emit('gameBegin');
     });
 });
