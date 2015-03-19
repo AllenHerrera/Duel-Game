@@ -116,7 +116,6 @@ public class socketController : MonoBehaviour
             gameController.instance.beginGame(true);
         else
             gameController.instance.beginGame(false);
-        uiController.instance.hideMenuPanels();
         challengedCode = null;
     }
     private void draw(SocketIOEvent e)

@@ -22,7 +22,7 @@ function playGame(data) {
     console.log('beginning game loop');
     if (channels[data.channel] !== undefined)
         channels[data.channel].gameState = 1;
-    var delay = Math.random() * 30000;
+    var delay = Math.random() * 20000;
     var gameLoop = function () {
         console.log('draw loop iteration beginning');
         if (channels[data.channel] === undefined) {
@@ -41,18 +41,18 @@ function playGame(data) {
             io.to(data.channel).emit('draw');
             channels[data.channel].drawActive = true;
             console.log('draw state entered');
-            delay = Math.random() * 30000;
+            delay = Math.random() * 20000;
             var endDraw = setTimeout(function () {
                 io.to(data.channel).emit('endDraw');
                 if(channels[data.channel] !== undefined) {
                     channels[data.channel].drawActive = false;
                     console.log('draw state ended');
                 }
-            }, Math.min(3000, delay - 500));
-            loop = setTimeout(gameLoop, Math.max(delay, 10000));
+            }, 2000);
+            loop = setTimeout(gameLoop, Math.max(delay, 7500));
         }
     };
-    var loop = setTimeout(gameLoop, Math.max(delay, 12500));
+    var loop = setTimeout(gameLoop, Math.max(delay, 8000));
     var gameTest = function(){
         if(channels[data.channel] === undefined || channels[data.channel].gameState !==1){
             console.log('Game is over, ending loop');
@@ -117,7 +117,7 @@ io.on('connection', function (socket) {
             if (players[data.code].isBusy === false || (games[data.challengerId]!== undefined && games[data.challengerId] === games[playerCode])) {
                 if(games[data.challengerId]!== undefined && games[data.challengerId] === games[playerCode]){
                     console.log('players are already in game. Disconnecting them from previous session');
-                    io.to(games[data.code].channel).emit('disconnectFromRoom', {channel:games[data.code].channel});
+                    io.to(games[data.challengerId].channel).emit('disconnectFromRoom', {channel:games[data.challengerId].channel});
                     delete games[data.code];
                 }
                 io.to(players[data.code].id).emit('challengePosted', {id: data.challengerId});

@@ -101,12 +101,14 @@ public class uiController : MonoBehaviour
     }
     public void hideMenuPanels()
     {
-        challengedPanel.SetActive(false);
         challengePanel.SetActive(false);
         mainPanel.SetActive(false);
         preGamePanel.SetActive(false);
         rejectedPanel.SetActive(false);
         disconnectedPanel.SetActive(false);
+        wonPanel.SetActive(false);
+        lostPanel.SetActive(false);
+
     }
     public void showPlayer1Label()
     {
