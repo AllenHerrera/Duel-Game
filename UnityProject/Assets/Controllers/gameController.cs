@@ -71,6 +71,7 @@ public class gameController : MonoBehaviour
         player2.sprite = cowboySprites[0];
         player1State = playerState.idle;
         player2State = playerState.idle;
+        inputController.instance.EnableInput();
     }
     public void recieveGameState(int newState, int newPlayer1State, int newPlayer2State)
     {
@@ -86,11 +87,11 @@ public class gameController : MonoBehaviour
         player2.sprite = cowboySprites[(int)player2State];
         if (currentState == gameState.over)
         {
+            inputController.instance.DisableInput();
             uiController.instance.hideDraw();
             uiController.instance.hidePlayerLabel();
             bool wonGame = (isPlayer1 && player1State == playerState.firing) || (!isPlayer1 && player2State == playerState.firing);
             StartCoroutine(gameOver(wonGame));
-
 
         }
     }

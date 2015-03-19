@@ -23,7 +23,10 @@ public class challengeButton : MonoBehaviour {
     }
     public void SubmitChallenge()
     {
-        if(challengeCode.Length ==4)
+        if (challengeCode.Length == 4)
+        {
             socketController.instance.challenge(challengeCode);
+            code.text = "";
+        }
     }
 }

@@ -17,14 +17,15 @@ public class socketController : MonoBehaviour
             return _instance;
         }
     }
-   #endregion
-   #region variables
-   private SocketIOComponent socket;
-   private string playerCode;
-   private string challengerCode;
-   private string challengedCode;
-   #endregion
-   void Start () {
+    #endregion
+    #region variables
+    private SocketIOComponent socket;
+    private string playerCode;
+    private string challengerCode;
+    private string challengedCode;
+    #endregion
+    void Start()
+    {
         //set socket reference
         socket = FindObjectOfType<SocketIOComponent>();
         //Register UI and other event listeners
@@ -36,25 +37,26 @@ public class socketController : MonoBehaviour
         socket.On("challengeCanceled", challengeCancelled);
         socket.On("challengeAccepted", challengeAccepted);
         socket.On("challengeRejected", challengeRejected);
+        socket.On("disconnectFromRoom", disconnectFromRoom);
         socket.On("beginGame", beginGame);
-        socket.On("draw",draw);
-        socket.On("endDraw",endDraw);
+        socket.On("draw", draw);
+        socket.On("endDraw", endDraw);
         socket.On("gameUpdate", gameUpdate);
         StartCoroutine(requestCode());
-	}
-   private IEnumerator requestCode()
-   {
-       yield return new WaitForSeconds(1);
-       //request player code
-       socket.Emit("requestPlayerCode");
-   }
+    }
+    private IEnumerator requestCode()
+    {
+        yield return new WaitForSeconds(1);
+        //request player code
+        socket.Emit("requestPlayerCode");
+    }
     #region socket listeners
     //recieve events from server and display approrpriate UI elements through UI controller
     private void recieveCode(SocketIOEvent e)
     {
         Debug.Log(e.data);
         //codeField.text = string.Format("{0}", e.data["gameCode"]);
-        playerCode= string.Format("{0}", e.data["code"]).Substring(1,4);
+        playerCode = string.Format("{0}", e.data["code"]).Substring(1, 4);
         //Ask UI Controller to display code
         uiController.instance.showCode(playerCode);
     }
@@ -74,18 +76,23 @@ public class socketController : MonoBehaviour
         uiController.instance.hidePlayerLabel();
         uiController.instance.showDisconnectedPanel();
         gameController.instance.resetGameState();
-
+    }
+    private void disconnectFromRoom(SocketIOEvent e)
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
+        socket.Emit("playerDisconnected", new JSONObject(data));
     }
 
     private void challengeAccepted(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
         uiController.instance.showAcceptedPanel();
-       
+
     }
     private void challengeRecieved(SocketIOEvent e)
     {
-        challengerCode = string.Format("{0}",e.data["id"]).Substring(1,4);
+        challengerCode = string.Format("{0}", e.data["id"]).Substring(1, 4);
         Debug.Log("recieved challenge from " + challengerCode);
         //Ask UI Controller to display appropriate screen        
         uiController.instance.showChallengedPanel();
@@ -105,11 +112,12 @@ public class socketController : MonoBehaviour
     private void beginGame(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
-        if(challengedCode != null)
+        if (challengedCode != null)
             gameController.instance.beginGame(true);
         else
             gameController.instance.beginGame(false);
         uiController.instance.hideMenuPanels();
+        challengedCode = null;
     }
     private void draw(SocketIOEvent e)
     {
@@ -128,7 +136,7 @@ public class socketController : MonoBehaviour
         int player1State = int.Parse(string.Format("{0}", e.data["player1state"]));
         int player2State = int.Parse(string.Format("{0}", e.data["player2state"]));
         int gameState = int.Parse(string.Format("{0}", e.data["gameState"]));
-        gameController.instance.recieveGameState(gameState, player1State, player2State);        
+        gameController.instance.recieveGameState(gameState, player1State, player2State);
     }
     #endregion
     #region public methods
@@ -150,6 +158,7 @@ public class socketController : MonoBehaviour
         data["challengerId"] = challengerCode;
         Debug.Log(new JSONObject(data));
         socket.Emit("acceptChallenge", new JSONObject(data));
+        challengedCode = null;
     }
     public void rejectChallenge()
     {
@@ -169,6 +178,19 @@ public class socketController : MonoBehaviour
         Debug.Log(new JSONObject(data));
         socket.Emit("challenge", new JSONObject(data));
         uiController.instance.showChallengingPanel();
+        challengerCode = challengedCode;
+    }
+    public void challenge()
+    {
+        Debug.Log(challengerCode);
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        if (challengedCode == null)
+            challengedCode = challengerCode;
+        data["code"] = challengedCode;
+        data["challengerId"] = playerCode;
+        Debug.Log(new JSONObject(data));
+        socket.Emit("challenge", new JSONObject(data));
+        uiController.instance.showChallengingPanel();
     }
     public void resetGame()
     {
@@ -176,14 +198,8 @@ public class socketController : MonoBehaviour
         gameController.instance.resetGameState();
         uiController.instance.showCode(playerCode);
     }
-#endregion
-    void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            processInput();
-        }
-    }
+    #endregion
+
 }
 
 

@@ -83,7 +83,8 @@ public class uiController : MonoBehaviour
         challengedPanel.SetActive(false);
         rejectedPanel.SetActive(false);
         disconnectedPanel.SetActive(false);
-
+        wonPanel.SetActive(false);
+        lostPanel.SetActive(false);
     }
     public void showChallengedPanel()
     {
@@ -94,6 +95,8 @@ public class uiController : MonoBehaviour
         preGamePanel.SetActive(false);
         rejectedPanel.SetActive(false);
         disconnectedPanel.SetActive(false);
+        wonPanel.SetActive(false);
+        lostPanel.SetActive(false);
 
     }
     public void hideMenuPanels()
