@@ -51,23 +51,6 @@ function playGame(data) {
         }
     };
     var loop = setTimeout(gameLoop, Math.max(delay, 12500));
-    //Loop to test constantly if game is still valid;
-    var gameTester = function () {
-        clearInterval(testLoop);
-        if (channels[data.channel] === undefined) {
-            console.log('game has been deleted. Ending loop');
-            clearInterval(loop);
-            return;
-        }
-        if (channels[data.channel].gameState == 2) {
-            console.log('game has ended, ending loop');
-            clearInterval(loop);
-            return;
-        }
-        testLoop = setTimeout(gameTester, 500);
-    };
-    var testLoop = setTimeout(gameTester, 500);
-    var loop = setTimeout(gameLoop, Math.max(delay, 10000));
 }
 
 console.log('server started');
@@ -121,7 +104,12 @@ io.on('connection', function (socket) {
         var code = data.code;
         if (players.hasOwnProperty(data.code)) {
             console.log("code is valid");
-            if (players[data.code].isBusy === false) {
+            if (players[data.code].isBusy === false || games[data.code] === games[playerCode]) {
+                if(games[data.code] === games[playerCode]){
+                    console.log('players are already in game. Disconnecting them from previous session');
+                    io.to(games[data.code].channel).emit('disconnectFromRoom', {channel:games[data.code].channel});
+                    delete games[data.code];
+                }
                 io.to(players[data.code].id).emit('challengePosted', {id: data.challengerId});
                 //Set both players as currently busy until challenge is accepted or declined
                 players[playerCode].isBusy = true;
@@ -258,20 +246,6 @@ io.on('connection', function (socket) {
             delete channels[data];
             //emit a disconnect to all other connected clients in the room
             io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
-        }
-    });
-    socket.on('challengeAgain', function (data) {
-        if (players.hasOwnProperty(data.code)) {
-            io.to(players[data.code].id).emit('challengePosted', {id: data.challengerId});
-            //Set both players as currently busy until challenge is accepted or declined
-            players[playerCode].isBusy = true;
-            players[data.code].isBusy = true;
-            //Create a new game and add it to the games list
-            //generate unique channel code
-            games[playerCode].gameState = 0;
-            games[playerCode].player1state = 0;
-            games[playerCode].player2state = 0;
-            games[playerCode].drawActive = false;
         }
     });
 });
