@@ -29,19 +29,21 @@ function playGame(data){
             console.log('game has been deleted. Ending loop');
             return;
         }
-        if(games[data.id].gameState ===1) {
-            io.to(games[data.id].channel).emit('draw');
-            games[data.id].drawActive=true;
-            console.log('draw state entered');
-            delay = Math.random() * 30000;
-            //emit draw event
-            setTimeout(function () {
-                io.to(games[data.id].channel).emit('endDraw');
-                games[data.id].drawActive=false;
-                console.log('draw state ended');
-            }, Math.min(3000, delay-500));
-            console.log("beginning new game loop. Draw will occur in "+delay);
-            loop = setInterval(gameLoop, Math.max(delay,10000));
+        else {
+            if (games[data.id].gameState === 1) {
+                io.to(games[data.id].channel).emit('draw');
+                games[data.id].drawActive = true;
+                console.log('draw state entered');
+                delay = Math.random() * 30000;
+                //emit draw event
+                setTimeout(function () {
+                    io.to(games[data.id].channel).emit('endDraw');
+                    games[data.id].drawActive = false;
+                    console.log('draw state ended');
+                }, Math.min(3000, delay - 500));
+                console.log("beginning new game loop. Draw will occur in " + delay);
+                loop = setInterval(gameLoop, Math.max(delay, 10000));
+            }
         }
     };
     var loop = setInterval(gameLoop, Math.max(delay,15000));
