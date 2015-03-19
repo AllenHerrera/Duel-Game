@@ -17,7 +17,6 @@ var games = {};
 var players = {};
 var channels = {};
 
-
 function playGame(data) {
     //Choose random  time in future to enable draw
     console.log('beginning game loop');
@@ -25,6 +24,7 @@ function playGame(data) {
         channels[data.channel].gameState = 1;
     var delay = Math.random() * 30000;
     var gameLoop = function () {
+        console.log('draw loop iteration beginning');
         clearInterval(loop);
         if (channels[data.channel] === undefined) {
             console.log('game has been deleted. Ending loop');
@@ -48,10 +48,10 @@ function playGame(data) {
                 channels[data.channel].drawActive = false;
                 console.log('draw state ended');
             }, Math.min(3000, delay - 500));
-            console.log("beginning new game loop. Draw will occur in " + delay);
+            loop = setInterval(gameLoop, Math.max(delay, 10000));
         }
     };
-    var loop = setInterval(gameLoop, Math.max(delay, 7500));
+    var loop = setInterval(gameLoop, Math.max(delay, 12500));
     //Loop to test constantly if game is still valid;
     var gameTester = function () {
         clearInterval(testLoop);
@@ -68,7 +68,7 @@ function playGame(data) {
         testLoop = setInterval(gameTester, 500);
     };
     var testLoop = setInterval(gameTester, 500);
-    loop = setInterval(gameLoop, Math.max(delay, 10000));
+    var loop = setInterval(gameLoop, Math.max(delay, 10000));
 }
 
 console.log('server started');
