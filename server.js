@@ -112,7 +112,7 @@ io.on('connection', function (socket) {
     });
     socket.on('challenge', function (data) {
         var code = data.code;
-        if (players.hasOwnProperty(data.code)) {
+        if (players.hasOwnProperty(data.code) && data.code !== playerCode) {
             console.log("code is valid");
             if (players[data.code].isBusy === false || (games[data.challengerId]!== undefined && games[data.challengerId] === games[playerCode])) {
                 if(games[data.challengerId]!== undefined && games[data.challengerId] === games[playerCode]){
