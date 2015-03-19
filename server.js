@@ -20,7 +20,8 @@ var channels = {};
 
 function playGame(data) {
     //Choose random  time in future to enable draw
-    channels[data.channel].gameState = 1;
+    if(channels[data.channel]!==undefined)
+        channels[data.channel].gameState = 1;
     var delay = Math.random() * 30000;
     var gameLoop = function () {
         clearInterval(loop);
@@ -163,16 +164,16 @@ io.on('connection', function (socket) {
     });
     socket.on('acceptChallenge', function (data) {
         socket.join(games[data.challengerId].channel);
-        if(games[playerCode] === undefined) {
-            games[playerCode] = games[data.challengerId];
+        games[playerCode] = games[data.challengerId];
+        if(games[playerCode].player2 === null)
             games[playerCode].player2 = players[playerCode];
-        }
-        socket.to(games[playerCode].player1.id).emit("challengeAccepted");
+        socket.to(players[data.challengerId].id).emit("challengeAccepted");
         setTimeout(function () {
                 if (games[playerCode] !== undefined) {
-                    console.log('game is beginning');
+                    console.log('game is beginning. Game information :');
                     console.log(games[playerCode]);
                     io.to(games[playerCode].channel).emit('beginGame');
+                    console.log("current game state is: ");
                     console.log(getCurrentState());
                     playGame({channel: games[playerCode].channel});
                 }
