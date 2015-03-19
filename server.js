@@ -22,11 +22,14 @@ function playGame(data) {
     //Choose random  time in future to enable draw
     channels[data.channel].gameState = 1;
     var delay = Math.random() * 30000;
-    console.log("beginning first game loop. Draw will occur in " + Math.max(delay, 25000));
     var gameLoop = function () {
         clearInterval(loop);
         if (channels[data.channel] === undefined) {
             console.log('game has been deleted. Ending loop');
+            return;
+        }
+        if(channels[data].gameState==2){
+            console.log('game has ended, ending loop');
             return;
         }
         else {
