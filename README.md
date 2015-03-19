@@ -1,5 +1,4 @@
-# krinkleGame
-DUEL
+#Duel
 
 Technology Stack:
 
