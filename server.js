@@ -69,11 +69,14 @@ io.on('connection', function (socket) {
         if (players.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + players[playerCode]);
             delete players[playerCode];
+            console.log(players);
         }
         if (games.hasOwnProperty(playerCode)) {
-            console.log('- deleted ' + games[playerCode].channel);
-            // emit a disconnect to all other connected clients in the room
-            io.sockets.in(games[playerCode].channel).emit('playerDisconnected');
+            console.log('- deleted ' + games[playerCode]);
+	    var data = games[playerCode].channel;
+            delete channels[data];
+	    //emit a disconnect to all other connected clients in the room
+            io.sockets.in(games[playerCode].channel).emit('playerDisconnected',{channel:data});
         }
     });
     socket.on('requestPlayerCode', function () {
@@ -131,15 +134,14 @@ io.on('connection', function (socket) {
             socket.emit('invalidCode');
         }
     });
-    socket.on('playerDisconnected', function () {
+    socket.on('playerDisconnected', function (data) {
         //last player in game deletes game
-        console.log(games[playerCode]);
-        socket.leave(games[playerCode].channel);
+	console.log(data);
+        socket.leave(data.channel);
         players[playerCode].isBusy = false;
-        delete games[playerCode];
         setTimeout(function() {
             console.log(games);
-        },1000);
+        },3000);
     });
     socket.on('cancelChallenge', function (data) {
         //Delete game object and allow challenges for both players
@@ -179,9 +181,13 @@ io.on('connection', function (socket) {
             if (!games[playerCode].drawActive) {
                 //set player state
                 if (isPlayer1) {
+	            if(games[playerCode].player1state === 2)
+			return;
                     games[playerCode].player1state = 2;
                 }
                 else {
+		    if(games[playerCode].player2state ===2)
+			return;
                     games[playerCode].player2state = 2;
                 }
                 //set update states to be sent to clients
