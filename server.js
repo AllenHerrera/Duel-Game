@@ -54,8 +54,7 @@ function playGame(data) {
     var loop = setInterval(gameLoop, Math.max(delay, 7500));
     //Loop to test constantly if game is still valid;
     var gameTester = function () {
-        console.log("tester loop iteration beginning");
-        clearInterval(gameTester);
+        clearInterval(testLoop);
         if (channels[data.channel] === undefined) {
             console.log('game has been deleted. Ending loop');
             clearInterval(loop);
