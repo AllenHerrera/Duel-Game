@@ -104,8 +104,8 @@ io.on('connection', function (socket) {
         var code = data.code;
         if (players.hasOwnProperty(data.code)) {
             console.log("code is valid");
-            if (players[data.code].isBusy === false || games[data.code] === games[playerCode]) {
-                if(games[data.code] === games[playerCode]){
+            if (players[data.code].isBusy === false || games[data.challengerId] === games[playerCode]) {
+                if(games[data.challengerId] === games[playerCode]){
                     console.log('players are already in game. Disconnecting them from previous session');
                     io.to(games[data.code].channel).emit('disconnectFromRoom', {channel:games[data.code].channel});
                     delete games[data.code];
