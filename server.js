@@ -44,13 +44,23 @@ function playGame(data) {
             delay = Math.random() * 30000;
             var endDraw = setTimeout(function () {
                 io.to(data.channel).emit('endDraw');
-                channels[data.channel].drawActive = false;
-                console.log('draw state ended');
+                if(channels[data.channel] !== undefined) {
+                    channels[data.channel].drawActive = false;
+                    console.log('draw state ended');
+                }
             }, Math.min(3000, delay - 500));
             loop = setTimeout(gameLoop, Math.max(delay, 10000));
         }
     };
     var loop = setTimeout(gameLoop, Math.max(delay, 12500));
+    var gameTest = function(){
+        if(channels[data.channel] === undefined || channels[data.channel].gameState !==1){
+            console.log('Game is over, ending loop');
+            clearTimeout(loop);
+        }
+        else testLoop = setTimeout(gameTest,500);
+    };
+    var testLoop = setTimeout(gameTest,500);
 }
 
 console.log('server started');
@@ -148,9 +158,6 @@ io.on('connection', function (socket) {
         console.log(data);
         socket.leave(data.channel);
         players[playerCode].isBusy = false;
-        setTimeout(function () {
-            console.log(games);
-        }, 3000);
     });
     socket.on('cancelChallenge', function (data) {
         //Delete game object and allow challenges for both players
@@ -175,6 +182,8 @@ io.on('connection', function (socket) {
         socket.to(players[data.challengerId].id).emit("challengeAccepted");
         setTimeout(function () {
                 if (games[playerCode] !== undefined) {
+                    console.log('all games are:');
+                    console.log(games);
                     console.log('game is beginning. Game information :');
                     console.log(games[playerCode]);
                     io.to(games[playerCode].channel).emit('beginGame');
