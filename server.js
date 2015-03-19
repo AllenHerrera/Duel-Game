@@ -20,7 +20,7 @@ var channels = {};
 
 function playGame(data) {
     //Choose random  time in future to enable draw
-    if(channels[data.channel]!==undefined)
+    if (channels[data.channel] !== undefined)
         channels[data.channel].gameState = 1;
     var delay = Math.random() * 30000;
     var gameLoop = function () {
@@ -29,28 +29,45 @@ function playGame(data) {
             console.log('game has been deleted. Ending loop');
             return;
         }
-        if(channels[data.channel].gameState==2){
+        if (channels[data.channel].gameState == 2) {
             console.log('game has ended, ending loop');
             return;
         }
-        else {
-            if (channels[data.channel].gameState === 1) {
-                io.to(data.channel).emit('draw');
-                channels[data.channel].drawActive = true;
-                console.log('draw state entered');
-                delay = Math.random() * 30000;
-                //emit draw event
-                setTimeout(function () {
-                    io.to(data.channel).emit('endDraw');
-                    channels[data.channel].drawActive = false;
-                    console.log('draw state ended');
-                }, Math.min(3000, delay - 500));
-                console.log("beginning new game loop. Draw will occur in " + delay);
-                loop = setInterval(gameLoop, Math.max(delay, 10000));
-            }
+        if (channels[data.channel].gameState === 1) {
+            io.to(data.channel).emit('draw');
+            channels[data.channel].drawActive = true;
+            console.log('draw state entered');
+            delay = Math.random() * 30000;
+            var endDraw = setTimeout(function () {
+                io.to(data.channel).emit('endDraw');
+                channels[data.channel].drawActive = false;
+                console.log('draw state ended');
+            }, Math.min(3000, delay - 500));
+            console.log("beginning new game loop. Draw will occur in " + delay);
         }
-    };
-    var loop = setInterval(gameLoop, Math.max(delay, 15000));
+        //Loop to test constantly if game is still valid;
+        var gameTester = function () {
+            console.log("tester loop iteration beginning");
+            clearInterval(gameTester);
+            if (channels[data.channel] === undefined) {
+                console.log('game has been deleted. Ending loop');
+                clearInterval(loop);
+                clearTimeout(endDraw);
+                return;
+            }
+            if (channels[data.channel].gameState == 2) {
+                console.log('game has ended, ending loop');
+                clearInterval(loop);
+                clearTimeout(endDraw);
+                return;
+            }
+            testLoop = setInterval(gameTester, 500);
+        };
+        var testLoop = setInterval(gameTester, 500);
+        loop = setInterval(gameLoop, Math.max(delay, 10000));
+    }
+};
+var loop = setInterval(gameLoop, Math.max(delay, 7500));
 }
 
 console.log('server started');
@@ -165,7 +182,7 @@ io.on('connection', function (socket) {
     socket.on('acceptChallenge', function (data) {
         socket.join(games[data.challengerId].channel);
         games[playerCode] = games[data.challengerId];
-        if(games[playerCode].player2 === null)
+        if (games[playerCode].player2 === null)
             games[playerCode].player2 = players[playerCode];
         socket.to(players[data.challengerId].id).emit("challengeAccepted");
         setTimeout(function () {
