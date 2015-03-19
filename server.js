@@ -65,9 +65,8 @@ function playGame(data) {
         };
         var testLoop = setInterval(gameTester, 500);
         loop = setInterval(gameLoop, Math.max(delay, 10000));
-    }
-};
-var loop = setInterval(gameLoop, Math.max(delay, 7500));
+    };
+    var loop = setInterval(gameLoop, Math.max(delay, 7500));
 }
 
 console.log('server started');
