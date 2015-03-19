@@ -20,6 +20,7 @@ var channels = {};
 
 function playGame(data) {
     //Choose random  time in future to enable draw
+    console.log('beginning game loop');
     if (channels[data.channel] !== undefined)
         channels[data.channel].gameState = 1;
     var delay = Math.random() * 30000;
@@ -27,10 +28,14 @@ function playGame(data) {
         clearInterval(loop);
         if (channels[data.channel] === undefined) {
             console.log('game has been deleted. Ending loop');
+            if(endDraw !==undefined)
+                clearTimeout(endDraw);
             return;
         }
         if (channels[data.channel].gameState == 2) {
             console.log('game has ended, ending loop');
+            if(endDraw !==undefined)
+                clearTimeout(endDraw);
             return;
         }
         if (channels[data.channel].gameState === 1) {
@@ -45,28 +50,26 @@ function playGame(data) {
             }, Math.min(3000, delay - 500));
             console.log("beginning new game loop. Draw will occur in " + delay);
         }
-        //Loop to test constantly if game is still valid;
-        var gameTester = function () {
-            console.log("tester loop iteration beginning");
-            clearInterval(gameTester);
-            if (channels[data.channel] === undefined) {
-                console.log('game has been deleted. Ending loop');
-                clearInterval(loop);
-                clearTimeout(endDraw);
-                return;
-            }
-            if (channels[data.channel].gameState == 2) {
-                console.log('game has ended, ending loop');
-                clearInterval(loop);
-                clearTimeout(endDraw);
-                return;
-            }
-            testLoop = setInterval(gameTester, 500);
-        };
-        var testLoop = setInterval(gameTester, 500);
-        loop = setInterval(gameLoop, Math.max(delay, 10000));
     };
     var loop = setInterval(gameLoop, Math.max(delay, 7500));
+    //Loop to test constantly if game is still valid;
+    var gameTester = function () {
+        console.log("tester loop iteration beginning");
+        clearInterval(gameTester);
+        if (channels[data.channel] === undefined) {
+            console.log('game has been deleted. Ending loop');
+            clearInterval(loop);
+            return;
+        }
+        if (channels[data.channel].gameState == 2) {
+            console.log('game has ended, ending loop');
+            clearInterval(loop);
+            return;
+        }
+        testLoop = setInterval(gameTester, 500);
+    };
+    var testLoop = setInterval(gameTester, 500);
+    loop = setInterval(gameLoop, Math.max(delay, 10000));
 }
 
 console.log('server started');
