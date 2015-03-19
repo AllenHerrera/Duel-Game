@@ -120,11 +120,13 @@ io.on('connection', function(socket){
             socket.emit('invalidCode');
         }
     });
-    socket.on('playerDisconnected', function(data){
+    socket.on('playerDisconnected', function(){
         //last player in game deletes game
         socket.leave(games[playerCode].channel);
         players[playerCode].isBusy = false;
         delete games[playerCode];
+        console.log('deleted game  ' +games[playerCode]);
+        console.log(games);
     });
     socket.on('cancelChallenge', function(data){
         //Delete game object and allow challenges for both players
