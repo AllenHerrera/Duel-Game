@@ -20,25 +20,31 @@ var channels={};
 
 function playGame(data){
     //Choose random  time in future to enable draw
-    data.game.gameState=1;
-    var delay = Math.random() * 150000;
-    console.log("beginning first game loop. Draw will occur in "+Math.min(delay,5000));
+    games[data.id].gameState=1;
+    var delay = Math.random() * 45000;
+    console.log("beginning first game loop. Draw will occur in "+Math.max(delay,25000));
     var gameLoop = function(){
         clearInterval(loop);
-        if(data.game.gameState ===1) {
-            io.to(data.game.channel).emit('draw');
+        if(games[data.id] === undefined){
+            console.log('game has been deleted. Ending loop');
+            return;
+        }
+        if(games[data.id].gameState ===1) {
+            io.to(games[data.id].channel).emit('draw');
+            games[data.id].drawActive=true;
             console.log('draw state entered');
-            delay = Math.random() * 150000;
+            delay = Math.random() * 30000;
             //emit draw event
             setTimeout(function () {
-                io.to(data.game.channel).emit('endDraw');
+                io.to(games[data.id].channel).emit('endDraw');
+                games[data.id].drawActive=false;
                 console.log('draw state ended');
             }, Math.min(3000, delay-500));
-            console.log("beginning new game loop. Draw will occur in "+Math.min(delay,5000));
-            loop = setInterval(gameLoop, delay);
+            console.log("beginning new game loop. Draw will occur in "+delay);
+            loop = setInterval(gameLoop, Math.max(delay,10000));
         }
     };
-    var loop = setInterval(gameLoop, Math.min(delay,5000));
+    var loop = setInterval(gameLoop, Math.max(delay,25000));
 }
 
 console.log('server started');
@@ -94,6 +100,7 @@ io.on('connection', function(socket){
                 {
                     channel:channelCode,
                     gameState: 0,
+                    drawActive: false,
                     player1:players[playerCode],
                     player2:null,
                     player1state: 0,
@@ -128,8 +135,58 @@ io.on('connection', function(socket){
                 console.log('game is beginning');
                 console.log(games[playerCode]);
                 io.to(games[playerCode].channel).emit('beginGame');
-                playGame({game: games[playerCode]});
+                playGame({id: playerCode});
             }
             ,3000);
+    });
+    socket.on('processInput', function(){
+        function getCurrentState(){
+            //return states of players and game as JSON object
+            return {player1state: games[playerCode].player1state, player2state: games[playerCode].player2state, gameState: games[playerCode].gameState}
+        }
+        if(games[playerCode].gameState ===1){
+            var isPlayer1 = (games[playerCode].player1.id === socket.id);
+            //handle gun jams
+            if(!games[playerCode.drawActive]){
+                //set player state
+                if(isPlayer1){
+                    games[playerCode].player1state=2;
+                }
+                else{
+                    games[playerCode].player2state=2;
+                }
+                //set update states to be sent to clients
+                //send current states to game
+                io.to(games[playerCode].channel).emit('gameUpdate',getCurrentState());
+                console.log(playerCode + 'is jammed');
+                setTimeout(function(){
+                    if(games[playerCode].gameState === 1) {
+                        if (isPlayer1) {
+                            games[playerCode].player1state = 0;
+                        }
+                        else {
+                            games[playerCode].player2state = 0;
+                        }
+                        io.to(games[playerCode].channel).emit('gameUpdate',getCurrentState());
+                        console.log(playerCode + 'is no longer jammed');
+                    }
+                },5000);
+            }
+            //handle player winning
+            else{
+                games[playerCode].gameState=2;
+                if(isPlayer1){
+                    console.log('player 1 wins!');
+                    games[playerCode].player1state=1;
+                    games[playerCode].player2state=3;
+                }
+                else{
+                    console.log('player 2 wins!');
+                    games[playerCode].player1state=3;
+                    games[playerCode].player2state=1;
+                }
+                io.to(games[playerCode].channel).emit('gameUpdate',getCurrentState());
+            }
+        }
     });
 });

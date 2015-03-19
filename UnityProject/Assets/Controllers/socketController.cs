@@ -34,6 +34,9 @@ public class socketController : MonoBehaviour
         socket.On("challengeAccepted", challengeAccepted);
         socket.On("challengeRejected", challengeRejected);
         socket.On("beginGame", beginGame);
+        socket.On("draw",draw);
+        socket.On("endDraw",endDraw);
+        socket.On("gameUpdate", gameUpdate);
         StartCoroutine(requestCode());
 	}
    private IEnumerator requestCode()
@@ -84,9 +87,37 @@ public class socketController : MonoBehaviour
         uiController.instance.hideMenuPanels();
         gameController.instance.beginGame();
     }
+    private void draw(SocketIOEvent e)
+    {
+        //Ask UI Controller to display appropriate screen
+        Debug.Log("Draw!");
+        uiController.instance.hideMenuPanels();
+        gameController.instance.beginGame();
+    }
+    private void endDraw(SocketIOEvent e)
+    {
+         Debug.Log("end Draw!");
+
+        //Ask UI Controller to display appropriate screen
+        uiController.instance.hideMenuPanels();
+        gameController.instance.beginGame();
+    }
+    private void gameUpdate(SocketIOEvent e)
+    {
+        Debug.Log("recieved game update");
+        Debug.Log(e.data);
+        int player1State = int.Parse(string.Format("{0}", e.data["player1State"]).Substring(1, 1));
+        int player2State = int.Parse(string.Format("{0}", e.data["player2State"]).Substring(1, 1));
+        int gameState = int.Parse(string.Format("{0}", e.data["gameState"]).Substring(1, 1));
+        
+    }
     #endregion
     #region public methods
     //recieve inputs from UI/Gamecontroller and send them to server
+    public void processInput()
+    {
+        socket.Emit("processInput");
+    }
     public void acceptChallenge()
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
@@ -111,6 +142,13 @@ public class socketController : MonoBehaviour
         uiController.instance.showChallengingPanel();
     }
 #endregion
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            processInput();
+        }
+    }
 }
 
 
