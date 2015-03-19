@@ -22,6 +22,7 @@ public class socketController : MonoBehaviour
    private SocketIOComponent socket;
    private string playerCode;
    private string challengerCode;
+   private string challengedCode;
    #endregion
    void Start () {
         //set socket reference
@@ -32,6 +33,7 @@ public class socketController : MonoBehaviour
         socket.On("playerDisconnected", playerDisconnect);
         socket.On("challengedIsBusy", challengeRejected);
         socket.On("challengePosted", challengeRecieved);
+        socket.On("challengeCanceled", challengeCancelled);
         socket.On("challengeAccepted", challengeAccepted);
         socket.On("challengeRejected", challengeRejected);
         socket.On("beginGame", beginGame);
@@ -83,6 +85,11 @@ public class socketController : MonoBehaviour
         //Ask UI Controller to display appropriate screen        
         uiController.instance.showChallengedPanel();
     }
+    private void challengeCancelled(SocketIOEvent e)
+    {
+        //Ask UI Controller to display appropriate screen
+        uiController.instance.showCode(playerCode);
+    }
 
     private void challengeRejected(SocketIOEvent e)
     {
@@ -128,7 +135,9 @@ public class socketController : MonoBehaviour
     }
     public void cancelChallenge()
     {
-        socket.Emit("cancelChallenge");
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["code"] = challengedCode;
+        socket.Emit("cancelChallenge", new JSONObject(data));
     }
     public void acceptChallenge()
     {
@@ -146,6 +155,7 @@ public class socketController : MonoBehaviour
     }
     public void challenge(string s)
     {
+        challengedCode = s;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["code"] = s;
         data["challengerId"] = playerCode;

@@ -160,7 +160,7 @@ io.on('connection', function(socket){
         if(games[playerCode].gameState ===1){
             var isPlayer1 = (games[playerCode].player1.id === socket.id);
             //handle gun jams
-            if(!games[playerCode.drawActive]){
+            if(!games[playerCode].drawActive){
                 //set player state
                 if(isPlayer1){
                     games[playerCode].player1state=2;

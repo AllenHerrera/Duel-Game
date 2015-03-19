@@ -66,7 +66,11 @@ public class uiController : MonoBehaviour
     {
         code.text = userCode;
         //shows panel with personal code
-        mainPanel.SetActive(true);        
+        mainPanel.SetActive(true);
+        challengePanel.SetActive(false);
+        challengedPanel.SetActive(false);
+        rejectedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);
     }
     public void showInvalidCodePanel()
     {
