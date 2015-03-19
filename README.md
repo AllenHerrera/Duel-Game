@@ -1,5 +1,7 @@
 # krinkleGame
-Duel:
+DUEL
+
+Technology Stack:
 
 	front end: Unity
 	back end: Node.js & Socket.io 
