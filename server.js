@@ -235,4 +235,18 @@ io.on('connection', function (socket) {
             io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
         }
     });
+    socket.on('challengeAgain', function(data){
+        if (players.hasOwnProperty(data.code)) {
+                io.to(players[data.code].id).emit('challengePosted', {id: data.challengerId});
+                //Set both players as currently busy until challenge is accepted or declined
+                players[playerCode].isBusy = true;
+                players[data.code].isBusy = true;
+                //Create a new game and add it to the games list
+                //generate unique channel code
+                games[playerCode].gameState = 0;
+                games[playerCode].player1state=0;
+                games[playerCode].player2state=0;
+                games[playerCode].drawActive =false;
+            }
+    });
 });
