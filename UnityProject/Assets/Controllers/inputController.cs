@@ -31,12 +31,12 @@ public class inputController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		if (isTouching==false && Input.touchCount > 0 ){
+		if (isTouching==false && (Input.touchCount > 0 | Input.GetMouseButtonUp(0))){
 			isTouching=true; 
 			//run method that processes input
             HandleInput();
 		}
-		if (isTouching==true && Input.touchCount==0 ) {
+		if (isTouching==true && (Input.touchCount==0 | Input.GetMouseButtonUp (0)==false)) {
 			isTouching= false; 	
 	    }
         if (Input.GetMouseButtonUp(0))
