@@ -28,7 +28,7 @@ function playGame(data) {
             console.log('game has been deleted. Ending loop');
             return;
         }
-        if(channels[data].gameState==2){
+        if(channels[data.channel].gameState==2){
             console.log('game has ended, ending loop');
             return;
         }
@@ -163,8 +163,10 @@ io.on('connection', function (socket) {
     });
     socket.on('acceptChallenge', function (data) {
         socket.join(games[data.challengerId].channel);
-        games[playerCode] = games[data.challengerId];
-        games[playerCode].player2 = players[playerCode];
+        if(games[playerCode] === undefined) {
+            games[playerCode] = games[data.challengerId];
+            games[playerCode].player2 = players[playerCode];
+        }
         socket.to(games[playerCode].player1.id).emit("challengeAccepted");
         setTimeout(function () {
                 if (games[playerCode] !== undefined) {
