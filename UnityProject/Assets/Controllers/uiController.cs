@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 public class uiController : MonoBehaviour
 {
-    public GameObject mainPanel, challengePanel, challengedPanel, rejectedPanel, preGamePanel, invalidCodePanel;
+    public GameObject mainPanel, challengePanel, challengedPanel, rejectedPanel, preGamePanel, invalidCodePanel, disconnectedPanel;
     public Text code;
     private static uiController _instance;
     //This is the public reference that other classes will use
@@ -39,6 +39,17 @@ public class uiController : MonoBehaviour
         mainPanel.SetActive(false);
         challengePanel.SetActive(false);
         challengedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);
+    }
+    public void showDisconnectedPanel()
+    {
+        //shows panel when a challenge is rejected
+        rejectedPanel.SetActive(false);
+        preGamePanel.SetActive(false);
+        mainPanel.SetActive(false);
+        challengePanel.SetActive(false);
+        challengedPanel.SetActive(false);
+        disconnectedPanel.SetActive(true);
     }
     public void showAcceptedPanel()
     {
@@ -48,6 +59,8 @@ public class uiController : MonoBehaviour
         challengePanel.SetActive(false);
         challengedPanel.SetActive(false);
         rejectedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);
+
     }
     public void showCode(string userCode)
     {
@@ -63,6 +76,8 @@ public class uiController : MonoBehaviour
         rejectedPanel.SetActive(false);
         preGamePanel.SetActive(false);
         invalidCodePanel.SetActive(true);
+        disconnectedPanel.SetActive(false);
+
     }
     public void showChallengingPanel()
     {
@@ -72,6 +87,8 @@ public class uiController : MonoBehaviour
         preGamePanel.SetActive(false);
         challengedPanel.SetActive(false);
         rejectedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);
+
     }
     public void showChallengedPanel()
     {
@@ -81,6 +98,7 @@ public class uiController : MonoBehaviour
         mainPanel.SetActive(false);
         preGamePanel.SetActive(false);
         rejectedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);
 
     }
     public void hideMenuPanels()
@@ -90,5 +108,6 @@ public class uiController : MonoBehaviour
         mainPanel.SetActive(false);
         preGamePanel.SetActive(false);
         rejectedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);
     }
 }

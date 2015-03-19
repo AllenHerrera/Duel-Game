@@ -29,6 +29,7 @@ public class socketController : MonoBehaviour
         //Register UI and other event listeners
         socket.On("playerCodeCreated", recieveCode);
         socket.On("invalidCode", invalidCode);
+        socket.On("playerDisconnected", playerDisconnect);
         socket.On("challengedIsBusy", challengeRejected);
         socket.On("challengePosted", challengeRecieved);
         socket.On("challengeAccepted", challengeAccepted);
@@ -59,6 +60,13 @@ public class socketController : MonoBehaviour
     {
         //Ask UI Controller to display appropriate screen
         uiController.instance.showInvalidCodePanel();
+
+    }
+    private void playerDisconnect(SocketIOEvent e)
+    {
+        //Ask UI Controller to display appropriate screen
+        uiController.instance.showDisconnectedPanel();
+        socket.Emit("playerDisconnected");
 
     }
 
@@ -117,6 +125,10 @@ public class socketController : MonoBehaviour
     public void processInput()
     {
         socket.Emit("processInput");
+    }
+    public void cancelChallenge()
+    {
+        socket.Emit("cancelChallenge");
     }
     public void acceptChallenge()
     {

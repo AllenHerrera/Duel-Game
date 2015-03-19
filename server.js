@@ -21,7 +21,7 @@ var channels={};
 function playGame(data){
     //Choose random  time in future to enable draw
     games[data.id].gameState=1;
-    var delay = Math.random() * 45000;
+    var delay = Math.random() * 30000;
     console.log("beginning first game loop. Draw will occur in "+Math.max(delay,25000));
     var gameLoop = function(){
         clearInterval(loop);
@@ -44,7 +44,7 @@ function playGame(data){
             loop = setInterval(gameLoop, Math.max(delay,10000));
         }
     };
-    var loop = setInterval(gameLoop, Math.max(delay,25000));
+    var loop = setInterval(gameLoop, Math.max(delay,15000));
 }
 
 console.log('server started');
@@ -61,7 +61,6 @@ io.on('connection', function(socket){
             console.log('- deleted ' + games[playerCode].channel);
             // emit a disconnect to all other connected clients in the room
             io.sockets.in(games[playerCode].channel).emit('playerDisconnected');
-            delete games[playerCode];
         }
     });
     socket.on('requestPlayerCode', function() {
@@ -118,6 +117,20 @@ io.on('connection', function(socket){
             console.log("Code is invalid");
             socket.emit('invalidCode');
         }
+    });
+    socket.on('playerDisconnected', function(data){
+        //last player in game deletes game
+        socket.leave(games[playerCode].channel);
+        players[playerCode].isBusy = false;
+        delete games[playerCode];
+    });
+    socket.on('cancelChallenge', function(data){
+        //Delete game object and allow challenges for both players
+        socket.leave(games[playerCode].channel);
+        delete games[playerCode];
+        players[data.code].isBusy = false;
+        players[playerCode].isBusy = false;
+        io.to(players[data.code].id).emit("challengeCanceled");
     });
     socket.on('rejectChallenge', function(data){
         //Delete game object and allow challenges for both players
