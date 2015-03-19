@@ -1,14 +1,19 @@
 # krinkleGame
 Duel:
+
 	front end: Unity
 	back end: Node.js & Socket.io 
 	target platforms: PC, Mac, Linux, Android, IOS
+	
 Process Tool:
 	https://trello.com/b/409GLLCz/unitygame
 Download Link:
+
+
 	https://app.box.com/s/at69l8reub1rtdcebn2qzeklvps6yhcb
 
 Instructions:
+
 	To play, ensure that you are connected to stable internet. Enter the code of the 
 	person you wish to challenge and press the Request Duel Button. Wait for them to 
 	respond or cancel the duel. If challenged, accept or reject the duel using the
