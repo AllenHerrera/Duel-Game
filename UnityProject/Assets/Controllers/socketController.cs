@@ -66,9 +66,14 @@ public class socketController : MonoBehaviour
     }
     private void playerDisconnect(SocketIOEvent e)
     {
+        Debug.Log(e.data);
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
+        socket.Emit("playerDisconnected", new JSONObject(data));
         //Ask UI Controller to display appropriate screen
+        uiController.instance.hidePlayerLabel();
         uiController.instance.showDisconnectedPanel();
-        socket.Emit("playerDisconnected");
+        gameController.instance.resetGameState();
 
     }
 
@@ -94,42 +99,36 @@ public class socketController : MonoBehaviour
     private void challengeRejected(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
-        uiController.instance.showRejectedPanel();   
+        uiController.instance.showRejectedPanel();
+        gameController.instance.resetGameState();
     }
     private void beginGame(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
+        if(challengedCode != null)
+            gameController.instance.beginGame(true);
+        else
+            gameController.instance.beginGame(false);
         uiController.instance.hideMenuPanels();
-        gameController.instance.beginGame();
     }
     private void draw(SocketIOEvent e)
     {
         //Ask UI Controller to display appropriate screen
-        Debug.Log("Draw!");
-        uiController.instance.hideMenuPanels();
-        gameController.instance.beginGame();
+        uiController.instance.showDraw();
     }
     private void endDraw(SocketIOEvent e)
     {
-         Debug.Log("end Draw!");
-
         //Ask UI Controller to display appropriate screen
-        uiController.instance.hideMenuPanels();
-        gameController.instance.beginGame();
+        uiController.instance.hideDraw();
     }
     private void gameUpdate(SocketIOEvent e)
     {
         Debug.Log("recieved game update");
         Debug.Log(e.data);
-        int player1State = int.Parse(string.Format("{0}", e.data["player1State"]).Substring(1, 1));
-        int player2State = int.Parse(string.Format("{0}", e.data["player2State"]).Substring(1, 1));
-        int gameState = int.Parse(string.Format("{0}", e.data["gameState"]).Substring(1, 1));
-        gameController.gameState state = (gameController.gameState)gameState;
-        gameController.playerState p1state = (gameController.playerState)player1State;
-        gameController.playerState p2state = (gameController.playerState)player2State;
-        gameController.instance.recieveGameState(state, p1state, p2state);
-
-        
+        int player1State = int.Parse(string.Format("{0}", e.data["player1state"]));
+        int player2State = int.Parse(string.Format("{0}", e.data["player2state"]));
+        int gameState = int.Parse(string.Format("{0}", e.data["gameState"]));
+        gameController.instance.recieveGameState(gameState, player1State, player2State);        
     }
     #endregion
     #region public methods
@@ -143,6 +142,7 @@ public class socketController : MonoBehaviour
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["code"] = challengedCode;
         socket.Emit("cancelChallenge", new JSONObject(data));
+        challengedCode = null;
     }
     public void acceptChallenge()
     {
@@ -157,6 +157,8 @@ public class socketController : MonoBehaviour
         data["challengerId"] = challengerCode;
         Debug.Log(new JSONObject(data));
         socket.Emit("rejectChallenge", new JSONObject(data));
+        challengedCode = null;
+        gameController.instance.resetGameState();
     }
     public void challenge(string s)
     {
@@ -167,6 +169,12 @@ public class socketController : MonoBehaviour
         Debug.Log(new JSONObject(data));
         socket.Emit("challenge", new JSONObject(data));
         uiController.instance.showChallengingPanel();
+    }
+    public void resetGame()
+    {
+        socket.Emit("reset");
+        gameController.instance.resetGameState();
+        uiController.instance.showCode(playerCode);
     }
 #endregion
     void Update()

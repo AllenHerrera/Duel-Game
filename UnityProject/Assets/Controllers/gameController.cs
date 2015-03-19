@@ -17,59 +17,92 @@ public class gameController : MonoBehaviour
     }
 
     //create possible game states
-    public enum gameState { inMenu = 0, inGame = 1, inGameDraw = 2 };
+    public enum gameState { inactive = 0, active = 1, over = 2 };
     public enum playerState { idle = 0, firing = 1, jammed = 2, dead = 3 };
+    public AudioClip[] sounds = new AudioClip[3];
     public Sprite[] cowboySprites = new Sprite[4];
-    //public enum distractionType { 1 , 2 , 3 , 4 , 5 };
 
     //Variables
-    //initialize the currentstate as Menu
-    private gameState currentState = gameState.inMenu;
-    private bool drawActive = false;
+    private gameState currentState = gameState.inactive;
+    private AudioSource audio;
+    private bool isPlayer1;
     //container of player and opponent sprites and animations
     private SpriteRenderer player1, player2;
     private playerState player1State, player2State;
 
-
-    //Public Methods
-    //enables input controller, hides UI elemtents, begins game loop
-    public void recieveGameState(gameState newState, playerState newPlayer1State, playerState newPlayer2State)
-    {
-        currentState = newState;
-        player1State = newPlayer1State;
-        player2State = newPlayer2State;
-        player1.sprite = cowboySprites[(int)player1State];
-        player2.sprite = cowboySprites[(int)player2State];
-    }
-
-    public void beginGame()
-    {
-        Debug.Log("Game is beginning!");
-    }
-
-    // receieve input from touch controller, check if valid, display result on screen, send result to sever
-    public void processPlayerAction()
-    {
-        socketController.instance.processInput();
-    }
-    //call a distraction
-    /*public void spawnDistraction(distractionType type)
-    {
-    }*/
-
-    //private methods
-
-
-
-    // Use this for initialization
+    #region private methods
     void Start()
     {
         player1 = GameObject.FindGameObjectWithTag("player1").GetComponent<SpriteRenderer>();
         player2 = GameObject.FindGameObjectWithTag("player2").GetComponent<SpriteRenderer>();
+        player1.sprite = null;
+        player2.sprite = null;
+        audio = GetComponent<AudioSource>();
     }
-    // Update is called once per frame
-    void Update()
+    private IEnumerator gameOver(bool isWinner)
     {
-
+        audio.clip = sounds[0];
+        audio.Play();
+        yield return new WaitForSeconds(.5f);
+        audio.clip = sounds[1];
+        audio.Play();
+        yield return new WaitForSeconds(2.5f);
+        if (isWinner)
+            uiController.instance.showWonPanel();
+        else
+            uiController.instance.showLostPanel();
+        
     }
+    #endregion
+    #region public methods
+    public void beginGame(bool playerOne)
+    {
+        isPlayer1 = playerOne;
+        if (isPlayer1)
+        {
+            uiController.instance.showPlayer1Label();
+        }
+        else
+        {
+            uiController.instance.showPlayer2Label();
+        }
+        currentState = gameState.active;
+        player1.sprite = cowboySprites[0];
+        player2.sprite = cowboySprites[0];
+        player1State = playerState.idle;
+        player2State = playerState.idle;
+    }
+    public void recieveGameState(int newState, int newPlayer1State, int newPlayer2State)
+    {
+        currentState = (gameState)newState;
+        player1State = (playerState)newPlayer1State;
+        player2State = (playerState)newPlayer2State;
+        if ((player1State == playerState.jammed && isPlayer1) || (player2State == playerState.jammed && !isPlayer1))
+        {
+            audio.clip = sounds[2];
+            audio.Play();
+        }
+        player1.sprite = cowboySprites[(int)player1State];
+        player2.sprite = cowboySprites[(int)player2State];
+        if (currentState == gameState.over)
+        {
+            uiController.instance.hideDraw();
+            uiController.instance.hidePlayerLabel();
+            bool wonGame = (isPlayer1 && player1State == playerState.firing) || (!isPlayer1 && player2State == playerState.firing);
+            StartCoroutine(gameOver(wonGame));
+
+
+        }
+    }
+    public void processPlayerAction()
+    {
+        socketController.instance.processInput();
+    }
+    public void resetGameState()
+    {
+        currentState = gameState.inactive;
+        player1.sprite = null;
+        player2.sprite = null;
+    }
+    #endregion    
 }

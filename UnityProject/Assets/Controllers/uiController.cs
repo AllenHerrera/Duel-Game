@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 public class uiController : MonoBehaviour
 {
-    public GameObject mainPanel, challengePanel, challengedPanel, rejectedPanel, preGamePanel, invalidCodePanel, disconnectedPanel;
+    public GameObject mainPanel, challengePanel, challengedPanel, rejectedPanel, preGamePanel, invalidCodePanel, disconnectedPanel, Draw, player1Label, player2Label, wonPanel, lostPanel;
     public Text code;
     private static uiController _instance;
     //This is the public reference that other classes will use
@@ -16,17 +16,6 @@ public class uiController : MonoBehaviour
             return _instance;
         }
     }
-    void Start()
-    {
-       
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void panelUpdate()
     {
         //takes the different events such as rejecting or accepting panels and sets the approriate panel to active.
@@ -39,7 +28,7 @@ public class uiController : MonoBehaviour
         mainPanel.SetActive(false);
         challengePanel.SetActive(false);
         challengedPanel.SetActive(false);
-        disconnectedPanel.SetActive(false);
+        disconnectedPanel.SetActive(false);        
     }
     public void showDisconnectedPanel()
     {
@@ -49,6 +38,8 @@ public class uiController : MonoBehaviour
         mainPanel.SetActive(false);
         challengePanel.SetActive(false);
         challengedPanel.SetActive(false);
+        wonPanel.SetActive(false);
+        lostPanel.SetActive(false);
         disconnectedPanel.SetActive(true);
     }
     public void showAcceptedPanel()
@@ -113,5 +104,36 @@ public class uiController : MonoBehaviour
         preGamePanel.SetActive(false);
         rejectedPanel.SetActive(false);
         disconnectedPanel.SetActive(false);
+    }
+    public void showPlayer1Label()
+    {
+        player1Label.SetActive(true);
+        player2Label.SetActive(false);
+    }
+    public void showPlayer2Label()
+    {
+        player1Label.SetActive(false);
+        player2Label.SetActive(true);
+    }
+    public void hidePlayerLabel()
+    {
+        player1Label.SetActive(false);
+        player2Label.SetActive(false);
+    }
+    public void showDraw()
+    {
+        Draw.SetActive(true);
+    }
+    public void hideDraw()
+    {
+        Draw.SetActive(false);
+    }
+    public void showWonPanel()
+    {
+        wonPanel.SetActive(true);
+    }
+    public void showLostPanel()
+    {
+        lostPanel.SetActive(true);
     }
 }

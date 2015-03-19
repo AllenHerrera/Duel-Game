@@ -73,10 +73,10 @@ io.on('connection', function (socket) {
         }
         if (games.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + games[playerCode]);
-	    var data = games[playerCode].channel;
+            var data = games[playerCode].channel;
             delete channels[data];
-	    //emit a disconnect to all other connected clients in the room
-            io.sockets.in(games[playerCode].channel).emit('playerDisconnected',{channel:data});
+            //emit a disconnect to all other connected clients in the room
+            io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
         }
     });
     socket.on('requestPlayerCode', function () {
@@ -136,12 +136,12 @@ io.on('connection', function (socket) {
     });
     socket.on('playerDisconnected', function (data) {
         //last player in game deletes game
-	console.log(data);
+        console.log(data);
         socket.leave(data.channel);
         players[playerCode].isBusy = false;
-        setTimeout(function() {
+        setTimeout(function () {
             console.log(games);
-        },3000);
+        }, 3000);
     });
     socket.on('cancelChallenge', function (data) {
         //Delete game object and allow challenges for both players
@@ -181,13 +181,13 @@ io.on('connection', function (socket) {
             if (!games[playerCode].drawActive) {
                 //set player state
                 if (isPlayer1) {
-	            if(games[playerCode].player1state === 2)
-			return;
+                    if (games[playerCode].player1state === 2)
+                        return;
                     games[playerCode].player1state = 2;
                 }
                 else {
-		    if(games[playerCode].player2state ===2)
-			return;
+                    if (games[playerCode].player2state === 2)
+                        return;
                     games[playerCode].player2state = 2;
                 }
                 //set update states to be sent to clients
@@ -222,6 +222,17 @@ io.on('connection', function (socket) {
                 }
                 io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
             }
+        }
+    });
+    socket.on('reset', function () {
+        if (games.hasOwnProperty(playerCode)) {
+            console.log('resetting game ' + games[playerCode]);
+            var data = games[playerCode].channel;
+            socket.leave(data);
+            players[playerCode].isBusy = false;
+            delete channels[data];
+            //emit a disconnect to all other connected clients in the room
+            io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
         }
     });
 });
