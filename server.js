@@ -205,22 +205,24 @@ io.on('connection', function (socket) {
                         io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
                         console.log(playerCode + 'is no longer jammed');
                     }
-                }, 5000);
+                }, 5000)
             }
-            //handle player winning
             else {
-                games[playerCode].gameState = 2;
-                if (isPlayer1) {
+                if (isPlayer1 && games[playerCode].player1state !== 2) {
+                    games[playerCode].gameState = 2;
                     console.log('player 1 wins!');
                     games[playerCode].player1state = 1;
                     games[playerCode].player2state = 3;
+                    io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
+
                 }
-                else {
+                if (!isPlayer1 && games[playerCode].player2state !== 2) {
+                    games[playerCode].gameState = 2;
                     console.log('player 2 wins!');
                     games[playerCode].player1state = 3;
                     games[playerCode].player2state = 1;
+                    io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
                 }
-                io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
             }
         }
     });
@@ -235,18 +237,18 @@ io.on('connection', function (socket) {
             io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
         }
     });
-    socket.on('challengeAgain', function(data){
+    socket.on('challengeAgain', function (data) {
         if (players.hasOwnProperty(data.code)) {
-                io.to(players[data.code].id).emit('challengePosted', {id: data.challengerId});
-                //Set both players as currently busy until challenge is accepted or declined
-                players[playerCode].isBusy = true;
-                players[data.code].isBusy = true;
-                //Create a new game and add it to the games list
-                //generate unique channel code
-                games[playerCode].gameState = 0;
-                games[playerCode].player1state=0;
-                games[playerCode].player2state=0;
-                games[playerCode].drawActive =false;
-            }
+            io.to(players[data.code].id).emit('challengePosted', {id: data.challengerId});
+            //Set both players as currently busy until challenge is accepted or declined
+            players[playerCode].isBusy = true;
+            players[data.code].isBusy = true;
+            //Create a new game and add it to the games list
+            //generate unique channel code
+            games[playerCode].gameState = 0;
+            games[playerCode].player1state = 0;
+            games[playerCode].player2state = 0;
+            games[playerCode].drawActive = false;
+        }
     });
 });
