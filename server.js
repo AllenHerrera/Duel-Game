@@ -54,6 +54,8 @@ console.log('server started');
 io.on('connection', function(socket){
     function getCurrentState(){
         //return states of players and game as JSON object
+	if(games[playerCode].player2state === undefined)
+		games[playerCode].player2state = 0;
         return {player1state: games[playerCode].player1state, player2state: games[playerCode].player2state, gameState: games[playerCode].gameState}
     }
     console.log('a user connected');
@@ -127,6 +129,7 @@ io.on('connection', function(socket){
     });
     socket.on('playerDisconnected', function(){
         //last player in game deletes game
+	console.log(games[playerCode]);
         socket.leave(games[playerCode].channel);
         players[playerCode].isBusy = false;
         delete games[playerCode];
@@ -154,12 +157,14 @@ io.on('connection', function(socket){
         games[playerCode].player2=players[playerCode];
         socket.to(games[playerCode].player1.id).emit("challengeAccepted");
         setTimeout(function(){
+		if(games[playerCode] !==undefined){
                 console.log('game is beginning');
                 console.log(games[playerCode]);
                 io.to(games[playerCode].channel).emit('beginGame');
                 console.log(getCurrentState());
                 playGame({channel: games[playerCode].channel});
-            }
+           	}
+		}
             ,3000);
     });
     socket.on('processInput', function(){
