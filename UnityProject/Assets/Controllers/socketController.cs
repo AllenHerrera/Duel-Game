@@ -124,6 +124,11 @@ public class socketController : MonoBehaviour
         int player1State = int.Parse(string.Format("{0}", e.data["player1State"]).Substring(1, 1));
         int player2State = int.Parse(string.Format("{0}", e.data["player2State"]).Substring(1, 1));
         int gameState = int.Parse(string.Format("{0}", e.data["gameState"]).Substring(1, 1));
+        gameController.gameState state = (gameController.gameState)gameState;
+        gameController.playerState p1state = (gameController.playerState)player1State;
+        gameController.playerState p2state = (gameController.playerState)player2State;
+        gameController.instance.recieveGameState(state, p1state, p2state);
+
         
     }
     #endregion
