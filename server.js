@@ -20,25 +20,26 @@ var channels={};
 
 function playGame(data){
     //Choose random  time in future to enable draw
-    games[data.id].gameState=1;
+    channels[data.channel].gameState=1;
     var delay = Math.random() * 30000;
     console.log("beginning first game loop. Draw will occur in "+Math.max(delay,25000));
     var gameLoop = function(){
         clearInterval(loop);
-        if(games[data.id] === undefined){
+        if(    channels[data.channel].gameState===undefined)
+        {
             console.log('game has been deleted. Ending loop');
             return;
         }
         else {
-            if (games[data.id].gameState === 1) {
-                io.to(games[data.id].channel).emit('draw');
-                games[data.id].drawActive = true;
+            if (channels[data.channel].gameState=== 1) {
+                io.to(data.channel).emit('draw');
+                channels[data.channel].drawActive = true;
                 console.log('draw state entered');
                 delay = Math.random() * 30000;
                 //emit draw event
                 setTimeout(function () {
-                    io.to(games[data.id].channel).emit('endDraw');
-                    games[data.id].drawActive = false;
+                    io.to(data.channel).emit('endDraw');
+                    channels[data.channel].drawActive = false;
                     console.log('draw state ended');
                 }, Math.min(3000, delay - 500));
                 console.log("beginning new game loop. Draw will occur in " + delay);
@@ -51,6 +52,10 @@ function playGame(data){
 
 console.log('server started');
 io.on('connection', function(socket){
+    function getCurrentState(){
+        //return states of players and game as JSON object
+        return {player1state: games[playerCode].player1state, player2state: games[playerCode].player2state, gameState: games[playerCode].gameState}
+    }
     console.log('a user connected');
     var playerCode = '----';
     socket.on('disconnect', function(){
@@ -152,15 +157,12 @@ io.on('connection', function(socket){
                 console.log('game is beginning');
                 console.log(games[playerCode]);
                 io.to(games[playerCode].channel).emit('beginGame');
-                playGame({id: playerCode});
+                console.log(getCurrentState());
+                playGame({channel: games[playerCode].channel});
             }
             ,3000);
     });
     socket.on('processInput', function(){
-        function getCurrentState(){
-            //return states of players and game as JSON object
-            return {player1state: games[playerCode].player1state, player2state: games[playerCode].player2state, gameState: games[playerCode].gameState}
-        }
         if(games[playerCode].gameState ===1){
             var isPlayer1 = (games[playerCode].player1.id === socket.id);
             //handle gun jams
