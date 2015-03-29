@@ -61,11 +61,12 @@ public class socketController : MonoBehaviour
     private void receiveError(SocketIOEvent e)
     {
         errorMessage = string.Format("{0}",e.data["message"]).Substring(1, string.Format("{0}",e.data["message"]).Length-2);
-        uiController.instance.HidePanel();
         uiController.instance.ShowPanel(uiController.instance.FailPanel);
     }
     private void playerDisconnect(SocketIOEvent e)
     {
+        Debug.Log("Player disconnected!");
+        uiController.instance.ShowPanel(uiController.instance.FailPanel);
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
         socket.Emit("playerDisconnected", new JSONObject(data));
