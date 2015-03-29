@@ -141,6 +141,7 @@ io.on('connection', function (socket) {
     });
     socket.on('challenge', function (data) {
         var code = data.code;
+        var message={};
         if (players.hasOwnProperty(data.code) && data.code !== playerCode) {
             console.log("code is valid");
             if (players[data.code].isBusy === false || (games[data.challengerId]!== undefined && games[data.challengerId] === games[playerCode])) {
@@ -174,12 +175,14 @@ io.on('connection', function (socket) {
                 channels[channelCode] = game;
             }
             else {
-                socket.emit('challengedIsBusy');
+                message.message='Player with code ' + data.code +' is currently in a duel.';
+                socket.emit('connectionError',message);
             }
         }
         else {
             console.log("Code is invalid");
-            socket.emit('invalidCode');
+            message.message='There is no player with code ' + data.code +' to challenge.';
+            socket.emit('connectionError',message);
         }
     });
     socket.on('playerDisconnected', function (data) {
@@ -201,7 +204,10 @@ io.on('connection', function (socket) {
         delete games[data.challengerId];
         players[data.challengerId].isBusy = false;
         players[playerCode].isBusy = false;
-        io.to(players[data.challengerId].id).emit("challengeRejected");
+        var message={};
+        message.message='Your challenge was rejected by ' + playerCode +'.';
+        io.to(players[data.challengerId].id).emit('connectionError',message);
+
     });
     socket.on('acceptChallenge', function (data) {
         socket.join(games[data.challengerId].channel);
@@ -282,6 +288,9 @@ io.on('connection', function (socket) {
             socket.leave(data);
             players[playerCode].isBusy = false;
             delete channels[data];
+            var message={};
+            message.message='Your opponent has disconnected.';
+            io.sockets.in(games[playerCode].channel).emit('connectionError',message);
             //emit a disconnect to all other connected clients in the room
             io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
         }
