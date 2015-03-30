@@ -25,6 +25,7 @@ public class uiController : MonoBehaviour
     public preGamePanel PreGamePanel { get; private set; }
     public postGamePanel PostGamePanel { get; private set; }
     public drawPanel DrawPanel { get; private set; }
+	public onFirstLoadPanel OnFirstLoadPanel { get; private set; }
     private menuPanel currentPanel;
     private void Start()
     {
@@ -35,6 +36,7 @@ public class uiController : MonoBehaviour
         PreGamePanel = FindObjectOfType<preGamePanel>();
         PostGamePanel = FindObjectOfType<postGamePanel>();
         DrawPanel = FindObjectOfType<drawPanel>();
+		OnFirstLoadPanel = FindObjectOfType<onFirstLoadPanel>();
         //set pregame, ingameUi & draw panels to inactive so it doesn't block other touch events
         PreGamePanel.gameObject.SetActive(false);
         DrawPanel.gameObject.SetActive(false);
