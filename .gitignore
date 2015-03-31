@@ -16,9 +16,8 @@
 
 # Unity3D generated meta files
 *.pidb.meta
+*.cs.meta
 *.meta
-*.info
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
-UnityProject/Library/metadata/00/00000000000000002000000000000000
