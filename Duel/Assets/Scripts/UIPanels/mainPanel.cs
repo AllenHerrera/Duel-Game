@@ -41,7 +41,10 @@ public class mainPanel : menuPanel {
             case ButtonAction.leaderboard:
                 throw new System.NotImplementedException();
             case ButtonAction.options:
-                throw new System.NotImplementedException();
+					{
+				uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
+				break;
+					}
             case ButtonAction.quit:
                 throw new System.NotImplementedException();
         }
@@ -67,4 +70,8 @@ public class mainPanel : menuPanel {
     {
         ProcessButtonPress(ButtonAction.leaderboard);
     }
+	public void Options()
+	{
+		ProcessButtonPress(ButtonAction.options);
+	}
 }
