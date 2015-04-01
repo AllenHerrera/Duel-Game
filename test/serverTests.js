@@ -84,8 +84,10 @@ describe('Suite of unit tests', function () {
                         client2.on('playerCodeCreated', function (data) {
                             client2Code = data.code;
                             client1.emit('challenge', { code: client2Code, challengerId: client1Code });
-                            client2.on('challengePosted', function(data) {
-                                client2.emit('acceptChallenge', { challengerId: data.id });
+                            client2.on('challengePosted', function (data) {
+                                setTimeout(function() {
+                                    client2.emit('acceptChallenge', { challengerId: data.id });
+                                }, 500);
                                 client1.on('challengeAccepted', function () {
                                     client1.disconnect();
                                     client2.disconnect();
@@ -115,7 +117,9 @@ describe('Suite of unit tests', function () {
                         client2Code = data.code;
                         client1.emit('challenge', { code: client2Code, challengerId: client1Code });
                         client2.on('challengePosted', function (data) {
-                            client2.emit('acceptChallenge', { challengerId: data.id });
+                            setTimeout(function () {
+                                client2.emit('acceptChallenge', { challengerId: data.id });
+                            }, 500);
                             client1.on('challengeAccepted', function () {
                                 client1.disconnect();
                                 client2.on('playerDisconnected', function () {
@@ -146,8 +150,9 @@ describe('Suite of unit tests', function () {
                         client2Code = data.code;
                         client1.emit('challenge', { code: client2Code, challengerId: client1Code });
                         client2.on('challengePosted', function (data) {
-                            client2.emit('acceptChallenge', { challengerId: data.id });
-                            client1.on('challengeAccepted', function () {
+                            setTimeout(function () {
+                                client2.emit('acceptChallenge', { challengerId: data.id });
+                            }, 500); client1.on('challengeAccepted', function () {
                                 client1.on('beginGame', function () {
                                     client1.emit('processInput');
                                     client1.on('gameUpdate', function (data) {
