@@ -67,7 +67,7 @@ function playGame(data) {
             return;
         }
         if (channels[data.channel].gameState === 1) {
-            delay = Math.random() * 12000;
+            delay = Math.random() * 20000;
             var proc = Math.random().toFixed(2);
             if (proc > .75) {
                 io.to(data.channel).emit('draw');
@@ -84,7 +84,7 @@ function playGame(data) {
                     channels[data.channel].drawActive = false;
                     console.log('draw state ended');
                 }
-            }, 2000);
+            }, 3000);
             loop = setTimeout(gameLoop, Math.max(delay, 5000));
         }
     };

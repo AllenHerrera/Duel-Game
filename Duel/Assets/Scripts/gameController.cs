@@ -87,6 +87,7 @@ public class gameController : MonoBehaviour
     }
     public void resetGameState()
     {
+        CameraController.instance.TransitionToMenu();
         currentState = gameState.inactive;    
     }
     #endregion    
