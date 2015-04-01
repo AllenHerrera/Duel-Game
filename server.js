@@ -67,18 +67,29 @@ function playGame(data) {
             return;
         }
         if (channels[data.channel].gameState === 1) {
-            io.to(data.channel).emit('draw');
-            channels[data.channel].drawActive = true;
-            console.log('draw state entered');
-            delay = Math.random() * 20000;
-            var endDraw = setTimeout(function () {
+            delay = Math.random() * 12000;
+            var proc = Math.random().toFixed(2);
+            if(proc > .75)
+            {
+                io.to(data.channel).emit('draw');
+                channels[data.channel].drawActive = true;
+                console.log('draw state entered');
+            }
+            else
+            {
+                io.to(data.channel).emit('distraction', { value: proc });
+                channels[data.channel].drawActive = false;
+                console.log('draw state entered');
+            }
+            var endDraw = setTimeout(function() {
                 io.to(data.channel).emit('endDraw');
-                if(channels[data.channel] !== undefined) {
+                if (channels[data.channel] !== undefined) {
                     channels[data.channel].drawActive = false;
                     console.log('draw state ended');
                 }
             }, 2000);
-            loop = setTimeout(gameLoop, Math.max(delay, 7500));
+        }
+        loop = setTimeout(gameLoop, Math.max(delay, 5000));
         }
     };
     var loop = setTimeout(gameLoop, Math.max(delay, 8000));

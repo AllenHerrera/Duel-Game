@@ -33,7 +33,7 @@ public class uiController : MonoBehaviour
     private menuPanel currentPanel;
     private void Start()
     {
-        Title = GameObject.Find("Title").GetComponent<Text>();
+        //Title = GameObject.Find("Title").GetComponent<Text>();
         MainPanel = FindObjectOfType<mainPanel>();
         ChallengingPanel = FindObjectOfType<challengingPanel>();
         FailPanel = FindObjectOfType<failPanel>();

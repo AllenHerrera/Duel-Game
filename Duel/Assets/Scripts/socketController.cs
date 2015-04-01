@@ -25,6 +25,7 @@ public class socketController : MonoBehaviour
     public string playerCode{ get; private set;}
     public string errorMessage { get; private set;}
     public bool isChallenger { get; set; }
+    public string distractionMessage { get; private set; }
     void Start()
     {
         //set socket reference
@@ -40,6 +41,7 @@ public class socketController : MonoBehaviour
         socket.On("disconnectFromRoom", disconnectFromRoom);
         socket.On("beginGame", beginGame);
         socket.On("draw", draw);
+        socket.On("distraction", showDistraction);
         socket.On("endDraw", endDraw);
         socket.On("gameUpdate", gameUpdate);
         StartCoroutine(requestCode());
@@ -108,6 +110,14 @@ public class socketController : MonoBehaviour
     }
     private void draw(SocketIOEvent e)
     {
+        distractionMessage = null;
+        uiController.instance.ShowPanel(uiController.instance.DrawPanel);
+    }
+
+    private void showDistraction(SocketIOEvent e)
+    {
+        var proc = float.Parse(string.Format("{0}", e.data["value"]));
+        distractionMessage = "Dude!";
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
     }
     private void endDraw(SocketIOEvent e)
