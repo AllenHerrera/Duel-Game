@@ -113,9 +113,12 @@ describe('Suite of unit tests', function () {
                 });
                 client2.on('connect', function () {
                     client2.emit('requestPlayerCode');
-                    client2.on('playerCodeCreated', function (data) {
+                    client2.on('playerCodeCreated', function(data) {
                         client2Code = data.code;
-                        client1.emit('challenge', { code: client2Code, challengerId: client1Code });
+                        setTimeout(function ()
+                        {
+                            client1.emit('challenge', { code: client2Code, challengerId: client1Code });
+                        }, 500);
                         client2.on('challengePosted', function (data) {
                             setTimeout(function () {
                                 client2.emit('acceptChallenge', { challengerId: data.id });
