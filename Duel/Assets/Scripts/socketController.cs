@@ -116,6 +116,7 @@ public class socketController : MonoBehaviour
 
     private void showDistraction(SocketIOEvent e)
     {
+        Debug.Log("DISTRACTION!");
         var proc = float.Parse(string.Format("{0}", e.data["value"]));
         distractionMessage = "Dude!";
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
