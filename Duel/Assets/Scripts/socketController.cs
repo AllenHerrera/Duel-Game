@@ -56,7 +56,7 @@ public class socketController : MonoBehaviour
     private void receiveCode(SocketIOEvent e)
     {
         playerCode = string.Format("{0}", e.data["code"]).Substring(1, 4);
-        uiController.instance.ShowPanel(uiController.instance.OnFirstLoadPanel);
+        uiController.instance.ShowPanel(uiController.instance.MainPanel);
     }
     private void receiveError(SocketIOEvent e)
     {
