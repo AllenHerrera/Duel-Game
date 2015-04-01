@@ -34,7 +34,7 @@ var io = require('socket.io')({
     transports: ['websocket']
 });
 //var Enum = require('enum');
-io.attach(3000);
+io.attach(3001);
 
 //var playerState = new Enum(['idle','jammed','fired','killed']);
 //var gameState = new Enum(['inactive', 'active','over']);
