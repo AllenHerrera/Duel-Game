@@ -52,31 +52,28 @@ function playGame(data) {
     if (channels[data.channel] !== undefined)
         channels[data.channel].gameState = 1;
     var delay = Math.random() * 20000;
-    var gameLoop = function () {
+    var gameLoop = function() {
         console.log('draw loop iteration beginning');
         if (channels[data.channel] === undefined) {
             console.log('game has been deleted. Ending loop');
-            if(endDraw !==undefined)
+            if (endDraw !== undefined)
                 clearTimeout(endDraw);
             return;
         }
         if (channels[data.channel].gameState == 2) {
             console.log('game has ended, ending loop');
-            if(endDraw !==undefined)
+            if (endDraw !== undefined)
                 clearTimeout(endDraw);
             return;
         }
         if (channels[data.channel].gameState === 1) {
             delay = Math.random() * 12000;
             var proc = Math.random().toFixed(2);
-            if(proc > .75)
-            {
+            if (proc > .75) {
                 io.to(data.channel).emit('draw');
                 channels[data.channel].drawActive = true;
                 console.log('draw state entered');
-            }
-            else
-            {
+            } else {
                 io.to(data.channel).emit('distraction', { value: proc });
                 channels[data.channel].drawActive = false;
                 console.log('draw state entered');
@@ -88,19 +85,17 @@ function playGame(data) {
                     console.log('draw state ended');
                 }
             }, 2000);
-        }
-        loop = setTimeout(gameLoop, Math.max(delay, 5000));
+            loop = setTimeout(gameLoop, Math.max(delay, 5000));
         }
     };
     var loop = setTimeout(gameLoop, Math.max(delay, 8000));
-    var gameTest = function(){
-        if(channels[data.channel] === undefined || channels[data.channel].gameState !==1){
+    var gameTest = function() {
+        if (channels[data.channel] === undefined || channels[data.channel].gameState !== 1) {
             console.log('Game is over, ending loop');
             clearTimeout(loop);
-        }
-        else testLoop = setTimeout(gameTest,500);
+        } else testLoop = setTimeout(gameTest, 500);
     };
-    var testLoop = setTimeout(gameTest,500);
+    var testLoop = setTimeout(gameTest, 500);
 }
 
 console.log('server started');
