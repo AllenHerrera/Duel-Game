@@ -44,25 +44,25 @@ describe('Suite of unit tests', function () {
     describe('Testing valid Code', function () {
         it('Valid code', function (done) {
             var client1 = io.connect(socketURL, options);
-            var client2 = io.connect(socketURL, options);
             var client1Code;
-            var client2Code;
             client1.on('connect', function () {
                 client1.emit('requestPlayerCode');
                 client1.on('playerCodeCreated', function (data) {
                     client1Code = data.code;
-                });
-                client2.on('connect', function () {
-                    client2.emit('requestPlayerCode');
-                    client2.on('playerCodeCreated', function (data) {
-                        client2Code = data.code;
-                        client1.emit('challenge', { code: client2Code, challengerId: client1Code });
-                        client2.on('challengePosted', function (data) {
-                            var id = data.id;
-                            id.should.equal(client1Code);
-                            client1.disconnect();
-                            client2.disconnect();
-                            done();
+                    var client2 = io.connect(socketURL, options);
+                    var client2Code;
+                    client2.on('connect', function () {
+                        client2.emit('requestPlayerCode');
+                        client2.on('playerCodeCreated', function (data) {
+                            client2Code = data.code;
+                            client1.emit('challenge', { code: client2Code, challengerId: client1Code });
+                            client2.on('challengePosted', function(data) {
+                                var id = data.id;
+                                id.should.equal(client1Code);
+                                client1.disconnect();
+                                client2.disconnect();
+                                done();
+                            });
                         });
                     });
                 });
@@ -72,25 +72,25 @@ describe('Suite of unit tests', function () {
     describe('Testing Challenge Acceptance', function () {
         it('Challenge Accept', function (done) {
             var client1 = io.connect(socketURL, options);
-            var client2 = io.connect(socketURL, options);
             var client1Code;
-            var client2Code;
             client1.on('connect', function () {
                 client1.emit('requestPlayerCode');
                 client1.on('playerCodeCreated', function (data) {
                     client1Code = data.code;
-                });
-                client2.on('connect', function () {
-                    client2.emit('requestPlayerCode');
-                    client2.on('playerCodeCreated', function (data) {
-                        client2Code = data.code;
-                        client1.emit('challenge', { code: client2Code, challengerId: client1Code });
-                        client2.on('challengePosted', function (data) {
-                            client2.emit('acceptChallenge', { challengerId: data.id });
-                            client1.on('challengeAccepted', function () {
-                                client1.disconnect();
-                                client2.disconnect();
-                                done();
+                    var client2 = io.connect(socketURL, options);
+                    var client2Code;
+                    client2.on('connect', function () {
+                        client2.emit('requestPlayerCode');
+                        client2.on('playerCodeCreated', function (data) {
+                            client2Code = data.code;
+                            client1.emit('challenge', { code: client2Code, challengerId: client1Code });
+                            client2.on('challengePosted', function(data) {
+                                client2.emit('acceptChallenge', { challengerId: data.id });
+                                client1.on('challengeAccepted', function () {
+                                    client1.disconnect();
+                                    client2.disconnect();
+                                    done();
+                                });
                             });
                         });
                     });
