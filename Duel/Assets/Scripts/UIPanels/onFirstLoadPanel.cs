@@ -22,7 +22,6 @@ public class onFirstLoadPanel : menuPanel {
 
 	protected override void Start()
 	{
-		PlayerPrefs.DeleteKey ("playerProfile");
 		PlayerPrefs.SetInt ("firstLoad", 0);
 		base.Start();
 		playerNameField = GameObject.Find("EnterNameField").GetComponent<InputField>();
@@ -33,7 +32,7 @@ public class onFirstLoadPanel : menuPanel {
 		switch (btn)
 		{
 		case ButtonAction.returnToMain:
-			if (playerName != null)
+			if (playerName != "")
 			{
 				PlayerPrefs.SetString ("playerProfile", playerName);
 				// transition to mainpanel
@@ -50,7 +49,7 @@ public class onFirstLoadPanel : menuPanel {
 
 	public override void TransitionIn(){
 		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-		if (PlayerPrefs.GetString ("playerProfile") != null || PlayerPrefs.GetString ("playerProfile") != "" ) {
+		if ( PlayerPrefs.GetString ("playerProfile") != "" ) {
 			Debug.Log ("why");
 			uiController.instance.ShowPanel (uiController.instance.MainPanel);
 			return;

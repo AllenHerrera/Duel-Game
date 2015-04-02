@@ -25,16 +25,17 @@ public class OptionsPanel : menuPanel {
 
 	public AudioClip[] audioClips;
 	public AudioClip currentAudioClip;
-
-	void Awake()
-	{
-		GameObject.FindWithTag("PlayerName").GetComponent<Text>().text = PlayerPrefs.GetString("playerProfile");
-		audioClips = Resources.LoadAll<AudioClip> ("Audio");
-		characterSprites = Resources.LoadAll<Sprite> ("Sprites");
-	}
+	
 	// Use this for initialization
 	void Start () {
 
+		Debug.Log(PlayerPrefs.GetFloat("savedVolume"));
+		Debug.Log(PlayerPrefs.GetFloat("savedSound"));
+		Debug.Log(PlayerPrefs.GetFloat("savedCharacter"));
+		Debug.Log(PlayerPrefs.GetFloat("savedMusic"));
+		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
+
+		GameObject.FindWithTag("PlayerName").GetComponent<Text>().text = PlayerPrefs.GetString("playerProfile");
 		setDynamicSliders ();
 
 		base.Start();
@@ -45,6 +46,10 @@ public class OptionsPanel : menuPanel {
 
 	public void setDynamicSliders ()
 	{
+
+		audioClips = Resources.LoadAll<AudioClip> ("Audio");
+		characterSprites = Resources.LoadAll<Sprite> ("Sprites");
+
 		musicSlider.GetComponent<Slider> ().maxValue = audioClips.Length -1;
 		characterSlider.GetComponent<Slider> ().maxValue = characterSprites.Length-1;
 	}
@@ -54,7 +59,7 @@ public class OptionsPanel : menuPanel {
 		playerName = PlayerPrefs.GetString ("playerProfile");
 		//get saved music
 		music= PlayerPrefs.GetInt("savedMusic");
-		if (music == null) 
+		if (music == 0) 
 			{
 				music = 50;
 			}
@@ -62,7 +67,7 @@ public class OptionsPanel : menuPanel {
 		musicSlider.value = music;
 
 		//get saved mute value
-		if (PlayerPrefs.GetInt ("savedSound") == null || PlayerPrefs.GetInt ("savedSound") >= 0.5) {
+		if (PlayerPrefs.GetInt ("savedSound") == 0 || PlayerPrefs.GetInt ("savedSound") > 1) {
 			soundmute = false;
 			soundScrollbar.value = 1;
 		} else {
@@ -72,7 +77,7 @@ public class OptionsPanel : menuPanel {
 
 		//get saved volume
 		volume = PlayerPrefs.GetInt ("savedVolume");
-		if (volume == null) 
+		if (volume == 0) 
 			{
 				volume = 50;
 			}
@@ -80,9 +85,9 @@ public class OptionsPanel : menuPanel {
 
 		//get saved character
 		characterIndex = PlayerPrefs.GetInt("savedCharacter");
-		if (characterIndex == null) 
+		if (characterIndex == 0) 
 			{
-				characterIndex = 0;
+				characterIndex = 1;
 			}
 		characterSlider.value = characterIndex;
 
@@ -106,13 +111,13 @@ public class OptionsPanel : menuPanel {
 	{
 		if (soundScrollbar.value <= 0.5) 
 		{	
-			PlayerPrefs.SetFloat ("savedSound", 0);
+			PlayerPrefs.SetFloat ("savedSound", 1);
 			soundmute = true;
 			soundText.text = "Music: Off";
 		}
 		if (soundScrollbar.value >= 0.5) 
 		{
-			PlayerPrefs.SetFloat ("savedSound", 1);
+			PlayerPrefs.SetFloat ("savedSound", 2);
 			soundmute = false;
 			soundText.text = "Music: On";
 		}
@@ -147,7 +152,7 @@ public class OptionsPanel : menuPanel {
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
-			PlayerPrefs.SetString ("playerProfile", playerName);
+			Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 				// transition to mainpanel
 			Debug.Log(PlayerPrefs.GetFloat("savedVolume"));
 			Debug.Log(PlayerPrefs.GetFloat("savedSound"));
@@ -165,7 +170,7 @@ public class OptionsPanel : menuPanel {
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
-			PlayerPrefs.SetString ("playerProfile", playerName);
+
 
 			uiController.instance.ShowPanel (uiController.instance.ChangeNamePanel);
 		
