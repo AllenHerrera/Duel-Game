@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 public class animTest{	
 	[Test]
-	public void testing(){
+	public void idleTest(){
 		GameObject duelFigure = GameObject.Find("DuelFigure");
 		Animation duelAnim;
 		bool clicked = false;
@@ -14,18 +14,36 @@ public class animTest{
 
 		Assert.That (duelAnim.isPlaying == true);
 
-		duelFigure.GetComponent<Animation> ().Play ("Shoot");
-
-		Assert.That (duelAnim.isPlaying == true);
-
-		duelFigure.GetComponent<Animation> ().Play ("Jam");
-
-		Assert.That (duelAnim.isPlaying == true);
-
-		duelFigure.GetComponent<Animation> ().Play ("Dead");
-
-		Assert.That (duelAnim.isPlaying == true);
-
 	}
-
+	[Test]
+	public void deadTest(){
+		GameObject duelFigure = GameObject.Find("DuelFigure");
+		Animation duelAnim;
+		bool clicked = false;
+		duelAnim = duelFigure.GetComponent<Animation> ();
+		duelFigure = GameObject.Find("DuelFigure");
+		duelFigure.GetComponent<Animation> ().Play ("Dead");
+		Assert.That (duelAnim.isPlaying == true);
+		}
+	[Test]
+	public void shootTest(){
+		GameObject duelFigure = GameObject.Find("DuelFigure");
+		Animation duelAnim;
+		bool clicked = false;
+		duelAnim = duelFigure.GetComponent<Animation> ();
+		duelFigure = GameObject.Find("DuelFigure");
+		duelFigure.GetComponent<Animation> ().Play ("Shoot");
+		Assert.That (duelAnim.isPlaying == true);
+		}
+	[Test]
+	public void jamTest(){
+		GameObject duelFigure = GameObject.Find("DuelFigure");
+		Animation duelAnim;
+		bool clicked = false;
+		duelAnim = duelFigure.GetComponent<Animation> ();
+		duelFigure = GameObject.Find("DuelFigure");
+		duelFigure.GetComponent<Animation> ().Play ("Jam");
+		Assert.That (duelAnim.isPlaying == true);
+	}
 }
+
