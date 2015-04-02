@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class mainPanel : menuPanel {
     private Text playerCode;
     private InputField challengeCodeField;
+	private GameObject Skeleton;
     private string _challengeCode = "";
     public string challengeCode
     {
@@ -21,6 +23,7 @@ public class mainPanel : menuPanel {
     protected override void Start()
     {
         base.Start();
+		Skeleton = GameObject.Find ("Skeleton");
         playerCode = GameObject.Find("PlayerCode").GetComponent<Text>();
         challengeCodeField = GameObject.Find("ChallengeCodeField").GetComponent<InputField>();
     }
@@ -40,17 +43,22 @@ public class mainPanel : menuPanel {
                 throw new System.NotImplementedException();
             case ButtonAction.leaderboard:
                 throw new System.NotImplementedException();
-            case ButtonAction.options:
-					{
+          
+			case ButtonAction.options:
+		{		
+				Skeleton.SetActive(false);
+				GameObject.FindGameObjectWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
+				GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 				uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
 				break;
-					}
+			}
             case ButtonAction.quit:
                 throw new System.NotImplementedException();
         }
     }
     public override void TransitionIn()
-    {
+    {	
+		Skeleton.SetActive(true);
         playerCode.text = socketController.instance.playerCode;
         base.TransitionIn();
     }

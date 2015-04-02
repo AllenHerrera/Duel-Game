@@ -6,6 +6,27 @@ public class animationController : MonoBehaviour {
 	Animation duelAnim;
 	bool clicked = false;
 
+	public enum chooseAnimations {Idle, Shoot, Dead, Jam};
+
+
+	public void animationChoice(chooseAnimations anim){
+
+		switch (anim) {
+		case chooseAnimations.Idle:
+			this.gameObject.GetComponent<Animation> ().Play ("Idle");
+			break;
+		case chooseAnimations.Jam:
+			this.gameObject.GetComponent<Animation> ().Play ("Jam");
+			break;
+		case chooseAnimations.Shoot:
+			this.gameObject.GetComponent<Animation> ().Play ("Shoot");
+			break;
+		case chooseAnimations.Dead:
+			this.gameObject.GetComponent<Animation> ().Play ("Dead");
+			break;
+		}
+	
+	}
 
 	// Use this for initialization
 	void Start () {
