@@ -28,12 +28,13 @@ public class uiController : MonoBehaviour
     public drawPanel DrawPanel { get; private set; }
 	public onFirstLoadPanel OnFirstLoadPanel { get; private set; }
 	public OptionsPanel OptionsPanel { get; private set; }
-    public Text Title { get; private set; }
+	public ChangeNamePanel ChangeNamePanel { get; private set; }
+	public Text Title { get; private set; }
 
     private menuPanel currentPanel;
     private void Start()
     {
-        Title = GameObject.Find("Title").GetComponent<Text>();
+        //Title = GameObject.Find("Title").GetComponent<Text>();
         MainPanel = FindObjectOfType<mainPanel>();
         ChallengingPanel = FindObjectOfType<challengingPanel>();
         FailPanel = FindObjectOfType<failPanel>();
@@ -43,6 +44,7 @@ public class uiController : MonoBehaviour
         DrawPanel = FindObjectOfType<drawPanel>();
 		OnFirstLoadPanel = FindObjectOfType<onFirstLoadPanel>();
 		OptionsPanel = FindObjectOfType<OptionsPanel> ();
+		ChangeNamePanel = FindObjectOfType<ChangeNamePanel> ();
 
         //set pregame, ingameUi & draw panels to inactive so it doesn't block other touch events
         PreGamePanel.gameObject.SetActive(false);

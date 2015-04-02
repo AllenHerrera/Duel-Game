@@ -46,7 +46,7 @@ public class gameController : MonoBehaviour
         audio.Play();
         yield return new WaitForSeconds(2.5f);
         uiController.instance.ShowPanel(uiController.instance.PostGamePanel);
-        
+        CameraController.instance.TransitionToMenu();
     }
     #endregion
     #region public methods
@@ -58,6 +58,7 @@ public class gameController : MonoBehaviour
         _playerState = playerState.idle;
         opponentState = playerState.idle;
         inputController.instance.EnableInput();
+        CameraController.instance.TransitionToGame();
     }
     public void recieveGameState(int newState, int newPlayerState, int newOpponentState)
     {
@@ -86,6 +87,7 @@ public class gameController : MonoBehaviour
     }
     public void resetGameState()
     {
+        CameraController.instance.TransitionToMenu();
         currentState = gameState.inactive;    
     }
     #endregion    

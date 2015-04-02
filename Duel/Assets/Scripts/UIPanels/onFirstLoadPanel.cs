@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class onFirstLoadPanel : menuPanel {
 	private InputField playerNameField;
-	private string _playerName = "";
+	private string _playerName = null;
 	// Use this for initialization
 
 	public string playerName
@@ -22,7 +22,7 @@ public class onFirstLoadPanel : menuPanel {
 
 	protected override void Start()
 	{
-
+		PlayerPrefs.DeleteKey ("playerProfile");
 		PlayerPrefs.SetInt ("firstLoad", 0);
 		base.Start();
 		playerNameField = GameObject.Find("EnterNameField").GetComponent<InputField>();
@@ -47,9 +47,11 @@ public class onFirstLoadPanel : menuPanel {
 	{
 		ProcessButtonPress(ButtonAction.returnToMain);
 	}
+
 	public override void TransitionIn(){
-		Debug.Log (PlayerPrefs.GetString ("playerProfile"));
-		if (PlayerPrefs.GetString ("playerProfile") != null) {
+		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
+		if (PlayerPrefs.GetString ("playerProfile") != null || PlayerPrefs.GetString ("playerProfile") != "" ) {
+			Debug.Log ("why");
 			uiController.instance.ShowPanel (uiController.instance.MainPanel);
 			return;
 	}

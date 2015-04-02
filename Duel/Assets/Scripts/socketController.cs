@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using SocketIO;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ public class socketController : MonoBehaviour
     public string playerCode{ get; private set;}
     public string errorMessage { get; private set;}
     public bool isChallenger { get; set; }
+    public string distractionMessage { get; private set; }
     void Start()
     {
         //set socket reference
@@ -40,6 +42,7 @@ public class socketController : MonoBehaviour
         socket.On("disconnectFromRoom", disconnectFromRoom);
         socket.On("beginGame", beginGame);
         socket.On("draw", draw);
+        socket.On("distraction", showDistraction);
         socket.On("endDraw", endDraw);
         socket.On("gameUpdate", gameUpdate);
         StartCoroutine(requestCode());
@@ -56,7 +59,7 @@ public class socketController : MonoBehaviour
     private void receiveCode(SocketIOEvent e)
     {
         playerCode = string.Format("{0}", e.data["code"]).Substring(1, 4);
-        uiController.instance.ShowPanel(uiController.instance.OnFirstLoadPanel);
+        uiController.instance.ShowPanel(uiController.instance.MainPanel);
     }
     private void receiveError(SocketIOEvent e)
     {
@@ -71,6 +74,7 @@ public class socketController : MonoBehaviour
         data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
         socket.Emit("playerDisconnected", new JSONObject(data));
         gameController.instance.resetGameState();
+        
     }
     private void disconnectFromRoom(SocketIOEvent e)
     {
@@ -108,6 +112,27 @@ public class socketController : MonoBehaviour
     }
     private void draw(SocketIOEvent e)
     {
+        distractionMessage = null;
+        uiController.instance.ShowPanel(uiController.instance.DrawPanel);
+    }
+
+    private void showDistraction(SocketIOEvent e)
+    {
+        float proc = float.Parse(string.Format("{0}", e.data["value"]).Substring(1,3));
+        if(proc <.1f)
+            distractionMessage = "Dude!";
+        if(proc>=.1f && proc <.2f)
+            distractionMessage = "D'oh!";
+        if (proc >= .2f && proc < .3f)
+            distractionMessage = "Dang!";
+        if (proc >= .4f && proc < .5f)
+            distractionMessage = "Darn!";
+        if (proc >= .5f && proc < .6f)
+            distractionMessage = "Damn!";
+        if (proc >= .6f && proc < .7f)
+            distractionMessage = "Derp!";
+        if (proc >= .7f)
+            distractionMessage = "Drat!";
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
     }
     private void endDraw(SocketIOEvent e)
