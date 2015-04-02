@@ -47,6 +47,7 @@ public class mainPanel : menuPanel {
 			case ButtonAction.options:
 		{		
 				Skeleton.SetActive(false);
+				Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 				GameObject.FindGameObjectWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
 				GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 				uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
