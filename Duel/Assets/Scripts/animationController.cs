@@ -9,7 +9,7 @@ public class animationController : MonoBehaviour {
 	public enum chooseAnimations {Idle, Shoot, Dead, Jam};
 
 
-	public IEnumerator animationChoice(chooseAnimations anim){
+	public void animationChoice(chooseAnimations anim){
 
 		switch (anim) {
 		case chooseAnimations.Idle:
@@ -17,12 +17,13 @@ public class animationController : MonoBehaviour {
 			break;
 		case chooseAnimations.Jam:
 			this.gameObject.GetComponent<Animation> ().Play ("Jam");
+			break;
 		case chooseAnimations.Shoot:
 			this.gameObject.GetComponent<Animation> ().Play ("Shoot");
-			yield return new WaitForSeconds (.5f);
-			this.gameObject.GetComponent<Animation> ().Play ("dance");
+			break;
 		case chooseAnimations.Dead:
 			this.gameObject.GetComponent<Animation> ().Play ("Dead");
+			break;
 	
 		}
 	}
