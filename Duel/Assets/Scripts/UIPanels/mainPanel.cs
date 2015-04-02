@@ -6,7 +6,7 @@ using DG.Tweening;
 public class mainPanel : menuPanel {
     private Text playerCode;
     private InputField challengeCodeField;
-	private GameObject Skeleton;
+	public GameObject Skeleton;
     private string _challengeCode = "";
     public string challengeCode
     {
@@ -23,7 +23,7 @@ public class mainPanel : menuPanel {
     protected override void Start()
     {
         base.Start();
-		Skeleton = GameObject.Find ("Skeleton");
+		//Skeleton = GameObject.Find ("Skeleton");
         playerCode = GameObject.Find("PlayerCode").GetComponent<Text>();
         challengeCodeField = GameObject.Find("ChallengeCodeField").GetComponent<InputField>();
     }
@@ -45,7 +45,7 @@ public class mainPanel : menuPanel {
                 throw new System.NotImplementedException();
           
 			case ButtonAction.options:
-		{		
+		    {		
 				Skeleton.SetActive(false);
 				Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 				GameObject.FindGameObjectWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
@@ -54,7 +54,9 @@ public class mainPanel : menuPanel {
 				break;
 			}
             case ButtonAction.quit:
-                throw new System.NotImplementedException();
+               Debug.Log("should quit!");
+                Application.Quit();
+                break;
         }
     }
     public override void TransitionIn()
@@ -83,4 +85,8 @@ public class mainPanel : menuPanel {
 	{
 		ProcessButtonPress(ButtonAction.options);
 	}
+    public void Quit()
+    {
+        ProcessButtonPress(ButtonAction.quit);
+    }
 }

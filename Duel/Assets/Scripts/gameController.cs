@@ -26,12 +26,13 @@ public class gameController : MonoBehaviour
     public Sprite[] cowboySprites = new Sprite[4];
     public SpriteRenderer player1, player2;
     private AudioSource audio;
+    public animationController Player;
     //container of player and opponent sprites and animations
     private playerState _playerState, opponentState;
     void Start()
     {
-        player1.sprite = null;
-        player2.sprite = null;
+        player1.sprite = cowboySprites[0];
+        player2.sprite = cowboySprites[0];
         audio = GetComponent<AudioSource>();
         currentState = gameState.inactive;
     }
@@ -57,15 +58,34 @@ public class gameController : MonoBehaviour
         player2.sprite = cowboySprites[0];
         _playerState = playerState.idle;
         opponentState = playerState.idle;
+        Player.animationChoice(animationController.chooseAnimations.Idle);
         inputController.instance.EnableInput();
         CameraController.instance.TransitionToGame();
     }
-    public void recieveGameState(int newState, int newPlayerState, int newOpponentState)
+    public void recieveGameState(int newState, int newPlayerState, int newOpponentState, bool won)
     {
+        wonGame = !won;
         bool wasJammed = ((_playerState == playerState.jammed && (playerState)newPlayerState != playerState.jammed) || (opponentState == playerState.jammed && (playerState)newOpponentState != playerState.jammed));
         currentState = (gameState)newState;
         _playerState = (playerState)newPlayerState;
         opponentState = (playerState)newOpponentState;
+        switch (_playerState)
+        {
+            case playerState.idle:
+                Player.animationChoice(animationController.chooseAnimations.Idle);
+                break;
+            case playerState.firing:
+                Player.animationChoice(animationController.chooseAnimations.Shoot);
+                break;
+            case playerState.dead:
+                Player.animationChoice(animationController.chooseAnimations.Dead);
+                break;
+            case playerState.jammed:
+                Player.animationChoice(animationController.chooseAnimations.Jam);
+                break;
+
+
+        }
         if ((_playerState == playerState.jammed) || (opponentState == playerState.jammed) || wasJammed)
         {
             audio.clip = sounds[2];
@@ -76,9 +96,7 @@ public class gameController : MonoBehaviour
         if (currentState == gameState.over)
         {
             inputController.instance.DisableInput();
-            wonGame = ((socketController.instance.isChallenger && _playerState == playerState.firing) || (!socketController.instance.isChallenger && opponentState == playerState.firing));
             StartCoroutine(gameOver());
-
         }
     }
     public void processPlayerAction()
@@ -88,6 +106,8 @@ public class gameController : MonoBehaviour
     public void resetGameState()
     {
         CameraController.instance.TransitionToMenu();
+        player1.sprite = cowboySprites[0];
+        player2.sprite = null;
         currentState = gameState.inactive;    
     }
     #endregion    

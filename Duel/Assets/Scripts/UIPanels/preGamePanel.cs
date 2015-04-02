@@ -24,6 +24,7 @@ public class preGamePanel : menuPanel {
     }
     public override void TransitionIn()
     {
+        uiController.instance.HideTitle();
         panelTransform.gameObject.SetActive(true);
         panel.DOFade(1, transitionDuration).SetEase(Ease.InOutSine);
     }

@@ -24,6 +24,14 @@ public class drawPanel : menuPanel
     }
     public override void TransitionIn()
     {
+        if (socketController.instance.distractionMessage != null)
+        {
+            DrawText.text = socketController.instance.distractionMessage;
+        }
+        else
+        {
+            DrawText.text = "Draw!";
+        }
         panelTransform.gameObject.SetActive(true);
         panel.DOFade(1, transitionDuration).SetEase(Ease.InOutSine);
     }

@@ -52,6 +52,9 @@ public class socketController : MonoBehaviour
         yield return new WaitForSeconds(1);
         //request player code
         socket.Emit("requestPlayerCode");
+        yield return new WaitForSeconds(5);
+        if (playerCode == null)
+            Application.Quit();
     }
     #endregion
     #region socket listeners
@@ -142,9 +145,9 @@ public class socketController : MonoBehaviour
     private void gameUpdate(SocketIOEvent e)
     {
         Debug.Log(e.data);
-        Debug.Log(isChallenger);
         int playerState;
         int opponentState;
+        bool wonGame = false;
         if (isChallenger)
         {
             playerState = int.Parse(string.Format("{0}", e.data["player1state"]));
@@ -156,7 +159,11 @@ public class socketController : MonoBehaviour
             opponentState = int.Parse(string.Format("{0}", e.data["player1state"]));
         }
         int gameState = int.Parse(string.Format("{0}", e.data["gameState"]));
-        gameController.instance.recieveGameState(gameState, playerState, opponentState);
+        if (playerState == 3 && gameState == 2)
+        {
+            wonGame = true;
+        }
+        gameController.instance.recieveGameState(gameState, playerState, opponentState, wonGame);
     }
     #endregion
     #region public methods

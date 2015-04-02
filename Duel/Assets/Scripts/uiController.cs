@@ -34,7 +34,7 @@ public class uiController : MonoBehaviour
     private menuPanel currentPanel;
     private void Start()
     {
-        //Title = GameObject.Find("Title").GetComponent<Text>();
+        Title = GameObject.Find("Title").GetComponent<Text>();
         MainPanel = FindObjectOfType<mainPanel>();
         ChallengingPanel = FindObjectOfType<challengingPanel>();
         FailPanel = FindObjectOfType<failPanel>();
@@ -50,7 +50,6 @@ public class uiController : MonoBehaviour
         PreGamePanel.gameObject.SetActive(false);
         DrawPanel.gameObject.SetActive(false);
         //Tween in Title
-        ShowTitle();
     }
     #endregion
     #region public methods
@@ -66,6 +65,10 @@ public class uiController : MonoBehaviour
         if (panel == PreGamePanel)
         {
             panel.gameObject.SetActive(true);
+        }
+        if (panel == MainPanel)
+        {
+            gameController.instance.resetGameState();
         }
         panel.TransitionIn();
     }
