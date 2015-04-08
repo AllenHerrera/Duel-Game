@@ -28,6 +28,7 @@ public class socketController : MonoBehaviour
     public bool isChallenger { get; private set; }
     public bool inMatchmaking { get; private set; }
     public string distractionMessage { get; private set; }
+    public bool vsAi { get; private set; }
     void Start()
     {
         //set socket reference
@@ -118,6 +119,9 @@ public class socketController : MonoBehaviour
     {
         distractionMessage = null;
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
+        if (vsAi)
+            gameController.instance.promptAI(true);
+            
     }
 
     private void showDistraction(SocketIOEvent e)
@@ -138,6 +142,8 @@ public class socketController : MonoBehaviour
         if (proc >= .7f)
             distractionMessage = "Drat!";
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
+        if (vsAi)
+            gameController.instance.promptAI(false);
     }
     private void endDraw(SocketIOEvent e)
     {
@@ -172,6 +178,10 @@ public class socketController : MonoBehaviour
     public void processInput()
     {
         socket.Emit("processInput");
+    }
+    public void processAIInput()
+    {
+        //socket.Emit("processInput");
     }
     public void cancelChallenge()
     {

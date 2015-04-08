@@ -123,14 +123,13 @@ io.on('connection', function (socket) {
 
     console.log('a user connected');
     var playerCode = '----';
-    var currentGame = null;
     socket.on('disconnect', function () {
         console.log('- user disconnected');
         if (players.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + players[playerCode]);
             delete players[playerCode];
             console.log(players);
-            if(players[playerCode].currentGame!==null)
+            if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
                 removeMatch(players[playerCode].currentGame);
             players[playerCode].currentGame=null;
         }
@@ -320,7 +319,7 @@ io.on('connection', function (socket) {
             , 3000);
     });
     socket.on('processInput', function () {
-        if (games[playerCode].gameState === 1) {
+        if (games[playerCode] !== undefined && games[playerCode].gameState === 1) {
             var isPlayer1 = (games[playerCode].player1.id === socket.id);
             //handle gun jams
             if (!games[playerCode].drawActive) {
@@ -373,7 +372,7 @@ io.on('connection', function (socket) {
                 console.log(players[games[playerCode].player2.code].currentGame);
                 if(players[playerCode].currentGame!==null || players[games[playerCode].player2.code].currentGame!==null){
                     console.log("match made game has ended. SHould be deleting game");
-                    socket.to(games[playerCode].channel).emit('playerDisconnected',{channel: games[playerCode].channel});
+                    io.to(games[playerCode].channel).emit('disconnectFromRoom', {channel:games[playerCode].channel});
                     console.log(games);
                     players[playerCode].currentGame = null;
                     players[games[playerCode].player2.code].currentGame =null;

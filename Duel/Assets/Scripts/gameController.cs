@@ -38,6 +38,14 @@ public class gameController : MonoBehaviour
     }
     #endregion
     #region private methods
+    private IEnumerator aiResponse(float responseTime, bool respond)
+    {
+        //After x delay, respond
+        yield return new WaitForSeconds(responseTime/1000);
+        if (respond)
+            socketController.instance.processAIInput();
+
+    }
     private IEnumerator gameOver()
     {
         audio.clip = sounds[0];
@@ -51,6 +59,14 @@ public class gameController : MonoBehaviour
     }
     #endregion
     #region public methods
+    public void promptAI(bool isDraw)
+    {
+        //if isdraw determine delay and always respond
+        var responseTime = 500;
+        //else determine delay and determine if respond
+        var response = true;
+        StartCoroutine(aiResponse(responseTime, response));
+    }
     public void beginGame()
     {
         currentState = gameState.active;
