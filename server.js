@@ -373,7 +373,7 @@ io.on('connection', function (socket) {
                 console.log(players[games[playerCode].player2.code].currentGame);
                 if(players[playerCode].currentGame!==null || players[games[playerCode].player2.code].currentGame!==null){
                     console.log("match made game has ended. SHould be deleting game");
-                    socket.to(games[playerCode].channel).emit('playerDisconnected',{channel: games[playerCode].channel});
+                    io.to(games[data.challengerId].channel).emit('disconnectFromRoom', {channel:games[data.challengerId].channel});
                     console.log(games);
                     players[playerCode].currentGame = null;
                     players[games[playerCode].player2.code].currentGame =null;
