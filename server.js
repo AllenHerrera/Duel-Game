@@ -2,33 +2,33 @@
  * Created by toby on 2/22/15.
  * MICROSOFT REFERENCE SOURCE LICENSE (MS-RSL)
 
-This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
+ This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
 
-1. Definitions
+ 1. Definitions
 
-The terms "reproduce," "reproduction" and "distribution" have the same meaning here as under U.S. copyright law.
+ The terms "reproduce," "reproduction" and "distribution" have the same meaning here as under U.S. copyright law.
 
-"You" means the licensee of the software.
+ "You" means the licensee of the software.
 
-"Your company" means the company you worked for when you downloaded the software.
+ "Your company" means the company you worked for when you downloaded the software.
 
-"Reference use" means use of the software within your company as a reference, in read only form, for the sole purposes of debugging your products, maintaining your products, or enhancing the interoperability of your products with the software, and specifically excludes the right to distribute the software outside of your company.
+ "Reference use" means use of the software within your company as a reference, in read only form, for the sole purposes of debugging your products, maintaining your products, or enhancing the interoperability of your products with the software, and specifically excludes the right to distribute the software outside of your company.
 
-"Licensed patents" means any Licensor patent claims which read directly on the software as distributed by the Licensor under this license.
+ "Licensed patents" means any Licensor patent claims which read directly on the software as distributed by the Licensor under this license.
 
-2. Grant of Rights
+ 2. Grant of Rights
 
-(A) Copyright Grant- Subject to the terms of this license, the Licensor grants you a non-transferable, non-exclusive, worldwide, royalty-free copyright license to reproduce the software for reference use.
+ (A) Copyright Grant- Subject to the terms of this license, the Licensor grants you a non-transferable, non-exclusive, worldwide, royalty-free copyright license to reproduce the software for reference use.
 
-(B) Patent Grant- Subject to the terms of this license, the Licensor grants you a non-transferable, non-exclusive, worldwide, royalty-free patent license under licensed patents for reference use.
+ (B) Patent Grant- Subject to the terms of this license, the Licensor grants you a non-transferable, non-exclusive, worldwide, royalty-free patent license under licensed patents for reference use.
 
-3. Limitations
+ 3. Limitations
 
-(A) No Trademark License- This license does not grant you any rights to use the Licensor's name, logo, or trademarks.
+ (A) No Trademark License- This license does not grant you any rights to use the Licensor's name, logo, or trademarks.
 
-(B) If you begin patent litigation against the Licensor over patents that you think may apply to the software (including a cross-claim or counterclaim in a lawsuit), your license to the software ends automatically.
+ (B) If you begin patent litigation against the Licensor over patents that you think may apply to the software (including a cross-claim or counterclaim in a lawsuit), your license to the software ends automatically.
 
-(C) The software is licensed "as-is." You bear the risk of using it. The Licensor gives no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the Licensor excludes the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
+ (C) The software is licensed "as-is." You bear the risk of using it. The Licensor gives no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the Licensor excludes the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
  */
 var io = require('socket.io')({
     transports: ['websocket']
@@ -45,6 +45,7 @@ io.attach(3001);
 var games = {};
 var players = {};
 var channels = {};
+var matchmaking = [];//queue
 
 function playGame(data) {
     //Choose random  time in future to enable draw
@@ -97,6 +98,15 @@ function playGame(data) {
     };
     var testLoop = setTimeout(gameTest, 500);
 }
+function removeMatch(currentGame){
+    for (var i = 0; i < matchmaking.length; i++) {
+        if (matchmaking[i] === currentGame)
+            matchmaking.splice(i, 1);
+        console.log('deleted matchmaking match');
+        console.log(matchmaking);
+        break;
+    }
+}
 
 console.log('server started');
 io.on('connection', function (socket) {
@@ -113,19 +123,23 @@ io.on('connection', function (socket) {
 
     console.log('a user connected');
     var playerCode = '----';
+    var currentGame = null;
     socket.on('disconnect', function () {
         console.log('- user disconnected');
         if (players.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + players[playerCode]);
             delete players[playerCode];
             console.log(players);
+            if(players[playerCode].currentGame!==null)
+                removeMatch(players[playerCode].currentGame);
+            players[playerCode].currentGame=null;
         }
         if (games.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + games[playerCode]);
             var data = games[playerCode].channel;
             delete channels[data];
             //emit a disconnect to all other connected clients in the room
-            io.sockets.in(games[playerCode].channel).emit('playerDisconnected', {channel: data});
+            io.to(games[playerCode].channel).emit('playerDisconnected', {channel: data});
         }
     });
     socket.on('requestPlayerCode', function () {
@@ -143,7 +157,67 @@ io.on('connection', function (socket) {
         players[playerCode] = {};
         players[playerCode].id = socket.id;
         players[playerCode].isBusy = false;
+        players[playerCode].code = playerCode;
+        players[playerCode].currentGame = null;
         socket.emit('playerCodeCreated', {code: playerCode})
+    });
+
+    socket.on('findMatch', function () {
+        //look through players already looking for matches and join one, otherwise create lobby and wait for someone to join. Timeout after a while
+        if(matchmaking.length > 0) {
+            var game = matchmaking.shift();
+            socket.join(game.channel);
+            games[playerCode] = game;
+            games[playerCode].player2 = players[playerCode];
+            setTimeout(function () {
+                    if (games[playerCode] !== undefined) {
+                        console.log('all games are:');
+                        console.log(games);
+                        console.log('game is beginning. Game information :');
+                        console.log(games[playerCode]);
+                        var playerStatus = {player1:games[playerCode].player1.code};
+                        io.to(games[playerCode].channel).emit('beginGame', playerStatus);
+                        console.log("current game state is: ");
+                        console.log(getCurrentState());
+                        playGame({channel: games[playerCode].channel});
+                    }
+                }
+                , 3000);
+        }
+        else{
+            players[playerCode].isBusy = true;
+            //Create a new game and add it to the games list
+            //generate unique channel code
+            do
+            {
+                var channelCode = Math.random().toString(36).slice(2).substring(0, 4).toUpperCase();
+            } while (channels.hasOwnProperty(channelCode));
+            var game =
+            {
+                channel: channelCode,
+                gameState: 0,
+                drawActive: false,
+                player1: players[playerCode],
+                player2: null,
+                player1state: 0,
+                player2State: 0
+            };
+            socket.join(game.channel);
+            games[playerCode] = game;
+            channels[channelCode] = game;
+            matchmaking.push(game);
+            players[playerCode].currentGame = game;
+            setTimeout(function() {
+                if(games[playerCode]!==undefined && games[playerCode].player2 === null) {
+                    var message = {};
+                    message.message = 'Matchmaking timed out. Try again or challenge a friend.';
+                    socket.emit('connectionError', message);
+                    if(players[playerCode].currentGame!==null)
+                        removeMatch(players[playerCode].currentGame);
+                    players[playerCode].currentGame=null;
+                }
+            },60000);
+        }
     });
     socket.on('challenge', function (data) {
         var code = data.code;
@@ -201,9 +275,18 @@ io.on('connection', function (socket) {
         //Delete game object and allow challenges for both players
         socket.leave(games[playerCode].channel);
         delete games[playerCode];
-        players[data.code].isBusy = false;
         players[playerCode].isBusy = false;
-        io.to(players[data.code].id).emit("challengeCanceled");
+        //If direct challenge (e.g. not matchmaking) then cancel challenge
+        if(data.code !== undefined && players[data.code]!==undefined) {
+            players[data.code].isBusy = false;
+            io.to(players[data.code].id).emit("challengeCanceled");
+        }
+        //if in matchmaking then delete match
+        else{
+            if(players[playerCode].currentGame!==null)
+                removeMatch(players[playerCode].currentGame);
+            players[playerCode].currentGame=null;
+        }
     });
     socket.on('rejectChallenge', function (data) {
         //Delete game object and allow challenges for both players
@@ -227,7 +310,8 @@ io.on('connection', function (socket) {
                     console.log(games);
                     console.log('game is beginning. Game information :');
                     console.log(games[playerCode]);
-                    io.to(games[playerCode].channel).emit('beginGame');
+                    var playerStatus = {player1:games[playerCode].player1.code};
+                    io.to(games[playerCode].channel).emit('beginGame', playerStatus);
                     console.log("current game state is: ");
                     console.log(getCurrentState());
                     playGame({channel: games[playerCode].channel});
@@ -283,6 +367,17 @@ io.on('connection', function (socket) {
                     games[playerCode].player1state = 3;
                     games[playerCode].player2state = 1;
                     io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
+                }
+                //Delete game and unsubscribe players to channel if match was matchmakingmatch
+                console.log(players[playerCode].currentGame);
+                console.log(players[games[playerCode].player2.code].currentGame);
+                if(players[playerCode].currentGame!==null || players[games[playerCode].player2.code].currentGame!==null){
+                    console.log("match made game has ended. SHould be deleting game");
+                    socket.to(games[playerCode].channel).emit('playerDisconnected',{channel: games[playerCode].channel});
+                    console.log(games);
+                    players[playerCode].currentGame = null;
+                    players[games[playerCode].player2.code].currentGame =null;
+                    delete games[playerCode];
                 }
             }
         }

@@ -40,7 +40,8 @@ public class mainPanel : menuPanel {
                 }
                 break;
             case ButtonAction.matchmaking:
-                throw new System.NotImplementedException();
+                socketController.instance.findMatch();
+                break;
             case ButtonAction.leaderboard:
                 throw new System.NotImplementedException();
           

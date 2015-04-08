@@ -50,7 +50,6 @@ public class onFirstLoadPanel : menuPanel {
 	public override void TransitionIn(){
 		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 		if ( PlayerPrefs.GetString ("playerProfile") != "" ) {
-			Debug.Log ("why");
 			uiController.instance.ShowPanel (uiController.instance.MainPanel);
 			return;
 	}

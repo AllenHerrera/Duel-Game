@@ -40,7 +40,7 @@ public class preGamePanel : menuPanel {
     }
     private IEnumerator DisplayCountdown()
     {
-        title.DOFade(0, .5f);
+        title.DOFade(0, 2);
         string[] message = new string[4]{"3","2","1","Begin!"};
         for(int i = 0; i< message.Length; i++){
             beginText.text = message[i];
