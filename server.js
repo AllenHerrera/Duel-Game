@@ -123,7 +123,6 @@ io.on('connection', function (socket) {
 
     console.log('a user connected');
     var playerCode = '----';
-    var currentGame = null;
     socket.on('disconnect', function () {
         console.log('- user disconnected');
         if (players.hasOwnProperty(playerCode)) {
@@ -373,7 +372,7 @@ io.on('connection', function (socket) {
                 console.log(players[games[playerCode].player2.code].currentGame);
                 if(players[playerCode].currentGame!==null || players[games[playerCode].player2.code].currentGame!==null){
                     console.log("match made game has ended. SHould be deleting game");
-                    io.to(games[data.challengerId].channel).emit('disconnectFromRoom', {channel:games[data.challengerId].channel});
+                    io.to(games[playerCode].channel).emit('disconnectFromRoom', {channel:games[playerCode].channel});
                     console.log(games);
                     players[playerCode].currentGame = null;
                     players[games[playerCode].player2.code].currentGame =null;
