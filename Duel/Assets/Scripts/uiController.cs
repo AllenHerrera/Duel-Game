@@ -56,7 +56,6 @@ public class uiController : MonoBehaviour
     #region public methods
     public void ShowPanel(menuPanel panel)
     {
-        Debug.Log("changing panel");
         if (currentPanel != null)
         {
             currentPanel.TransitionOut();
@@ -75,7 +74,6 @@ public class uiController : MonoBehaviour
     }
     public void HidePanel()
     {
-        Debug.Log("Hiding panel");
         currentPanel.TransitionOut();
         currentPanel = null;       
     }

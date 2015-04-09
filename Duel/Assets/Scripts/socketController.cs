@@ -215,6 +215,7 @@ public class socketController : MonoBehaviour
     public void requestAIMatch()
     {
         vsAi = true;
+        inMatchmaking = true;
         socket.Emit("challengeAI");
     }
     public void challenge(string s)

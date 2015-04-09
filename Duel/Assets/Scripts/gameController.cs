@@ -83,7 +83,6 @@ public class gameController : MonoBehaviour
         _playerState = playerState.idle;
         opponentState = playerState.idle;
         Player.animationChoice(animationController.chooseAnimations.Idle);
-        inputController.instance.EnableInput();
         CameraController.instance.TransitionToGame();
     }
     public void recieveGameState(int newState, int newPlayerState, int newOpponentState, bool won)

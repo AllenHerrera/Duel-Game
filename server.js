@@ -61,7 +61,7 @@ function playGame(data) {
                 clearTimeout(endDraw);
             return;
         }
-        if (channels[data.channel].gameState == 2) {
+        if (channels[data.channel].gameState === 2) {
             console.log('game has ended, ending loop');
             if (endDraw !== undefined)
                 clearTimeout(endDraw);
@@ -93,6 +93,7 @@ function playGame(data) {
     var gameTest = function() {
         if (channels[data.channel] === undefined || channels[data.channel].gameState !== 1) {
             console.log('Game is over, ending loop');
+            console.log(games);
             clearTimeout(loop);
         } else testLoop = setTimeout(gameTest, 500);
     };
@@ -128,12 +129,12 @@ io.on('connection', function (socket) {
         console.log('- user disconnected');
         if (players.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + players[playerCode]);
-            delete players[playerCode];
             console.log(players);
             if(players[playerCode] !== undefined && players[playerCode].currentGame!==null) {
                 removeMatch(players[playerCode].currentGame);
                 players[playerCode].currentGame = null;
             }
+            delete players[playerCode];
         }
         if (games.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + games[playerCode]);
@@ -218,7 +219,8 @@ io.on('connection', function (socket) {
                     socket.emit('connectionError', message);
                     if(players[playerCode].currentGame!==null)
                         removeMatch(players[playerCode].currentGame);
-                    players[playerCode].currentGame=null;
+                    if(players[playerCode] !== undefined)
+                        players[playerCode].currentGame=null;
                 }
             },60000);
         }
@@ -361,13 +363,14 @@ io.on('connection', function (socket) {
     socket.on('processAIInput', function() {
         console.log(games[playerCode].drawActive);
         console.log("recieved AI Input");
+        var jamTimer;
         if (!games[playerCode].drawActive) {
             if (games[playerCode].player2state === 2)
                 return;
             console.log("should jam ai");
             games[playerCode].player2state = 2;
             io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
-            setTimeout(function () {
+            jamTimer = setTimeout(function () {
                 if (games[playerCode].gameState === 1) {
                     games[playerCode].player2state = 0;
                     io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
@@ -376,11 +379,13 @@ io.on('connection', function (socket) {
         }
         else
         {
-            if(games[playerCode].player2state !== 2) {
+            if(games[playerCode].player2state === 0) {
                 games[playerCode].gameState = 2;
                 games[playerCode].player1state = 3;
                 games[playerCode].player2state = 1;
                 io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
+                if(jamTimer !== undefined)
+                    clearTimeout(jamTimer);
             }
         }
         if (players[playerCode].currentGame !== null) {
@@ -393,6 +398,7 @@ io.on('connection', function (socket) {
     socket.on('processInput', function () {
         if (games[playerCode] !== undefined && games[playerCode].gameState === 1) {
             var isPlayer1 = (games[playerCode].player1.id === socket.id);
+            var jamTimer;
             //handle gun jams
             if (!games[playerCode].drawActive) {
                 //set player state
@@ -410,7 +416,7 @@ io.on('connection', function (socket) {
                 //send current states to game
                 io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
                 console.log(playerCode + 'is jammed');
-                setTimeout(function () {
+                jamTimer = setTimeout(function () {
                     if (games[playerCode].gameState === 1) {
                         if (isPlayer1) {
                             games[playerCode].player1state = 0;
@@ -424,7 +430,7 @@ io.on('connection', function (socket) {
                 }, 5000)
             }
             else {
-                if (isPlayer1 && games[playerCode].player1state !== 2) {
+                if (isPlayer1 && games[playerCode].player1state ==0) {
                     games[playerCode].gameState = 2;
                     console.log('player 1 wins!');
                     games[playerCode].player1state = 1;
@@ -439,8 +445,10 @@ io.on('connection', function (socket) {
                     games[playerCode].player2state = 1;
                     io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
                 }
+                if(jamTimer !== undefined)
+                    clearTimeout(jamTimer);
                 //Delete game and unsubscribe players to channel if match was matchmakingmatch
-                if(players[playerCode].currentGame!==null || players[games[playerCode].player2.code].currentGame!==null){
+                if(players[playerCode].currentGame!==null ||(games[playerCode].player2 !== null && players[games[playerCode].player2.code].currentGame!==null)){
                     console.log("match made game has ended. SHould be deleting game");
                     io.to(games[playerCode].channel).emit('disconnectFromRoom', {channel:games[playerCode].channel});
                     console.log(games);

@@ -40,6 +40,7 @@ public class preGamePanel : menuPanel {
     }
     private IEnumerator DisplayCountdown()
     {
+        inputController.instance.DisableInput();
         title.DOFade(0, 2);
         string[] message = new string[4]{"3","2","1","Begin!"};
         for(int i = 0; i< message.Length; i++){
@@ -48,10 +49,10 @@ public class preGamePanel : menuPanel {
             yield return new WaitForSeconds(.5f);
             beginText.DOFade(0, .4f);
             yield return new WaitForSeconds(.5f);
+
         }
-        beginText.DOFade(0, .5f);
         inputController.instance.EnableInput();
-        //beginText.DOText(message[index], 1).SetLoops(message.Length).OnComplete(() => { index++; Debug.Log(index); if (index > 5)uiController.instance.HidePanel(); }).SetDelay(.5f);
+        beginText.DOFade(0, .5f);
     }
    
 }
