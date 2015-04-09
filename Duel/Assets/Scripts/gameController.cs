@@ -60,12 +60,24 @@ public class gameController : MonoBehaviour
     #endregion
     #region public methods
     public void promptAI(bool isDraw)
-    {
-        //if isdraw determine delay and always respond
-        var responseTime = 500;
+	{	
+		var response = false;
+		var responseTime = Random.Range(350,1000);
+
+		//if isdraw determine delay and always respond
+		if (isDraw) 
+		{
+			response = true;
+			StartCoroutine (aiResponse (responseTime, response));
+		}
         //else determine delay and determine if respond
-        var response = true;
-        StartCoroutine(aiResponse(responseTime, response));
+		else 
+		{
+			var ResponseChoice = Random.value;
+
+			if (ResponseChoice < .6)
+				StartCoroutine (aiResponse (responseTime, response));
+		}
     }
     public void beginGame()
     {
