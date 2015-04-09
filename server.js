@@ -210,7 +210,8 @@ io.on('connection', function (socket) {
             matchmaking.push(game);
             players[playerCode].currentGame = game;
             setTimeout(function (){
-                socket.emit('suggestAIMatch');
+                if(games[playerCode].player2 === null)
+                    socket.emit('suggestAIMatch');
                 },20000);
             matchmakingTimeout = setTimeout(function() {
                 if(games[playerCode]!==undefined && games[playerCode].player2 === null) {

@@ -31,7 +31,6 @@ public class preGamePanel : menuPanel {
     public override void TransitionOut()
     {
         panel.DOFade(0, transitionDuration).SetEase(Ease.InOutSine);
-        StartCoroutine(Disable());        
     }
     public void CountDown()
     {
@@ -51,6 +50,7 @@ public class preGamePanel : menuPanel {
             yield return new WaitForSeconds(.5f);
 
         }
+        StartCoroutine(Disable());
         inputController.instance.EnableInput();
         beginText.DOFade(0, .5f);
     }
