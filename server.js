@@ -210,7 +210,7 @@ io.on('connection', function (socket) {
             matchmaking.push(game);
             players[playerCode].currentGame = game;
             setTimeout(function (){
-                if(games[playerCode].player2 === null)
+                if(games[playerCode] !== undefined && games[playerCode].player2 === null)
                     socket.emit('suggestAIMatch');
                 },20000);
             matchmakingTimeout = setTimeout(function() {
@@ -218,7 +218,7 @@ io.on('connection', function (socket) {
                     var message = {};
                     message.message = 'Matchmaking timed out. Try again or challenge a friend.';
                     socket.emit('connectionError', message);
-                    if(players[playerCode].currentGame!==null)
+                    if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
                         removeMatch(players[playerCode].currentGame);
                     if(players[playerCode] !== undefined)
                         players[playerCode].currentGame=null;
