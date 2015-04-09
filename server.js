@@ -52,7 +52,7 @@ function playGame(data) {
     console.log('beginning game loop');
     if (channels[data.channel] !== undefined)
         channels[data.channel].gameState = 1;
-    var delay = Math.random() * 20000;
+    var delay = Math.random() * 12000;
     var gameLoop = function() {
         console.log('draw loop iteration beginning');
         if (channels[data.channel] === undefined) {
@@ -68,16 +68,16 @@ function playGame(data) {
             return;
         }
         if (channels[data.channel].gameState === 1) {
-            delay = Math.random() * 20000;
+            delay = Math.random() * 15000;
             var proc = Math.random().toFixed(2);
-            if (proc > .75) {
+            if (proc > .66) {
                 io.to(data.channel).emit('draw');
                 channels[data.channel].drawActive = true;
                 console.log('draw state entered');
             } else {
                 io.to(data.channel).emit('distraction', { value: proc });
                 channels[data.channel].drawActive = false;
-                console.log('draw state entered');
+                console.log('distraction state entered');
             }
             var endDraw = setTimeout(function() {
                 io.to(data.channel).emit('endDraw');
@@ -89,7 +89,7 @@ function playGame(data) {
             loop = setTimeout(gameLoop, Math.max(delay, 5000));
         }
     };
-    var loop = setTimeout(gameLoop, Math.max(delay, 8000));
+    var loop = setTimeout(gameLoop, Math.max(delay, 4000));
     var gameTest = function() {
         if (channels[data.channel] === undefined || channels[data.channel].gameState !== 1) {
             console.log('Game is over, ending loop');
@@ -123,15 +123,17 @@ io.on('connection', function (socket) {
 
     console.log('a user connected');
     var playerCode = '----';
+    var matchmakingTimeout = null;
     socket.on('disconnect', function () {
         console.log('- user disconnected');
         if (players.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + players[playerCode]);
             delete players[playerCode];
             console.log(players);
-            if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
+            if(players[playerCode] !== undefined && players[playerCode].currentGame!==null) {
                 removeMatch(players[playerCode].currentGame);
-            players[playerCode].currentGame=null;
+                players[playerCode].currentGame = null;
+            }
         }
         if (games.hasOwnProperty(playerCode)) {
             console.log('- deleted ' + games[playerCode]);
@@ -206,7 +208,10 @@ io.on('connection', function (socket) {
             channels[channelCode] = game;
             matchmaking.push(game);
             players[playerCode].currentGame = game;
-            setTimeout(function() {
+            setTimeout(function (){
+                socket.emit('suggestAIMatch');
+                },20000);
+            matchmakingTimeout = setTimeout(function() {
                 if(games[playerCode]!==undefined && games[playerCode].player2 === null) {
                     var message = {};
                     message.message = 'Matchmaking timed out. Try again or challenge a friend.';
@@ -270,6 +275,41 @@ io.on('connection', function (socket) {
         socket.leave(data.channel);
         players[playerCode].isBusy = false;
     });
+    socket.on('challengeAI', function (){
+        if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
+            removeMatch(players[playerCode].currentGame);
+        players[playerCode].currentGame=null;
+        if(matchmakingTimeout !== null){
+            clearTimeout(matchmakingTimeout);
+            matchmakingTimeout=null;
+        }
+        do
+        {
+            var channelCode = Math.random().toString(36).slice(2).substring(0, 4).toUpperCase();
+        } while (channels.hasOwnProperty(channelCode));
+        var game =
+        {
+            channel: channelCode,
+            gameState: 0,
+            drawActive: false,
+            player1: players[playerCode],
+            player2: null,
+            player1state: 0,
+            player2State: 0
+        };
+        socket.join(game.channel);
+        games[playerCode] = game;
+        channels[channelCode] = game;
+        players[playerCode].isBusy = true;
+        setTimeout(function () {
+                if (games[playerCode] !== undefined) {
+                    var playerStatus = {player1:games[playerCode].player1.code};
+                    io.to(games[playerCode].channel).emit('beginGame', playerStatus);
+                    playGame({channel: games[playerCode].channel});
+                }
+            }
+            , 3000);
+    });
     socket.on('cancelChallenge', function (data) {
         //Delete game object and allow challenges for both players
         socket.leave(games[playerCode].channel);
@@ -317,6 +357,38 @@ io.on('connection', function (socket) {
                 }
             }
             , 3000);
+    });
+    socket.on('processAIInput', function() {
+        console.log(games[playerCode].drawActive);
+        console.log("recieved AI Input");
+        if (!games[playerCode].drawActive) {
+            if (games[playerCode].player2state === 2)
+                return;
+            console.log("should jam ai");
+            games[playerCode].player2state = 2;
+            io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
+            setTimeout(function () {
+                if (games[playerCode].gameState === 1) {
+                    games[playerCode].player2state = 0;
+                    io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
+                }
+            }, 5000);
+        }
+        else
+        {
+            if(games[playerCode].player2state !== 2) {
+                games[playerCode].gameState = 2;
+                games[playerCode].player1state = 3;
+                games[playerCode].player2state = 1;
+                io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
+            }
+        }
+        if (players[playerCode].currentGame !== null) {
+            io.to(games[playerCode].channel).emit('disconnectFromRoom', {channel: games[playerCode].channel});
+            console.log(games);
+            players[playerCode].currentGame = null;
+            delete games[playerCode];
+        }
     });
     socket.on('processInput', function () {
         if (games[playerCode] !== undefined && games[playerCode].gameState === 1) {
@@ -368,14 +440,13 @@ io.on('connection', function (socket) {
                     io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
                 }
                 //Delete game and unsubscribe players to channel if match was matchmakingmatch
-                console.log(players[playerCode].currentGame);
-                console.log(players[games[playerCode].player2.code].currentGame);
                 if(players[playerCode].currentGame!==null || players[games[playerCode].player2.code].currentGame!==null){
                     console.log("match made game has ended. SHould be deleting game");
                     io.to(games[playerCode].channel).emit('disconnectFromRoom', {channel:games[playerCode].channel});
                     console.log(games);
                     players[playerCode].currentGame = null;
-                    players[games[playerCode].player2.code].currentGame =null;
+                    if(games[playerCode].player!==null)
+                        players[games[playerCode].player2.code].currentGame =null;
                     delete games[playerCode];
                 }
             }

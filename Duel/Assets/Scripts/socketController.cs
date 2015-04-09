@@ -47,6 +47,7 @@ public class socketController : MonoBehaviour
         socket.On("distraction", showDistraction);
         socket.On("endDraw", endDraw);
         socket.On("gameUpdate", gameUpdate);
+        socket.On("suggestAIMatch", suggestAIMatch);
         StartCoroutine(requestCode());
     }
     private IEnumerator requestCode()
@@ -83,6 +84,7 @@ public class socketController : MonoBehaviour
     }
     private void disconnectFromRoom(SocketIOEvent e)
     {
+        vsAi = false;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
         socket.Emit("playerDisconnected", new JSONObject(data));
@@ -91,6 +93,10 @@ public class socketController : MonoBehaviour
     {
         Debug.Log("show stuff");
         uiController.instance.ShowPanel(uiController.instance.PreGamePanel);
+    }
+    private void suggestAIMatch(SocketIOEvent e)
+    {
+        uiController.instance.ShowPanel(uiController.instance.AIPanel);
     }
     private void challengeRecieved(SocketIOEvent e)
     {
@@ -136,11 +142,9 @@ public class socketController : MonoBehaviour
         if (proc >= .4f && proc < .5f)
             distractionMessage = "Darn!";
         if (proc >= .5f && proc < .6f)
-            distractionMessage = "Damn!";
-        if (proc >= .6f && proc < .7f)
-            distractionMessage = "Derp!";
-        if (proc >= .7f)
             distractionMessage = "Drat!";
+        if (proc >= .6f && proc < .67f)
+            distractionMessage = "Derp!";
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
         if (vsAi)
             gameController.instance.promptAI(false);
@@ -181,7 +185,7 @@ public class socketController : MonoBehaviour
     }
     public void processAIInput()
     {
-        //socket.Emit("processInput");
+        socket.Emit("processAIInput");
     }
     public void cancelChallenge()
     {
@@ -207,6 +211,11 @@ public class socketController : MonoBehaviour
         socket.Emit("rejectChallenge", new JSONObject(data));
         challengedCode = null;
         gameController.instance.resetGameState();
+    }
+    public void requestAIMatch()
+    {
+        vsAi = true;
+        socket.Emit("challengeAI");
     }
     public void challenge(string s)
     {

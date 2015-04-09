@@ -38,12 +38,11 @@ public class gameController : MonoBehaviour
     }
     #endregion
     #region private methods
-    private IEnumerator aiResponse(float responseTime, bool respond)
+    private IEnumerator aiResponse(float responseTime)
     {
         //After x delay, respond
         yield return new WaitForSeconds(responseTime/1000);
-        if (respond)
-            socketController.instance.processAIInput();
+        socketController.instance.processAIInput();
 
     }
     private IEnumerator gameOver()
@@ -60,15 +59,12 @@ public class gameController : MonoBehaviour
     #endregion
     #region public methods
     public void promptAI(bool isDraw)
-	{	
-		var response = false;
+	{
 		var responseTime = Random.Range(350,1000);
-
 		//if isdraw determine delay and always respond
 		if (isDraw) 
 		{
-			response = true;
-			StartCoroutine (aiResponse (responseTime, response));
+			StartCoroutine (aiResponse (responseTime));
 		}
         //else determine delay and determine if respond
 		else 
@@ -76,8 +72,8 @@ public class gameController : MonoBehaviour
 			var ResponseChoice = Random.value;
 
 			if (ResponseChoice < .6)
-				StartCoroutine (aiResponse (responseTime, response));
-		}
+				StartCoroutine (aiResponse (responseTime));  
+  		}
     }
     public void beginGame()
     {
