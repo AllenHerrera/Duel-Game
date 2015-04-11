@@ -87,7 +87,7 @@ public class socketController : MonoBehaviour
         vsAi = false;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
-        socket.Emit("playerDisconnected", new JSONObject(data));
+        socket.Emit("disconnectFromRoom", new JSONObject(data));
     }
     private void challengeAccepted(SocketIOEvent e)
     {

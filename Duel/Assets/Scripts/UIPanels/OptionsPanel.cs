@@ -148,6 +148,7 @@ public class OptionsPanel : menuPanel {
 
 		characterIndex = characterSlider.value;
 		currentSprite = characterSprites [(int)characterIndex];
+        
 		GameObject.FindWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().sprite = currentSprite;
 
 	}

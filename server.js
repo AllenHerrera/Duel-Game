@@ -33,85 +33,97 @@
 var io = require('socket.io')({
     transports: ['websocket']
 });
-//var Enum = require('enum');
 io.attach(3001);
-
-//var playerState = new Enum(['idle','jammed','fired','killed']);
-//var gameState = new Enum(['inactive', 'active','over']);
-//Will implement enums in the future. Currently using ints
 //player state ints(0:idle,1:fired,2:jammed,3:dead)
 //game state ints(0:inactive,1:active,:2,over)
-
+console.log('server started');
+//Server level variables
 var games = {};
 var players = {};
 var channels = {};
-var matchmaking = [];//queue
-
-function playGame(data) {
-    //Choose random  time in future to enable draw
-    console.log('beginning game loop');
-    if (channels[data.channel] !== undefined)
-        channels[data.channel].gameState = 1;
-    var delay = Math.random() * 12000;
-    var gameLoop = function() {
-        console.log('draw loop iteration beginning');
-        if (channels[data.channel] === undefined) {
-            console.log('game has been deleted. Ending loop');
-            if (endDraw !== undefined)
-                clearTimeout(endDraw);
-            return;
-        }
-        if (channels[data.channel].gameState === 2) {
-            console.log('game has ended, ending loop');
-            if (endDraw !== undefined)
-                clearTimeout(endDraw);
-            return;
-        }
-        if (channels[data.channel].gameState === 1) {
-            delay = Math.random() * 15000;
-            var proc = Math.random().toFixed(2);
-            if (proc > .66) {
-                io.to(data.channel).emit('draw');
-                channels[data.channel].drawActive = true;
-                console.log('draw state entered');
-            } else {
-                io.to(data.channel).emit('distraction', { value: proc });
-                channels[data.channel].drawActive = false;
-                console.log('distraction state entered');
-            }
-            var endDraw = setTimeout(function() {
-                io.to(data.channel).emit('endDraw');
-                if (channels[data.channel] !== undefined) {
-                    channels[data.channel].drawActive = false;
-                    console.log('draw state ended');
-                }
-            }, 3000);
-            loop = setTimeout(gameLoop, Math.max(delay, 5000));
-        }
-    };
-    var loop = setTimeout(gameLoop, Math.max(delay, 4000));
-    var gameTest = function() {
-        if (channels[data.channel] === undefined || channels[data.channel].gameState !== 1) {
-            console.log('Game is over, ending loop');
-            console.log(games);
-            clearTimeout(loop);
-        } else testLoop = setTimeout(gameTest, 500);
-    };
-    var testLoop = setTimeout(gameTest, 500);
-}
-function removeMatch(currentGame){
-    for (var i = 0; i < matchmaking.length; i++) {
-        if (matchmaking[i] === currentGame)
-            matchmaking.splice(i, 1);
-        console.log('deleted matchmaking match');
-        console.log(matchmaking);
-        break;
-    }
-}
-
-console.log('server started');
+var matchmaking = [];
 io.on('connection', function (socket) {
-    function getCurrentState() {
+    console.log('a user connected');
+    //INITIALIZE SOCKET VARIABLES
+    var playerCode = '----';
+    var suggestAiTimeout = null;
+    var matchmakingTimeout = null;
+    //FUNCTIONS
+    function beginGame(game)//After delay indicate to clients that they should begin game
+    {
+        setTimeout(function () {
+            if (game!== undefined) {
+                var playerStatus = {player1:game.player1.code};
+                io.to(game.channel).emit('beginGame', playerStatus);
+                playGame({channel: game.channel});
+            }
+        }, 3000);
+    }
+    function playGame(data)//Starts and runs game loop which spawns distractions/draw events at random intervals
+    {
+        //Choose random  time in future to enable draw
+        console.log('beginning game loop');
+        if (channels[data.channel] !== undefined)
+            channels[data.channel].gameState = 1;
+        var delay = Math.random() * 12000;
+        var gameLoop = function() {
+            console.log('draw loop iteration beginning');
+            if (channels[data.channel] === undefined) {
+                console.log('game has been deleted. Ending loop');
+                if (endDraw !== undefined)
+                    clearTimeout(endDraw);
+                return;
+            }
+            if (channels[data.channel].gameState === 2) {
+                console.log('game has ended, ending loop');
+                if (endDraw !== undefined)
+                    clearTimeout(endDraw);
+                return;
+            }
+            if (channels[data.channel].gameState === 1) {
+                delay = Math.random() * 15000;
+                var proc = Math.random().toFixed(2);
+                if (proc > .66) {
+                    io.to(data.channel).emit('draw');
+                    channels[data.channel].drawActive = true;
+                    console.log('draw state entered');
+                } else {
+                    io.to(data.channel).emit('distraction', { value: proc });
+                    channels[data.channel].drawActive = false;
+                    console.log('distraction state entered');
+                }
+                var endDraw = setTimeout(function() {
+                    io.to(data.channel).emit('endDraw');
+                    if (channels[data.channel] !== undefined) {
+                        channels[data.channel].drawActive = false;
+                        console.log('draw state ended');
+                    }
+                }, 3000);
+                loop = setTimeout(gameLoop, Math.max(delay, 5000));
+            }
+        };
+        var loop = setTimeout(gameLoop, Math.max(delay, 4000));
+        var gameTest = function() {
+            if (channels[data.channel] === undefined || channels[data.channel].gameState !== 1) {
+                console.log('Game is over, ending loop');
+                console.log(games);
+                clearTimeout(loop);
+            } else testLoop = setTimeout(gameTest, 500);
+        };
+        var testLoop = setTimeout(gameTest, 500);
+    }
+    function removeMatch(currentGame)//Removes a player from matchmaking after they cancel or find a match
+    {
+        for (var i = 0; i < matchmaking.length; i++) {
+            if (matchmaking[i] === currentGame)
+                matchmaking.splice(i, 1);
+            console.log('deleted matchmaking match');
+            console.log(matchmaking);
+            break;
+        }
+    }
+    function getCurrentState()//Return state of game and each player
+    {
         //return states of players and game as JSON object
         if (games[playerCode].player2state === undefined)
             games[playerCode].player2state = 0;
@@ -121,30 +133,21 @@ io.on('connection', function (socket) {
             gameState: games[playerCode].gameState
         }
     }
-
-    console.log('a user connected');
-    var playerCode = '----';
-    var matchmakingTimeout = null;
-    socket.on('disconnect', function () {
-        console.log('- user disconnected');
-        if (players.hasOwnProperty(playerCode)) {
-            console.log('- deleted ' + players[playerCode]);
-            console.log(players);
-            if(players[playerCode] !== undefined && players[playerCode].currentGame!==null) {
-                removeMatch(players[playerCode].currentGame);
-                players[playerCode].currentGame = null;
-            }
-            delete players[playerCode];
+    function clearTimeouts()//Clear timeouts that drive prompts for matchmaking ai and timeout
+    {
+        if(matchmakingTimeout !== null){
+            clearTimeout(matchmakingTimeout);
+            matchmakingTimeout=null;
         }
-        if (games.hasOwnProperty(playerCode)) {
-            console.log('- deleted ' + games[playerCode]);
-            var data = games[playerCode].channel;
-            delete channels[data];
-            //emit a disconnect to all other connected clients in the room
-            io.to(games[playerCode].channel).emit('playerDisconnected', {channel: data});
+        if(suggestAiTimeout !== null){
+            clearTimeout(suggestAiTimeout);
+            matchmakingTimeout=null;
         }
-    });
-    socket.on('requestPlayerCode', function () {
+    }
+    //SOCKET LISTENERS
+    //Startup
+    socket.on('requestPlayerCode', function ()//Assign player a unique code
+    {
         var code;
         do {
             var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -162,71 +165,11 @@ io.on('connection', function (socket) {
         players[playerCode].code = playerCode;
         players[playerCode].currentGame = null;
         socket.emit('playerCodeCreated', {code: playerCode})
+        console.log('player code assigned: '+code);
     });
-
-    socket.on('findMatch', function () {
-        //look through players already looking for matches and join one, otherwise create lobby and wait for someone to join. Timeout after a while
-        if(matchmaking.length > 0) {
-            var game = matchmaking.shift();
-            socket.join(game.channel);
-            games[playerCode] = game;
-            games[playerCode].player2 = players[playerCode];
-            setTimeout(function () {
-                    if (games[playerCode] !== undefined) {
-                        console.log('all games are:');
-                        console.log(games);
-                        console.log('game is beginning. Game information :');
-                        console.log(games[playerCode]);
-                        var playerStatus = {player1:games[playerCode].player1.code};
-                        io.to(games[playerCode].channel).emit('beginGame', playerStatus);
-                        console.log("current game state is: ");
-                        console.log(getCurrentState());
-                        playGame({channel: games[playerCode].channel});
-                    }
-                }
-                , 3000);
-        }
-        else{
-            players[playerCode].isBusy = true;
-            //Create a new game and add it to the games list
-            //generate unique channel code
-            do
-            {
-                var channelCode = Math.random().toString(36).slice(2).substring(0, 4).toUpperCase();
-            } while (channels.hasOwnProperty(channelCode));
-            var game =
-            {
-                channel: channelCode,
-                gameState: 0,
-                drawActive: false,
-                player1: players[playerCode],
-                player2: null,
-                player1state: 0,
-                player2State: 0
-            };
-            socket.join(game.channel);
-            games[playerCode] = game;
-            channels[channelCode] = game;
-            matchmaking.push(game);
-            players[playerCode].currentGame = game;
-            setTimeout(function (){
-                if(games[playerCode] !== undefined && games[playerCode].player2 === null)
-                    socket.emit('suggestAIMatch');
-                },20000);
-            matchmakingTimeout = setTimeout(function() {
-                if(games[playerCode]!==undefined && games[playerCode].player2 === null) {
-                    var message = {};
-                    message.message = 'Matchmaking timed out. Try again or challenge a friend.';
-                    socket.emit('connectionError', message);
-                    if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
-                        removeMatch(players[playerCode].currentGame);
-                    if(players[playerCode] !== undefined)
-                        players[playerCode].currentGame=null;
-                }
-            },60000);
-        }
-    });
-    socket.on('challenge', function (data) {
+    //Challenging
+    socket.on('challenge', function (data)//Issue a challenge to a player code
+    {
         var code = data.code;
         var message={};
         if (players.hasOwnProperty(data.code) && data.code !== playerCode) {
@@ -272,20 +215,102 @@ io.on('connection', function (socket) {
             socket.emit('connectionError',message);
         }
     });
-    socket.on('playerDisconnected', function (data) {
-        //last player in game deletes game
-        console.log(data);
-        socket.leave(data.channel);
+    socket.on('cancelChallenge', function (data)//Cancel a challenge to a player code/quit matchmaking
+    {
+        //Delete game object and allow challenges for both players
+        socket.leave(games[playerCode].channel);
+        delete games[playerCode];
         players[playerCode].isBusy = false;
+        //If direct challenge (e.g. not matchmaking) then cancel challenge
+        if(data.code !== undefined && players[data.code]!==undefined) {
+            players[data.code].isBusy = false;
+            io.to(players[data.code].id).emit("challengeCanceled");
+        }
+        //if in matchmaking then delete match
+        else{
+            if(players[playerCode].currentGame!==null) {
+                removeMatch(players[playerCode].currentGame);
+                players[playerCode].currentGame = null;
+            }
+        }
     });
-    socket.on('challengeAI', function (){
+    socket.on('rejectChallenge', function (data)//Reject challenge and tell challenging player they are rejected
+    {
+        //Delete game object and allow challenges for both players
+        delete games[data.challengerId];
+        players[data.challengerId].isBusy = false;
+        players[playerCode].isBusy = false;
+        var message={};
+        message.message='Your challenge was rejected by ' + playerCode +'.';
+        io.to(players[data.challengerId].id).emit('connectionError',message);
+
+    });
+    socket.on('acceptChallenge', function (data)//Accept a direct challenge and begin game
+    {
+        socket.join(games[data.challengerId].channel);
+        games[playerCode] = games[data.challengerId];
+        games[playerCode].player2 = players[playerCode];
+        socket.to(players[data.challengerId].id).emit("challengeAccepted");
+        beginGame(games[playerCode]);
+    });
+    //Matchmaking
+    socket.on('findMatch', function ()//Join a game in matchmaking queue or add a game to queue
+    {
+        clearTimeouts();
+        //If there are users looking for match join their game
+        if(matchmaking.length > 0) {
+            var game = matchmaking.shift();
+            socket.join(game.channel);
+            games[playerCode] = game;
+            games[playerCode].player2 = players[playerCode];
+            beginGame(game);
+        }
+        else{
+            players[playerCode].isBusy = true;
+            //Create a new game and add it to the games list
+            //generate unique channel code
+            do
+            {
+                var channelCode = Math.random().toString(36).slice(2).substring(0, 4).toUpperCase();
+            } while (channels.hasOwnProperty(channelCode));
+            var game =
+            {
+                channel: channelCode,
+                gameState: 0,
+                drawActive: false,
+                player1: players[playerCode],
+                player2: null,
+                player1state: 0,
+                player2State: 0
+            };
+            socket.join(game.channel);
+            games[playerCode] = game;
+            channels[channelCode] = game;
+            matchmaking.push(game);
+            players[playerCode].currentGame = game;
+            suggestAiTimeout = setTimeout(function (){
+                if(games[playerCode] !== undefined && games[playerCode].player2 === null)
+                    socket.emit('suggestAIMatch');
+            },20000);
+            matchmakingTimeout = setTimeout(function() {
+                if(games[playerCode]!==undefined && games[playerCode].player2 === null) {
+                    var message = {};
+                    message.message = 'Matchmaking timed out. Try again or challenge a friend.';
+                    socket.emit('connectionError', message);
+                    if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
+                        removeMatch(players[playerCode].currentGame);
+                    if(players[playerCode] !== undefined)
+                        players[playerCode].currentGame=null;
+                }
+            },60000);
+        }
+    });
+    socket.on('challengeAI', function ()//Accept match against AI, remove from matchmaking and begin AI match
+    {
         if(players[playerCode] !== undefined && players[playerCode].currentGame!==null)
             removeMatch(players[playerCode].currentGame);
+        clearTimeouts();
         players[playerCode].currentGame=null;
-        if(matchmakingTimeout !== null){
-            clearTimeout(matchmakingTimeout);
-            matchmakingTimeout=null;
-        }
         do
         {
             var channelCode = Math.random().toString(36).slice(2).substring(0, 4).toUpperCase();
@@ -313,58 +338,9 @@ io.on('connection', function (socket) {
             }
             , 3000);
     });
-    socket.on('cancelChallenge', function (data) {
-        //Delete game object and allow challenges for both players
-        socket.leave(games[playerCode].channel);
-        delete games[playerCode];
-        players[playerCode].isBusy = false;
-        //If direct challenge (e.g. not matchmaking) then cancel challenge
-        if(data.code !== undefined && players[data.code]!==undefined) {
-            players[data.code].isBusy = false;
-            io.to(players[data.code].id).emit("challengeCanceled");
-        }
-        //if in matchmaking then delete match
-        else{
-            if(players[playerCode].currentGame!==null)
-                removeMatch(players[playerCode].currentGame);
-            players[playerCode].currentGame=null;
-        }
-    });
-    socket.on('rejectChallenge', function (data) {
-        //Delete game object and allow challenges for both players
-        delete games[data.challengerId];
-        players[data.challengerId].isBusy = false;
-        players[playerCode].isBusy = false;
-        var message={};
-        message.message='Your challenge was rejected by ' + playerCode +'.';
-        io.to(players[data.challengerId].id).emit('connectionError',message);
-
-    });
-    socket.on('acceptChallenge', function (data) {
-        socket.join(games[data.challengerId].channel);
-        games[playerCode] = games[data.challengerId];
-        if (games[playerCode].player2 === null)
-            games[playerCode].player2 = players[playerCode];
-        socket.to(players[data.challengerId].id).emit("challengeAccepted");
-        setTimeout(function () {
-                if (games[playerCode] !== undefined) {
-                    console.log('all games are:');
-                    console.log(games);
-                    console.log('game is beginning. Game information :');
-                    console.log(games[playerCode]);
-                    var playerStatus = {player1:games[playerCode].player1.code};
-                    io.to(games[playerCode].channel).emit('beginGame', playerStatus);
-                    console.log("current game state is: ");
-                    console.log(getCurrentState());
-                    playGame({channel: games[playerCode].channel});
-                }
-            }
-            , 3000);
-    });
-    socket.on('processAIInput', function() {
-        console.log(games[playerCode].drawActive);
-        console.log("recieved AI Input");
-        var jamTimer;
+    //Input Handling
+    socket.on('processAIInput', function()//Recieve input from AI, determine if jam or won and update gamestate on server and clients
+    {
         if (!games[playerCode].drawActive) {
             if (games[playerCode].player2state === 2)
                 return;
@@ -372,7 +348,7 @@ io.on('connection', function (socket) {
             games[playerCode].player2state = 2;
             io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
             jamTimer = setTimeout(function () {
-                if (games[playerCode].gameState === 1) {
+                if (games[playerCode] !== undefined && games[playerCode].gameState === 1) {
                     games[playerCode].player2state = 0;
                     io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
                 }
@@ -396,7 +372,8 @@ io.on('connection', function (socket) {
             delete games[playerCode];
         }
     });
-    socket.on('processInput', function () {
+    socket.on('processInput', function ()//Recieve input from player, determine if jam or won and update gamestate on server and clients
+    {
         if (games[playerCode] !== undefined && games[playerCode].gameState === 1) {
             var isPlayer1 = (games[playerCode].player1.id === socket.id);
             var jamTimer;
@@ -461,8 +438,36 @@ io.on('connection', function (socket) {
             }
         }
     });
-    socket.on('reset', function () {
+    //Disconnect/Cleanup
+    socket.on('disconnect', function ()//When a socket disconnects delete player and game and tell other connected clients in same game to disconnect
+    {
+        if (players.hasOwnProperty(playerCode)) {
+            console.log('- deleted ' + players[playerCode]);
+            if(players[playerCode] !== undefined && players[playerCode].currentGame!==null) {
+                removeMatch(players[playerCode].currentGame);
+                players[playerCode].currentGame = null;
+            }
+            delete players[playerCode];
+        }
         if (games.hasOwnProperty(playerCode)) {
+            console.log('- deleted ' + games[playerCode]);
+            var data = games[playerCode].channel;
+            delete channels[data];
+            //emit a disconnect to all other connected clients in the room
+            io.to(games[playerCode].channel).emit('playerDisconnected', {channel: data});
+        }
+    });
+    socket.on('disconnectFromRoom', function (data)//Disconnect from channel of game that has ended
+    {
+        //last player in game deletes game
+        console.log(data);
+        socket.leave(data.channel);
+        players[playerCode].isBusy = false;
+    });
+    socket.on('reset', function ()//Reset everything
+    {
+        if (games.hasOwnProperty(playerCode)) {
+            clearTimeouts();
             console.log('resetting game ' + games[playerCode]);
             var data = games[playerCode].channel;
             socket.leave(data);
