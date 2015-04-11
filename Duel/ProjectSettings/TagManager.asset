@@ -8,6 +8,7 @@ TagManager:
   - PlayerName
   - CharacterSlider
   - BackgroundMusic
+  - OptionBtnSound
   layers:
   - Default
   - TransparentFX

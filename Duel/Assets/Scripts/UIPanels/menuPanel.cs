@@ -6,7 +6,7 @@ using DG.Tweening;
 public abstract class menuPanel : MonoBehaviour
 {
     #region variables & initialization
-	public enum ButtonAction { challenge, matchmaking, leaderboard, options, quit, cancelChallenge, returnToMain, acceptChallenge, declineChallenge, playAgain}
+    public enum ButtonAction { challenge, matchmaking, leaderboard, options, quit, cancelChallenge, returnToMain, acceptChallenge, declineChallenge, playAgain, aiMatch };
     protected CanvasGroup panel;
     protected RectTransform panelTransform;
     protected Vector2 originalPosition = new Vector2(275, 0), activePosition = new Vector2(-275, 0);

@@ -29,6 +29,7 @@ public class uiController : MonoBehaviour
 	public onFirstLoadPanel OnFirstLoadPanel { get; private set; }
 	public OptionsPanel OptionsPanel { get; private set; }
 	public ChangeNamePanel ChangeNamePanel { get; private set; }
+    public aiPanel AIPanel { get; private set; }
 	public Text Title { get; private set; }
 
     private menuPanel currentPanel;
@@ -45,7 +46,7 @@ public class uiController : MonoBehaviour
 		OnFirstLoadPanel = FindObjectOfType<onFirstLoadPanel>();
 		OptionsPanel = FindObjectOfType<OptionsPanel> ();
 		ChangeNamePanel = FindObjectOfType<ChangeNamePanel> ();
-
+        AIPanel = FindObjectOfType<aiPanel>();
         //set pregame, ingameUi & draw panels to inactive so it doesn't block other touch events
         PreGamePanel.gameObject.SetActive(false);
         DrawPanel.gameObject.SetActive(false);
@@ -55,7 +56,6 @@ public class uiController : MonoBehaviour
     #region public methods
     public void ShowPanel(menuPanel panel)
     {
-        Debug.Log("changing panel");
         if (currentPanel != null)
         {
             currentPanel.TransitionOut();
@@ -74,7 +74,6 @@ public class uiController : MonoBehaviour
     }
     public void HidePanel()
     {
-        Debug.Log("Hiding panel");
         currentPanel.TransitionOut();
         currentPanel = null;       
     }

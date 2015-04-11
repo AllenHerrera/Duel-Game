@@ -32,6 +32,9 @@ public class challengingPanel : menuPanel
     public override void TransitionIn()
     {
         base.TransitionIn();
-        challengingText.text = string.Format("{0} has been challenged. Awaiting response.", socketController.instance.challengedCode);
+        if(socketController.instance.inMatchmaking)
+            challengingText.text = "Searching for match.";
+        else
+            challengingText.text = string.Format("{0} has been challenged. Awaiting response.", socketController.instance.challengedCode);
     }
 }

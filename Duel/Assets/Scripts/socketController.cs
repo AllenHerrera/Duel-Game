@@ -25,8 +25,10 @@ public class socketController : MonoBehaviour
     public string challengedCode { get; private set;}
     public string playerCode{ get; private set;}
     public string errorMessage { get; private set;}
-    public bool isChallenger { get; set; }
+    public bool isChallenger { get; private set; }
+    public bool inMatchmaking { get; private set; }
     public string distractionMessage { get; private set; }
+    public bool vsAi { get; private set; }
     void Start()
     {
         //set socket reference
@@ -45,6 +47,7 @@ public class socketController : MonoBehaviour
         socket.On("distraction", showDistraction);
         socket.On("endDraw", endDraw);
         socket.On("gameUpdate", gameUpdate);
+        socket.On("suggestAIMatch", suggestAIMatch);
         StartCoroutine(requestCode());
     }
     private IEnumerator requestCode()
@@ -81,13 +84,19 @@ public class socketController : MonoBehaviour
     }
     private void disconnectFromRoom(SocketIOEvent e)
     {
+        vsAi = false;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
         socket.Emit("playerDisconnected", new JSONObject(data));
     }
     private void challengeAccepted(SocketIOEvent e)
     {
+        Debug.Log("show stuff");
         uiController.instance.ShowPanel(uiController.instance.PreGamePanel);
+    }
+    private void suggestAIMatch(SocketIOEvent e)
+    {
+        uiController.instance.ShowPanel(uiController.instance.AIPanel);
     }
     private void challengeRecieved(SocketIOEvent e)
     {
@@ -106,9 +115,8 @@ public class socketController : MonoBehaviour
     }
     private void beginGame(SocketIOEvent e)
     {
-        Debug.Log("beginning game!");
-        isChallenger = (challengedCode != null);
-        Debug.Log(uiController.instance.PreGamePanel);
+        isChallenger = (string.Format("{0}",e.data["player1"]).Substring(1,4)==playerCode);
+        uiController.instance.ShowPanel(uiController.instance.PreGamePanel);
         uiController.instance.PreGamePanel.CountDown();
         gameController.instance.beginGame();
         challengedCode = null;
@@ -117,6 +125,9 @@ public class socketController : MonoBehaviour
     {
         distractionMessage = null;
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
+        if (vsAi)
+            gameController.instance.promptAI(true);
+            
     }
 
     private void showDistraction(SocketIOEvent e)
@@ -131,12 +142,12 @@ public class socketController : MonoBehaviour
         if (proc >= .4f && proc < .5f)
             distractionMessage = "Darn!";
         if (proc >= .5f && proc < .6f)
-            distractionMessage = "Damn!";
-        if (proc >= .6f && proc < .7f)
-            distractionMessage = "Derp!";
-        if (proc >= .7f)
             distractionMessage = "Drat!";
+        if (proc >= .6f && proc < .67f)
+            distractionMessage = "Derp!";
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
+        if (vsAi)
+            gameController.instance.promptAI(false);
     }
     private void endDraw(SocketIOEvent e)
     {
@@ -172,6 +183,10 @@ public class socketController : MonoBehaviour
     {
         socket.Emit("processInput");
     }
+    public void processAIInput()
+    {
+        socket.Emit("processAIInput");
+    }
     public void cancelChallenge()
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
@@ -197,6 +212,12 @@ public class socketController : MonoBehaviour
         challengedCode = null;
         gameController.instance.resetGameState();
     }
+    public void requestAIMatch()
+    {
+        vsAi = true;
+        inMatchmaking = true;
+        socket.Emit("challengeAI");
+    }
     public void challenge(string s)
     {
         challengedCode = s;
@@ -221,9 +242,20 @@ public class socketController : MonoBehaviour
     }
     public void resetGame()
     {
-        socket.Emit("reset");
-        gameController.instance.resetGameState();
+        if (!inMatchmaking)
+        {
+            socket.Emit("reset");
+            gameController.instance.resetGameState();
+        }
         uiController.instance.ShowPanel(uiController.instance.MainPanel);
+
+    }
+
+    public void findMatch()
+    {
+        inMatchmaking = true;
+        socket.Emit("findMatch");
+        uiController.instance.ShowPanel(uiController.instance.ChallengingPanel);
     }
     #endregion
 }

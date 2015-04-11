@@ -14,6 +14,10 @@ public class OptionsPanel : menuPanel {
 	public float volume;
 
 	public bool soundmute;
+	public bool updateScrollBar = false;
+	public bool PreviousScrollerState = false;
+	public float PreviousValue = 1;
+	public int count = 0;
 
 	public string playerName;
 	public Text PlayerName;
@@ -101,32 +105,37 @@ public class OptionsPanel : menuPanel {
 	}
 
 	public void UpdateVolume()
-	{
+	{	
+
 		volume = volumeSlider.value;
 		volumeText.text = " Volume: " +volumeSlider.value.ToString ();
 		GameObject.FindGameObjectWithTag ("BackgroundMusic").GetComponent<AudioSource> ().volume = (volume / 100);
 	}
 
 	public void UpdateSound()
-	{
+	{ 	updateScrollBar = true;
+		count = 10;
+
 		if (soundScrollbar.value <= 0.5) 
 		{	
 			PlayerPrefs.SetFloat ("savedSound", 1);
 			soundmute = true;
 			soundText.text = "Music: Off";
+		
 		}
 		if (soundScrollbar.value >= 0.5) 
 		{
 			PlayerPrefs.SetFloat ("savedSound", 2);
 			soundmute = false;
 			soundText.text = "Music: On";
+
 		}
 
 		GameObject.FindGameObjectWithTag ("BackgroundMusic").GetComponent<AudioSource> ().mute = soundmute;
 	}
-	
 	public void UpdateMusic()
-	{
+	{	GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+
 		music = musicSlider.value;
 		currentAudioClip = audioClips [(int)music];
 		GameObject.FindGameObjectWithTag ("BackgroundMusic").GetComponent<AudioSource> ().clip = currentAudioClip;
@@ -135,7 +144,8 @@ public class OptionsPanel : menuPanel {
 	}
 
 	public void UpdateSprite ()
-	{
+	{	GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+
 		characterIndex = characterSlider.value;
 		currentSprite = characterSprites [(int)characterIndex];
 		GameObject.FindWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().sprite = currentSprite;
@@ -147,6 +157,8 @@ public class OptionsPanel : menuPanel {
 		switch (btn) {
 		case ButtonAction.returnToMain:
 		    {
+			GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+
 			GameObject.FindWithTag("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = false;
 			GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
@@ -165,6 +177,8 @@ public class OptionsPanel : menuPanel {
 			break;
 		case ButtonAction.options:
 		{
+			GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+
 			GameObject.FindWithTag("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = false;
 			GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
@@ -178,6 +192,26 @@ public class OptionsPanel : menuPanel {
 			break;
 		}
 	}
+	public bool CheckIfChange (bool ScrollerState, float value)
+	{
+		if (PreviousScrollerState == ScrollerState)
+			return false;
+		else {
+			// change from 1 to 0 or from 0 to 1
+			if (PreviousValue > 0.5 && value < 0.5 || PreviousValue < 0.5 && value >= 0.5)
+			{
+
+					PreviousScrollerState = ScrollerState;
+					PreviousValue = value;
+					return true;
+
+			}
+			else // no change in direction
+			{return false;
+			}
+		}
+
+	}
 	
 	public void returnToMain()
 	{
@@ -188,7 +222,40 @@ public class OptionsPanel : menuPanel {
 	{
 		ProcessButtonPress(ButtonAction.options);
 	}
+	 void Update()
+	{ 
+	
+		if (count > 0) {
+			if (soundScrollbar.value > 0.5) {
+				
+				soundScrollbar.value = (soundScrollbar.value + ((1 - soundScrollbar.value) / 12));
+			} else {
+				soundScrollbar.value = soundScrollbar.value - (soundScrollbar.value) / 12;
 
+			}
+			if(CheckIfChange(updateScrollBar,soundScrollbar.value)==true)
+				GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+			count --;
+			if (count == 0)
+			{
+			if (soundScrollbar.value > 0.5) 
+				
+				soundScrollbar.value = 1;
+			else 
+				soundScrollbar.value = 0;
+			}	
+
+			updateScrollBar = false;
+		}
+
+		
+
+		
+
+
+
+
+	}
 
 
 }

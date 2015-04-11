@@ -16,11 +16,17 @@ public class postGamePanel : menuPanel
         switch (btn)
         {
             case ButtonAction.returnToMain:
-                socketController.instance.rejectChallenge();
+                if(socketController.instance.inMatchmaking)
+                    socketController.instance.resetGame();
+                else
+                    socketController.instance.rejectChallenge();
                 uiController.instance.ShowPanel(uiController.instance.MainPanel);
                 break;
             case ButtonAction.playAgain:
-                socketController.instance.challenge();
+                if(socketController.instance.inMatchmaking)
+                    socketController.instance.findMatch();
+                else
+                    socketController.instance.challenge();
                 uiController.instance.ShowPanel(uiController.instance.ChallengingPanel);
                 break;
         }
