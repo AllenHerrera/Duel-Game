@@ -7,6 +7,7 @@ public class mainPanel : menuPanel {
     private Text playerCode;
     private InputField challengeCodeField;
 	public GameObject Skeleton;
+	public Text PlayerNameText;
     private string _challengeCode = "";
     public string challengeCode
     {
@@ -23,6 +24,7 @@ public class mainPanel : menuPanel {
     protected override void Start()
     {
         base.Start();
+		PlayerNameText.text = PlayerPrefs.GetString ("playerProfile");
 		//Skeleton = GameObject.Find ("Skeleton");
         playerCode = GameObject.Find("PlayerCode").GetComponent<Text>();
         challengeCodeField = GameObject.Find("ChallengeCodeField").GetComponent<InputField>();
@@ -62,6 +64,7 @@ public class mainPanel : menuPanel {
     }
     public override void TransitionIn()
     {	
+
 		Skeleton.SetActive(true);
         playerCode.text = socketController.instance.playerCode;
         base.TransitionIn();
