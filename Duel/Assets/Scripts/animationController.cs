@@ -6,10 +6,11 @@ public class animationController : MonoBehaviour {
 	Animation duelAnim;
 	bool clicked = false;
 	int hatSetting;
-	private SpriteRenderer torso, legs, hat;
+	private SpriteRenderer torso, legs, hat, gun;
 	public Sprite[] torsoOptions = new Sprite[4];
 	public Sprite[] legsOptions = new Sprite[4];
 	public Sprite[] hatsOptions = new Sprite[4];
+	public Sprite[] gunsOptions = new Sprite[4];
 
 	public enum chooseAnimations {Idle, Shoot, Dead, Jam};
 
@@ -45,8 +46,9 @@ public class animationController : MonoBehaviour {
 
 private void Start(){
 		torso = GameObject.FindGameObjectWithTag ("shirt").GetComponent<SpriteRenderer>();
-		hat = GameObject.FindGameObjectWithTag ("hats").GetComponent<SpriteRenderer>();
+		hat = GameObject.FindGameObjectWithTag ("hat").GetComponent<SpriteRenderer>();
 		legs = GameObject.FindGameObjectWithTag ("legs").GetComponent<SpriteRenderer>();
+		gun = GameObject.FindGameObjectWithTag ("gun").GetComponent<SpriteRenderer>();
 	}
 public void setHat(int option){
 		hat.sprite = hatsOptions [option];
@@ -56,5 +58,8 @@ public void setShirt(int option){
 	}
 public void setLegs(int option){
 		legs.sprite = legsOptions [option];
+	}
+public void setGuns(int option){
+		gun.sprite = gunsOptions [option];
 	}
 }
