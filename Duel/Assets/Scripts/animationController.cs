@@ -49,12 +49,12 @@ private void Start(){
 		legs = GameObject.FindGameObjectWithTag ("legs").GetComponent<SpriteRenderer>();
 	}
 public void setHat(int option){
-		hat.sprite = hatsOptions[option]
+		hat.sprite = hatsOptions [option];
 	}
 public void setShirt(int option){
-		torso.sprite = torsoOptions[option]
+		torso.sprite = torsoOptions [option];
 	}
 public void setLegs(int option){
-		legs.sprite = legsOptions[option]
+		legs.sprite = legsOptions [option];
 	}
 }
