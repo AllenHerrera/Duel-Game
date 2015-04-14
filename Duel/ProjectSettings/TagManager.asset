@@ -9,6 +9,7 @@ TagManager:
   - CharacterSlider
   - BackgroundMusic
   - OptionBtnSound
+  - NewNamePlaceHolder
   layers:
   - Default
   - TransparentFX

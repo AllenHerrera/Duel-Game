@@ -22,7 +22,6 @@ public class onFirstLoadPanel : menuPanel {
 
 	protected override void Start()
 	{
-		PlayerPrefs.SetInt ("firstLoad", 0);
 		base.Start();
 		playerNameField = GameObject.Find("EnterNameField").GetComponent<InputField>();
 	}
@@ -35,8 +34,13 @@ public class onFirstLoadPanel : menuPanel {
 			if (playerName != "")
 			{
 				PlayerPrefs.SetString ("playerProfile", playerName);
+				PlayerPrefs.SetInt ("wins", 0);
+				PlayerPrefs.SetInt ("losses", 0);
+				PlayerPrefs.SetInt ("rating", 0);
 				// transition to mainpanel
+
 				uiController.instance.ShowPanel(uiController.instance.MainPanel);
+				uiController.instance.MainPanel.PlayerNameText.text = PlayerPrefs.GetString ("playerProfile");
 			}
 			break;
 		}
@@ -49,6 +53,13 @@ public class onFirstLoadPanel : menuPanel {
 
 	public override void TransitionIn(){
 		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
+		Debug.Log ("og firstload: " + PlayerPrefs.GetInt ("firstLoad"));
+		if (PlayerPrefs.GetInt ("firstLoad")!= null)
+			PlayerPrefs.SetInt ("firstLoad", (PlayerPrefs.GetInt ("firstLoad")+1));
+		else
+			PlayerPrefs.SetInt ("firstLoad", 0);
+
+		Debug.Log ("new firstload: " + PlayerPrefs.GetInt ("firstLoad"));
 		if ( PlayerPrefs.GetString ("playerProfile") != "" ) {
 			uiController.instance.ShowPanel (uiController.instance.MainPanel);
 			return;

@@ -208,12 +208,11 @@ public class OptionsPanel : menuPanel {
 		{
 			GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
 			
-			GameObject.FindWithTag("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = false;
-			GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
+		
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
-			
+			//transition to changenamePanel
 			Debug.Log ("Playername going into changename: " + PlayerPrefs.GetString ("playerProfile"));
 			Debug.Log("savedVolume: " +PlayerPrefs.GetFloat("savedVolume"));
 			Debug.Log("savedSound: " +PlayerPrefs.GetFloat("savedSound"));
