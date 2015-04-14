@@ -39,7 +39,6 @@ protected override void ProcessButtonPress(ButtonAction btn)
 			if (playerName != null && playerName != "" && playerName != "Invalid Name")
 		{
 			PlayerPrefs.SetString ("playerProfile", playerName);
-				uiController.instance.MainPanel.PlayerNameText.text = PlayerPrefs.GetString ("playerProfile");
 			// transition back to optionpanel
 				GameObject.FindGameObjectWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
 				GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
