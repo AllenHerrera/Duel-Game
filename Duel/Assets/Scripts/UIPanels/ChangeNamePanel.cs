@@ -36,7 +36,7 @@ protected override void ProcessButtonPress(ButtonAction btn)
 	switch (btn)
 	{
 	case ButtonAction.returnToMain:
-		if (playerName != null)
+			if (playerName != null && playerName != "" && playerName != "Invalid Name")
 		{
 			PlayerPrefs.SetString ("playerProfile", playerName);
 				uiController.instance.MainPanel.PlayerNameText.text = PlayerPrefs.GetString ("playerProfile");
@@ -67,6 +67,16 @@ public void cancel()
 {
 	ProcessButtonPress(ButtonAction.quit);
 }
+
+public override void TransitionIn()
+{	
+	
+		GameObject.Find ("EnterNewNameField").GetComponent<InputField> ().text = "";
+		GameObject.FindWithTag ("NewNamePlaceHolder").SetActive (true);
+		
+		base.TransitionIn();
+}
+
 
 
 }

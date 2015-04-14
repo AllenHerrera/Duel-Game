@@ -9,10 +9,14 @@ TagManager:
   - CharacterSlider
   - BackgroundMusic
   - OptionBtnSound
+<<<<<<< HEAD
   - shirt
   - hat
   - legs
   - gun
+=======
+  - NewNamePlaceHolder
+>>>>>>> origin/master
   layers:
   - Default
   - TransparentFX
