@@ -23,6 +23,12 @@ public class OptionsPanel : menuPanel {
 	public Text PlayerName;
 	public Text volumeText;
 	public Text soundText;
+
+	public Text goldText;
+	public Text ratingText;
+	public Text winsText;
+	public Text lossesText;
+	public Text winRatioText;
 	
 	public Sprite[] characterSprites;
 	public Sprite currentSprite;
@@ -38,7 +44,11 @@ public class OptionsPanel : menuPanel {
 		Debug.Log("savedCharacter: " + PlayerPrefs.GetFloat("savedCharacter"));
 		Debug.Log("savedMusic: " + PlayerPrefs.GetFloat("savedMusic"));
 		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-		
+		Debug.Log ("gold is: " + PlayerPrefs.GetInt ("gold"));
+		Debug.Log ("wins is: " + PlayerPrefs.GetInt ("wins"));
+		Debug.Log ("losses is: " + PlayerPrefs.GetInt ("losses"));
+		Debug.Log ("firstloadvalue : " + PlayerPrefs.GetInt ("firstLoad"));
+
 		GameObject.FindWithTag("PlayerName").GetComponent<Text>().text = PlayerPrefs.GetString("playerProfile");
 		setDynamicSliders ();
 		
@@ -60,6 +70,8 @@ public class OptionsPanel : menuPanel {
 	
 	public void loadSavedPlayerPrefs ()
 	{
+		CheckNullPlayerPrefs ();
+
 		playerName = PlayerPrefs.GetString ("playerProfile");
 		//get saved music
 		music= PlayerPrefs.GetFloat("savedMusic");
@@ -95,6 +107,25 @@ public class OptionsPanel : menuPanel {
 		}
 		characterSlider.value = characterIndex;
 		
+	}
+	public void CheckNullPlayerPrefs()
+	{
+		if (PlayerPrefs.GetInt("gold") == null) 
+		{
+			PlayerPrefs.SetInt("gold", 0);
+		}
+		if (PlayerPrefs.GetInt("wins") == null) 
+		{
+			PlayerPrefs.SetInt("wins", 0);
+		}
+		if (PlayerPrefs.GetInt("losses") == null) 
+		{
+			PlayerPrefs.SetInt("losses", 0);
+		}
+		if (PlayerPrefs.GetInt("rating") == null) 
+		{
+			PlayerPrefs.SetInt("rating", 0);
+		}
 	}
 	public void _UpdateALL()
 	{
@@ -250,15 +281,25 @@ public class OptionsPanel : menuPanel {
 			
 			updateScrollBar = false;
 		}
-		
-		
-		
-		
-		
-		
-		
-		
 	}
+
+	public override void TransitionIn()
+	{	
+		goldText.text = PlayerPrefs.GetInt ("gold").ToString();
+		//ratingText.text = "N/A";
+		ratingText.text = PlayerPrefs.GetInt ("rating").ToString();
+		winsText.text = PlayerPrefs.GetInt ("wins").ToString();
+		lossesText.text = PlayerPrefs.GetInt ("losses").ToString();
+
+		if (PlayerPrefs.GetInt ("losses") + PlayerPrefs.GetInt ("wins") != 0)
+			winRatioText.text = ((((double)PlayerPrefs.GetInt ("wins") / (double)(PlayerPrefs.GetInt ("losses") + PlayerPrefs.GetInt ("wins"))) * 100).ToString () + "%");
+		else
+			winRatioText.text = "N/A";
+
+
+		base.TransitionIn();
+	}
+
 	
 	
 }
