@@ -9,6 +9,10 @@ TagManager:
   - CharacterSlider
   - BackgroundMusic
   - OptionBtnSound
+  - shirt
+  - hat
+  - legs
+  - gun
   layers:
   - Default
   - TransparentFX

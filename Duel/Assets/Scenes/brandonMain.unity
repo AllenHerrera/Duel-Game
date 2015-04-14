@@ -939,7 +939,7 @@ GameObject:
   - 212: {fileID: 136830876}
   m_Layer: 0
   m_Name: duelStickFigurePants1
-  m_TagString: Untagged
+  m_TagString: legs
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1815,6 +1815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Skeleton: {fileID: 970836523}
+  PlayerNameText: {fileID: 0}
 --- !u!1 &462151626
 GameObject:
   m_ObjectHideFlags: 0
@@ -3329,6 +3330,60 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 857562175}
+--- !u!1 &864160400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 864160401}
+  - 212: {fileID: 864160402}
+  m_Layer: 0
+  m_Name: raygun1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &864160401
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 864160400}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: .689999998, y: 3.80999994, z: 3.29999995}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1794590142}
+  m_RootOrder: 1
+--- !u!212 &864160402
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 864160400}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: a4bc1f443dc3e734db0fb7dae3ee6e95, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &892249707
 GameObject:
   m_ObjectHideFlags: 0
@@ -3662,7 +3717,7 @@ GameObject:
   - 212: {fileID: 906397428}
   m_Layer: 0
   m_Name: duelStickFigureGun2
-  m_TagString: Untagged
+  m_TagString: gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3673,8 +3728,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 906397426}
-  m_LocalRotation: {x: 0, y: 2.26225758e-08, z: -.0694282055, w: .997586966}
-  m_LocalPosition: {x: .100000001, y: .119999997, z: 3.29999995}
+  m_LocalRotation: {x: 1.91782079e-09, y: 3.71489811e-10, z: .337513834, w: -.941320598}
+  m_LocalPosition: {x: .49000001, y: 0, z: 3.29999995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 656826394}
@@ -5272,95 +5327,67 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 447636, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .299813956
+      value: .286427885
       objectReference: {fileID: 0}
     - target: {fileID: 447636, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: .953997731
+      value: .958101809
       objectReference: {fileID: 0}
     - target: {fileID: 430124, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .050451465
+      value: .0293190498
       objectReference: {fileID: 0}
     - target: {fileID: 430124, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -.998726547
+      value: -.999570131
       objectReference: {fileID: 0}
     - target: {fileID: 448624, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .254084885
+      value: .250998944
       objectReference: {fileID: 0}
     - target: {fileID: 448624, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -.967181921
+      value: -.967987359
       objectReference: {fileID: 0}
     - target: {fileID: 440450, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .00661502639
+      value: .0127292136
       objectReference: {fileID: 0}
     - target: {fileID: 440450, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -.999978125
+      value: -.999918997
       objectReference: {fileID: 0}
     - target: {fileID: 496962, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .356750995
+      value: .326451778
       objectReference: {fileID: 0}
     - target: {fileID: 496962, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: .934199512
+      value: .945213854
       objectReference: {fileID: 0}
     - target: {fileID: 483648, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .813414812
+      value: .461467803
       objectReference: {fileID: 0}
     - target: {fileID: 483648, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -.581684113
-      objectReference: {fileID: 0}
-    - target: {fileID: 478622, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: .268848181
-      objectReference: {fileID: 0}
-    - target: {fileID: 478622, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: .963182569
-      objectReference: {fileID: 0}
-    - target: {fileID: 427926, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: .318573207
-      objectReference: {fileID: 0}
-    - target: {fileID: 427926, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: .947898269
+      value: -.887156963
       objectReference: {fileID: 0}
     - target: {fileID: 412714, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .00318589224
+      value: .057986699
       objectReference: {fileID: 0}
     - target: {fileID: 412714, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: .999994934
+      value: .998317361
       objectReference: {fileID: 0}
     - target: {fileID: 443032, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.z
-      value: .00318851718
+      value: .0193411298
       objectReference: {fileID: 0}
     - target: {fileID: 443032, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalRotation.w
-      value: -.999994934
-      objectReference: {fileID: 0}
-    - target: {fileID: 483276, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -.790000021
-      objectReference: {fileID: 0}
-    - target: {fileID: 483276, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: .340000004
-      objectReference: {fileID: 0}
-    - target: {fileID: 483276, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -0
+      value: -.999812961
       objectReference: {fileID: 0}
     - target: {fileID: 464760, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalScale.x
@@ -5377,6 +5404,22 @@ Prefab:
     - target: {fileID: 450358, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
       propertyPath: m_LocalPosition.y
       value: -.270000011
+      objectReference: {fileID: 0}
+    - target: {fileID: 478622, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: .0245733876
+      objectReference: {fileID: 0}
+    - target: {fileID: 478622, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: -.999698043
+      objectReference: {fileID: 0}
+    - target: {fileID: 427926, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: .498860717
+      objectReference: {fileID: 0}
+    - target: {fileID: 427926, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: -.866682231
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11456382, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
@@ -6429,7 +6472,7 @@ GameObject:
   - 212: {fileID: 1467425646}
   m_Layer: 0
   m_Name: duelStickFigureVest
-  m_TagString: Untagged
+  m_TagString: shirt
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7059,7 +7102,7 @@ GameObject:
   - 212: {fileID: 1712979437}
   m_Layer: 0
   m_Name: duelStickFigureGun1
-  m_TagString: Untagged
+  m_TagString: gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7334,6 +7377,60 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1715894649}
+--- !u!1 &1727968263
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1727968265}
+  - 212: {fileID: 1727968264}
+  m_Layer: 0
+  m_Name: New Sprite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &1727968264
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1727968263}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+--- !u!4 &1727968265
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1727968263}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.73980951, y: -1.87371552, z: -3.296875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
 --- !u!1 &1730365310
 GameObject:
   m_ObjectHideFlags: 0
@@ -7741,6 +7838,10 @@ CanvasRenderer:
 GameObject:
   m_PrefabParentObject: {fileID: 196818, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
   m_PrefabInternal: {fileID: 1289057442}
+--- !u!4 &1794590142
+Transform:
+  m_PrefabParentObject: {fileID: 464760, guid: b1ed11152ab6e5444a96c39e1333035e, type: 2}
+  m_PrefabInternal: {fileID: 1289057442}
 --- !u!114 &1794590143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7752,6 +7853,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b668648c95cc6c2408f13e898e3381c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  torsoOptions:
+  - {fileID: 21300000, guid: b71e34034e214d54eb673b6431a69628, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  legsOptions:
+  - {fileID: 21300000, guid: c7fe918e91a194744be50903360e235a, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  hatsOptions:
+  - {fileID: 21300000, guid: b771f93edee681f4f950890b9e209eb4, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  gunsOptions:
+  - {fileID: 21300000, guid: 2e540c08f5171a947a61216b54191ca4, type: 3}
+  - {fileID: 21300000, guid: f3e569bd27c110e489699971d476b86a, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!111 &1794590144
 Animation:
   m_ObjectHideFlags: 0
@@ -8598,7 +8719,7 @@ GameObject:
   - 212: {fileID: 2016654102}
   m_Layer: 0
   m_Name: duelStickFigureBasichat
-  m_TagString: Untagged
+  m_TagString: hat
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
