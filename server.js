@@ -184,7 +184,6 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                             break;
                     }
                     io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
-                    updateStreaks(game);
                     removeGame(game);
                 }
             }
@@ -192,6 +191,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
             function removeGame(game)//Remove games when no longer needed
             {
                 if (game.player1.currentGame !== null || (game.player2 !== null && game.player2.currentGame !== null)) {
+                    updateStreaks(game);
                     console.log("match made game has ended. Should be deleting game");
                     io.to(games[playerCode].channel).emit('disconnectFromRoom', {channel: games[playerCode].channel});
                     players[playerCode].currentGame = null;
@@ -489,7 +489,6 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                         games[playerCode].player1state = 3;
                         games[playerCode].player2state = 1;
                         io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
-                        updateStreaks(game);
                         if (jamTimer !== undefined)
                             clearTimeout(jamTimer);
                     }
@@ -569,7 +568,6 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                                 }
                                 games[playerCode].inputWindow = false;
                                 io.to(games[playerCode].channel).emit('gameUpdate', getCurrentState());
-                                updateStreaks(games[playerCode]);
                                 removeGame(games[playerCode]);
                             }
                         }, delay);
