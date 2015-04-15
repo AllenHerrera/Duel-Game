@@ -45,11 +45,15 @@ public class postGamePanel : menuPanel
         {
             OutcomeTitle.text = "You Won!";
             OutcomeText.text = "You're the best! :)";
+			PlayerPrefs.SetInt("wins",(PlayerPrefs.GetInt("wins") + 1));
+			PlayerPrefs.SetInt("gold",(PlayerPrefs.GetInt("gold") + 2));
         }
         else
         {
             OutcomeTitle.text = "You Lost!";
             OutcomeText.text = "You're the worst! :(";
+			PlayerPrefs.SetInt("losses",(PlayerPrefs.GetInt("losses") + 1));
+			PlayerPrefs.SetInt("gold",(PlayerPrefs.GetInt("gold") + 1));
         }
         base.TransitionIn();
     }
