@@ -29,10 +29,15 @@ public class socketController : MonoBehaviour
     public bool inMatchmaking { get; private set; }
     public string distractionMessage { get; private set; }
     public bool vsAi { get; private set; }
+    public int playerPing { get; private set; }
+    private int drawTime;
+    private bool pingWarning = false;
+    public JSONObject leaderboard { get; private set; }
     void Start()
     {
         //set socket reference
         socket = FindObjectOfType<SocketIOComponent>();
+        socket.url="ws://52.0.195.188:3001/socket.io/?EIO=4&transport=websocket";
         //Register UI and other event listeners
         socket.On("playerCodeCreated", receiveCode);
         socket.On("connectionError", receiveError);
@@ -48,6 +53,9 @@ public class socketController : MonoBehaviour
         socket.On("endDraw", endDraw);
         socket.On("gameUpdate", gameUpdate);
         socket.On("suggestAIMatch", suggestAIMatch);
+        socket.On("ping", ping);
+        socket.On("pingResult", pingResult);
+        socket.On("sendLeaderboard", receiveLeaderboard);
         StartCoroutine(requestCode());
     }
     private IEnumerator requestCode()
@@ -67,6 +75,30 @@ public class socketController : MonoBehaviour
         playerCode = string.Format("{0}", e.data["code"]).Substring(1, 4);
         uiController.instance.ShowPanel(uiController.instance.OnFirstLoadPanel);
     }
+    private void ping(SocketIOEvent e)
+    {
+        socket.Emit("clientPing");
+
+       // StartCoroutine(pingtest());
+    }
+
+    private IEnumerator pingtest()//TEST PURPOSES
+    {
+        yield return new WaitForSeconds(1);
+        socket.Emit("clientPing");
+    }
+    private void receiveLeaderboard(SocketIOEvent e)
+    {
+        string data = string.Format("{0}", e.data["leaderboard"]);
+        JSONObject lb = new JSONObject(data);
+        leaderboard = lb;
+        uiController.instance.ShowPanel(uiController.instance.LeaderboardPanel);
+    }
+    private void pingResult(SocketIOEvent e)
+    {
+       playerPing= int.Parse(string.Format("{0}", e.data["ping"]));
+       uiController.instance.Ping = ""+playerPing;
+    }
     private void receiveError(SocketIOEvent e)
     {
         errorMessage = string.Format("{0}",e.data["message"]).Substring(1, string.Format("{0}",e.data["message"]).Length-2);
@@ -74,7 +106,7 @@ public class socketController : MonoBehaviour
     }
     private void playerDisconnect(SocketIOEvent e)
     {
-        Debug.Log("Player disconnected!");
+        errorMessage = "Your opponent has disconnected from the match.";
         uiController.instance.ShowPanel(uiController.instance.FailPanel);
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["channel"] = string.Format("{0}", e.data["channel"]).Substring(1, 4);
@@ -124,6 +156,7 @@ public class socketController : MonoBehaviour
     private void draw(SocketIOEvent e)
     {
         distractionMessage = null;
+        drawTime = GetTimestamp();
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
         if (vsAi)
             gameController.instance.promptAI(true);
@@ -181,7 +214,11 @@ public class socketController : MonoBehaviour
     //recieve inputs from UI/Gamecontroller and send them to server
     public void processInput()
     {
-        socket.Emit("processInput");
+        var delta = GetTimestamp() - drawTime;
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        Debug.Log("delta was "  + delta);
+        data["delta"] = delta.ToString();
+        socket.Emit("processInput", new JSONObject(data));
     }
     public void processAIInput()
     {
@@ -220,6 +257,12 @@ public class socketController : MonoBehaviour
     }
     public void challenge(string s)
     {
+        if (playerPing >= 500 && !pingWarning)
+        {
+            uiController.instance.ShowPanel(uiController.instance.PingPanel);
+            pingWarning = true;
+            return;
+        }
         challengedCode = s;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["code"] = s;
@@ -248,15 +291,36 @@ public class socketController : MonoBehaviour
             gameController.instance.resetGameState();
         }
         uiController.instance.ShowPanel(uiController.instance.MainPanel);
-
     }
-
     public void findMatch()
     {
+        if (playerPing >= 500 && !pingWarning)
+        {
+            uiController.instance.ShowPanel(uiController.instance.PingPanel);
+            pingWarning = true;
+            return;
+        }
+        var name = PlayerPrefs.GetString("playerProfile");
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["name"] = name;
         inMatchmaking = true;
-        socket.Emit("findMatch");
+        socket.Emit("findMatch", new JSONObject(data));
         uiController.instance.ShowPanel(uiController.instance.ChallengingPanel);
     }
+
+    public void requestLeaderboard()
+    {
+        socket.Emit("requestLeaderboard");
+    }
+    #endregion
+    #region utility
+    public static int GetTimestamp()
+    {
+        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+        int ts = (int)t.TotalMilliseconds;
+        return ts;
+    }
+
     #endregion
 }
 

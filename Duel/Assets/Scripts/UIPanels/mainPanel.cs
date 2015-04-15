@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Net.Sockets;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -62,8 +63,8 @@ public class mainPanel : menuPanel {
                 socketController.instance.findMatch();
                 break;
             case ButtonAction.leaderboard:
-                throw new System.NotImplementedException();
-          
+                socketController.instance.requestLeaderboard();
+                break;
 			case ButtonAction.options:
 		    {		
 				Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));

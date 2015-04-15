@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -30,11 +31,28 @@ public class uiController : MonoBehaviour
 	public OptionsPanel OptionsPanel { get; private set; }
 	public ChangeNamePanel ChangeNamePanel { get; private set; }
     public aiPanel AIPanel { get; private set; }
+    public pingPanel PingPanel { get; private set; }
+    public leaderboardPanel LeaderboardPanel { get; private set; }
 	public Text Title { get; private set; }
+    private Text PingText;
+
+    public string Ping
+    {
+        get { return Ping; }
+        set { PingText.text = " Ping: "+value+"ms";
+            if (int.Parse(value) > 200)
+                PingText.color = Color.red;
+            else
+            {
+                PingText.color = Color.green;
+            }
+        }
+    }
 
     private menuPanel currentPanel;
     private void Start()
     {
+        PingText = GameObject.Find("PingReadout").GetComponent<Text>();
         Title = GameObject.Find("Title").GetComponent<Text>();
         MainPanel = FindObjectOfType<mainPanel>();
         ChallengingPanel = FindObjectOfType<challengingPanel>();
@@ -47,6 +65,8 @@ public class uiController : MonoBehaviour
 		OptionsPanel = FindObjectOfType<OptionsPanel> ();
 		ChangeNamePanel = FindObjectOfType<ChangeNamePanel> ();
         AIPanel = FindObjectOfType<aiPanel>();
+        PingPanel = FindObjectOfType<pingPanel>();
+        LeaderboardPanel = FindObjectOfType<leaderboardPanel>();
         //set pregame, ingameUi & draw panels to inactive so it doesn't block other touch events
         PreGamePanel.gameObject.SetActive(false);
         DrawPanel.gameObject.SetActive(false);

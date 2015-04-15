@@ -15,6 +15,9 @@ public class OptionsPanel : menuPanel {
 	
 	public bool soundmute;
 	public bool updateScrollBar = false;
+	public bool updateCharacterBar = false;
+	public float CharacterPreviousValue = 1;
+	public int count2 = 0;
 	public bool PreviousScrollerState = false;
 	public float PreviousValue = 1;
 	public int count = 0;
@@ -37,16 +40,16 @@ public class OptionsPanel : menuPanel {
 	
 	// Use this for initialization
 	void Start () {
-		
-		Debug.Log("savedVolume: " + PlayerPrefs.GetFloat("savedVolume"));
-		Debug.Log("savedSound: " + PlayerPrefs.GetFloat("savedSound"));
+
+		//Debug.Log("savedVolume: " + PlayerPrefs.GetFloat("savedVolume"));
+		//Debug.Log("savedSound: " + PlayerPrefs.GetFloat("savedSound"));
 		Debug.Log("savedCharacter: " + PlayerPrefs.GetFloat("savedCharacter"));
-		Debug.Log("savedMusic: " + PlayerPrefs.GetFloat("savedMusic"));
-		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-		Debug.Log ("gold is: " + PlayerPrefs.GetInt ("gold"));
-		Debug.Log ("wins is: " + PlayerPrefs.GetInt ("wins"));
-		Debug.Log ("losses is: " + PlayerPrefs.GetInt ("losses"));
-		Debug.Log ("firstloadvalue : " + PlayerPrefs.GetInt ("firstLoad"));
+		//Debug.Log("savedMusic: " + PlayerPrefs.GetFloat("savedMusic"));
+		//Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
+		//Debug.Log ("gold is: " + PlayerPrefs.GetInt ("gold"));
+		//Debug.Log ("wins is: " + PlayerPrefs.GetInt ("wins"));
+		//Debug.Log ("losses is: " + PlayerPrefs.GetInt ("losses"));
+		//Debug.Log ("firstloadvalue : " + PlayerPrefs.GetInt ("firstLoad"));
 
 
 		goldText =GameObject.Find("GoldNumber").GetComponent<Text>();
@@ -85,7 +88,7 @@ public class OptionsPanel : menuPanel {
 	public void loadSavedPlayerPrefs ()
 	{
 		CheckNullPlayerPrefs ();
-
+		GameObject.Find("ProfileMenuPlayerName").GetComponent<Text>().text =PlayerPrefs.GetString ("playerProfile");
 		//get saved music
 		music= PlayerPrefs.GetFloat("savedMusic");
 		if (music == null) 
@@ -114,11 +117,12 @@ public class OptionsPanel : menuPanel {
 		
 		//get saved character
 		characterIndex = PlayerPrefs.GetFloat("savedCharacter");
-		if (characterIndex == 0) 
+		if (characterIndex == null) 
 		{
 			characterIndex = 1;
 		}
 		characterSlider.value = characterIndex;
+		CharacterPreviousValue = PlayerPrefs.GetFloat("savedCharacter");
 		
 	}
 	public void CheckNullPlayerPrefs()
@@ -194,12 +198,24 @@ public class OptionsPanel : menuPanel {
 	
 	public void UpdateSprite ()
 <<<<<<< HEAD
+<<<<<<< HEAD
 	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
 =======
 	{	GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 >>>>>>> 3a952870e609bc274317b0663de1e44a666c6d2f
+=======
+	{	
+		if (updateCharacterBar == false) {
+		
+			count2 = 12;
+		}
+		updateCharacterBar = true;
+
+>>>>>>> 58ffc1d475e33cc33bd8850f60cd66461d555569
 		
 		characterIndex = characterSlider.value;
+	
+
 		currentSprite = characterSprites [(int)characterIndex];
 		GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer> ().sprite = currentSprite;
 		
@@ -217,7 +233,7 @@ public class OptionsPanel : menuPanel {
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
-			Debug.Log ("Playername going into main is: " + PlayerPrefs.GetString ("playerProfile"));
+
 			// transition to mainpanel
 			
 			uiController.instance.ShowPanel (uiController.instance.MainPanel);
@@ -234,11 +250,7 @@ public class OptionsPanel : menuPanel {
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
 			//transition to changenamePanel
-			Debug.Log ("Playername going into changename: " + PlayerPrefs.GetString ("playerProfile"));
-			Debug.Log("savedVolume: " +PlayerPrefs.GetFloat("savedVolume"));
-			Debug.Log("savedSound: " +PlayerPrefs.GetFloat("savedSound"));
-			Debug.Log("savedcharacter: " +PlayerPrefs.GetFloat("savedCharacter"));
-			Debug.Log("savedMusic: " +PlayerPrefs.GetFloat("savedMusic"));
+
 			
 			uiController.instance.ShowPanel (uiController.instance.ChangeNamePanel);
 			
@@ -266,7 +278,8 @@ public class OptionsPanel : menuPanel {
 		}
 		
 	}
-	
+	//add a buy button that changes a value from player prefs
+	// have scroll bar scroll away if invalid skin
 	public void returnToMain()
 	{
 		ProcessButtonPress(ButtonAction.returnToMain);
@@ -277,14 +290,45 @@ public class OptionsPanel : menuPanel {
 		ProcessButtonPress(ButtonAction.options);
 	}
 	void Update()
-	{ 
-		
+	{ 	
+		//move characterscrollbar      still need to check that prev isnt the same so you dont double beep
+		if (count2 > 0) {
+
+			if (characterSlider.value % 1 < 0.5)
+				characterSlider.value = characterSlider.value - ((characterSlider.value % 1)/12);
+			else
+				characterSlider.value = characterSlider.value + (( 1-(characterSlider.value%1))/12);
+
+			count2--;
+			if (count2 == 0)
+				if (characterSlider.value%1 < 0.5) {
+
+				characterSlider.value = (int)characterSlider.value;
+			
+				updateCharacterBar = false;
+				if(characterSlider.value != CharacterPreviousValue){
+				GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+					CharacterPreviousValue = characterSlider.value;
+				}
+			}
+				else 
+			{
+				characterSlider.value= (int)characterSlider.value+1;
+				updateCharacterBar = false;
+				if(characterSlider.value != CharacterPreviousValue){
+					GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+					CharacterPreviousValue = characterSlider.value;
+				}
+			}
+		}
+
+		//movemute scrollbar
 		if (count > 0) {
 			if (soundScrollbar.value > 0.5) {
 				
-				soundScrollbar.value = (soundScrollbar.value + ((1 - soundScrollbar.value) / 12));
+				soundScrollbar.value = (soundScrollbar.value + ((1 - soundScrollbar.value) / 15));
 			} else {
-				soundScrollbar.value = soundScrollbar.value - (soundScrollbar.value) / 12;
+				soundScrollbar.value = soundScrollbar.value - (soundScrollbar.value) / 15;
 				
 			}
 			if(CheckIfChange(updateScrollBar,soundScrollbar.value)==true)
@@ -307,7 +351,7 @@ public class OptionsPanel : menuPanel {
 	{	
 		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 
-		uiController.instance.MainPanel.PlayerNameText.gameObject.SetActive (true);
+		uiController.instance.MainPanel.PlayerNameText.gameObject.SetActive (false);
 
 		uiController.instance.MainPanel.playerName = PlayerPrefs.GetString ("playerProfile");
 

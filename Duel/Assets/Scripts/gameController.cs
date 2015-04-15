@@ -29,6 +29,7 @@ public class gameController : MonoBehaviour
     public animationController Player;
     //container of player and opponent sprites and animations
     private playerState _playerState, opponentState;
+
     void Start()
     {
         player1.sprite = cowboySprites[0];

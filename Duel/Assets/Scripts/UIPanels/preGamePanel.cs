@@ -25,6 +25,7 @@ public class preGamePanel : menuPanel {
     public override void TransitionIn()
     {
         uiController.instance.HideTitle();
+        title.DOFade(1, 1);
         panelTransform.gameObject.SetActive(true);
         panel.DOFade(1, transitionDuration).SetEase(Ease.InOutSine);
     }
@@ -40,7 +41,7 @@ public class preGamePanel : menuPanel {
     private IEnumerator DisplayCountdown()
     {
         inputController.instance.DisableInput();
-        title.DOFade(0, 2);
+        title.DOFade(0, 5);
         string[] message = new string[4]{"3","2","1","Begin!"};
         for(int i = 0; i< message.Length; i++){
             beginText.text = message[i];
