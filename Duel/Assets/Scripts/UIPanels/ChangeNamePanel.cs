@@ -39,8 +39,10 @@ protected override void ProcessButtonPress(ButtonAction btn)
 			if (playerName != null && playerName != "" && playerName != "Invalid Name")
 		{
 			PlayerPrefs.SetString ("playerProfile", playerName);
-
+				GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 				uiController.instance.MainPanel.playerName = PlayerPrefs.GetString ("playerProfile");//does this work?
+
+				GameObject.Find("ProfileMenuPlayerName").GetComponent<Text>().text =PlayerPrefs.GetString ("playerProfile");
 			// transition back to optionpanel
 				GameObject.Find ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
 				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
@@ -50,6 +52,7 @@ protected override void ProcessButtonPress(ButtonAction btn)
 				GameObject.Find("EnterNewNameField").GetComponent<InputField>().text = "Invalid Name";
 		break;
 	case ButtonAction.quit:
+			GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 			GameObject.Find ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
 			GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 			// transition back to optionpanel without saving
