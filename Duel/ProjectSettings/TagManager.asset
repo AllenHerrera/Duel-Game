@@ -3,20 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - CurrentSprite
-  - PlayerName
-  - CharacterSlider
-  - BackgroundMusic
-  - OptionBtnSound
-<<<<<<< HEAD
-  - shirt
-  - hat
-  - legs
-  - gun
-=======
-  - NewNamePlaceHolder
->>>>>>> origin/master
+  tags: []
   layers:
   - Default
   - TransparentFX

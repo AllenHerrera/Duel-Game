@@ -8,7 +8,17 @@ public class mainPanel : menuPanel {
     private InputField challengeCodeField;
 	public GameObject Skeleton;
 	public Text PlayerNameText;
+	//private Text PlayerNameText = GameObject.Find ("PlayerNameText");
+	public string playerName{ 
+		get{ 
+			return PlayerNameText.text;
+		}
+		set{
+			PlayerNameText.text = value;
+		} 
+	}
     private string _challengeCode = "";
+	private SpriteRenderer currentSprite; // still needs to change to animated version
     public string challengeCode
     {
         get
@@ -23,11 +33,18 @@ public class mainPanel : menuPanel {
     }
     protected override void Start()
     {
+
+
         base.Start();
-		PlayerNameText.text = PlayerPrefs.GetString ("playerProfile");
+		PlayerNameText = GameObject.Find ("PlayerNameText").GetComponent<Text>();
+	
+		playerName = PlayerPrefs.GetString ("playerProfile");
+		
 		//Skeleton = GameObject.Find ("Skeleton");
         playerCode = GameObject.Find("PlayerCode").GetComponent<Text>();
         challengeCodeField = GameObject.Find("ChallengeCodeField").GetComponent<InputField>();
+		currentSprite = GameObject.Find ("CurrentSprite").GetComponent<SpriteRenderer> ();
+
     }
     protected override void ProcessButtonPress(ButtonAction btn)
     {
@@ -49,10 +66,10 @@ public class mainPanel : menuPanel {
           
 			case ButtonAction.options:
 		    {		
-				Skeleton.SetActive(false);
 				Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-				GameObject.FindGameObjectWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
-				GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
+
+				currentSprite.enabled=true;
+				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 				uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
 				break;
 			}
@@ -70,7 +87,8 @@ public class mainPanel : menuPanel {
         base.TransitionIn();
     }
     public override void TransitionOut()
-    {
+    {	
+		PlayerNameText.gameObject.SetActive (false);
         base.TransitionOut();
     }
     public void Challenge()
