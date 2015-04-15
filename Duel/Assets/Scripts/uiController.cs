@@ -30,6 +30,7 @@ public class uiController : MonoBehaviour
 	public OptionsPanel OptionsPanel { get; private set; }
 	public ChangeNamePanel ChangeNamePanel { get; private set; }
     public aiPanel AIPanel { get; private set; }
+    public pingPanel PingPanel { get; private set; }
 	public Text Title { get; private set; }
 
     private menuPanel currentPanel;
@@ -47,6 +48,7 @@ public class uiController : MonoBehaviour
 		OptionsPanel = FindObjectOfType<OptionsPanel> ();
 		ChangeNamePanel = FindObjectOfType<ChangeNamePanel> ();
         AIPanel = FindObjectOfType<aiPanel>();
+        PingPanel = FindObjectOfType<pingPanel>();
         //set pregame, ingameUi & draw panels to inactive so it doesn't block other touch events
         PreGamePanel.gameObject.SetActive(false);
         DrawPanel.gameObject.SetActive(false);
