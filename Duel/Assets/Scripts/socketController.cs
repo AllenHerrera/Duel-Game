@@ -101,11 +101,13 @@ public class socketController : MonoBehaviour
     }
     private void receiveError(SocketIOEvent e)
     {
+        inputController.instance.DisableInput();
         errorMessage = string.Format("{0}",e.data["message"]).Substring(1, string.Format("{0}",e.data["message"]).Length-2);
         uiController.instance.ShowPanel(uiController.instance.FailPanel);
     }
     private void playerDisconnect(SocketIOEvent e)
     {
+        inputController.instance.DisableInput();
         errorMessage = "Your opponent has disconnected from the match.";
         uiController.instance.ShowPanel(uiController.instance.FailPanel);
         Dictionary<string, string> data = new Dictionary<string, string>();
