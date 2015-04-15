@@ -165,7 +165,7 @@ public class OptionsPanel : menuPanel {
 		GameObject.FindGameObjectWithTag ("BackgroundMusic").GetComponent<AudioSource> ().mute = soundmute;
 	}
 	public void UpdateMusic()
-	{	GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
 		
 		music = musicSlider.value;
 		currentAudioClip = audioClips [(int)music];
@@ -176,7 +176,7 @@ public class OptionsPanel : menuPanel {
 	}
 	
 	public void UpdateSprite ()
-	{	GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
 		
 		characterIndex = characterSlider.value;
 		currentSprite = characterSprites [(int)characterIndex];

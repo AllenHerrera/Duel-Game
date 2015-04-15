@@ -40,15 +40,18 @@ public class animationController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if(Input.GetKey("1")){
+			setHat (1);
+		}
 	
 		}
 
 
 private void Start(){
-		torso = GameObject.FindGameObjectWithTag ("shirt").GetComponent<SpriteRenderer>();
-		hat = GameObject.FindGameObjectWithTag ("hat").GetComponent<SpriteRenderer>();
-		legs = GameObject.FindGameObjectWithTag ("legs").GetComponent<SpriteRenderer>();
-		gun = GameObject.FindGameObjectWithTag ("gun").GetComponent<SpriteRenderer>();
+		torso = GameObject.Find("shirt").GetComponent<SpriteRenderer>();
+		hat = GameObject.Find("hat").GetComponent<SpriteRenderer>();
+		legs = GameObject.Find("legs").GetComponent<SpriteRenderer>();
+		gun = GameObject.Find("gun").GetComponent<SpriteRenderer>();
 	}
 public void setHat(int option){
 		hat.sprite = hatsOptions [option];
