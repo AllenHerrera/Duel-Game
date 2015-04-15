@@ -1877,6 +1877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Skeleton: {fileID: 970836523}
+  PlayerNameText: {fileID: 0}
 --- !u!1 &462151626
 GameObject:
   m_ObjectHideFlags: 0
@@ -7013,10 +7014,13 @@ MonoBehaviour:
   PreviousScrollerState: 0
   PreviousValue: 1
   count: 0
-  playerName: 
-  PlayerName: {fileID: 2029048211}
   volumeText: {fileID: 1378374552}
   soundText: {fileID: 1657001282}
+  goldText: {fileID: 0}
+  ratingText: {fileID: 0}
+  winsText: {fileID: 0}
+  lossesText: {fileID: 0}
+  winRatioText: {fileID: 0}
   characterSprites: []
   currentSprite: {fileID: 0}
   audioClips: []
@@ -8395,6 +8399,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b668648c95cc6c2408f13e898e3381c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  torsoOptions:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  legsOptions:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  hatsOptions:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  gunsOptions:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!111 &1794590144
 Animation:
   m_ObjectHideFlags: 0

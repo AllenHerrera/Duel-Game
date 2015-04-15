@@ -618,7 +618,18 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                     socket.emit('pingResult', {ping: players[playerCode].ping});
                 }
             });
+            socket.on('requestLeaderboard', function(){
+                console.log('requested leaderboard!');
+                var options = {
+                    "limit": 25,
+                    "sort": ['streak','desc']
+                };
+                db.collection('players').find({}, options).toArray(function(err, docs){
+                    if(err) throw err;
+                    console.log(docs);
+                    socket.emit('sendLeaderboard', {leaderboard:docs});
+                });
+            });
         }
-    )
-    ;
+    );
 });
