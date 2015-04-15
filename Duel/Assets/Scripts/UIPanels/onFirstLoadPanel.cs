@@ -40,7 +40,7 @@ public class onFirstLoadPanel : menuPanel {
 				// transition to mainpanel
 
 				uiController.instance.ShowPanel(uiController.instance.MainPanel);
-				uiController.instance.MainPanel.PlayerNameText.text = PlayerPrefs.GetString ("playerProfile");
+				uiController.instance.MainPanel.playerName = PlayerPrefs.GetString ("playerProfile");
 			}
 			break;
 		}

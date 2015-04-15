@@ -19,8 +19,7 @@ public class OptionsPanel : menuPanel {
 	public float PreviousValue = 1;
 	public int count = 0;
 	
-	public string playerName;
-	public Text PlayerName;
+
 	public Text volumeText;
 	public Text soundText;
 
@@ -49,11 +48,26 @@ public class OptionsPanel : menuPanel {
 		Debug.Log ("losses is: " + PlayerPrefs.GetInt ("losses"));
 		Debug.Log ("firstloadvalue : " + PlayerPrefs.GetInt ("firstLoad"));
 
-		GameObject.FindWithTag("PlayerName").GetComponent<Text>().text = PlayerPrefs.GetString("playerProfile");
+
+		goldText =GameObject.Find("GoldNumber").GetComponent<Text>();
+		ratingText =GameObject.Find("RatingNumber").GetComponent<Text>();
+		winsText =GameObject.Find("WinsNumber").GetComponent<Text>();
+		lossesText =GameObject.Find("LossesNumber").GetComponent<Text>();
+		winRatioText =GameObject.Find("WinRateNumber").GetComponent<Text>();
+
+		volumeText =GameObject.Find("VolumeTextLabel").GetComponent<Text>();
+		soundText =GameObject.Find("SoundTextLabel").GetComponent<Text>();
+
+		characterSlider =GameObject.Find("CharacterSlider").GetComponent<Slider>();
+		musicSlider =GameObject.Find("MusicSlider").GetComponent<Slider>();
+		volumeSlider =GameObject.Find("VolumeSlider").GetComponent<Slider>();
+		soundScrollbar =GameObject.Find("SoundScrollbar").GetComponent<Scrollbar>();
+
+
 		setDynamicSliders ();
 		
 		base.Start();
-		
+
 		loadSavedPlayerPrefs ();
 		_UpdateALL ();
 	}
@@ -72,7 +86,6 @@ public class OptionsPanel : menuPanel {
 	{
 		CheckNullPlayerPrefs ();
 
-		playerName = PlayerPrefs.GetString ("playerProfile");
 		//get saved music
 		music= PlayerPrefs.GetFloat("savedMusic");
 		if (music == null) 
@@ -140,7 +153,7 @@ public class OptionsPanel : menuPanel {
 		
 		volume = volumeSlider.value;
 		volumeText.text = " Volume: " +volumeSlider.value.ToString ();
-		GameObject.FindGameObjectWithTag ("BackgroundMusic").GetComponent<AudioSource> ().volume = (volume / 100);
+		GameObject.Find ("BG").GetComponent<AudioSource> ().volume = (volume / 100);
 	}
 	
 	public void UpdateSound()
@@ -162,25 +175,33 @@ public class OptionsPanel : menuPanel {
 			
 		}
 		
-		GameObject.FindGameObjectWithTag ("BackgroundMusic").GetComponent<AudioSource> ().mute = soundmute;
+		GameObject.Find ("BG").GetComponent<AudioSource> ().mute = soundmute;
 	}
 	public void UpdateMusic()
+<<<<<<< HEAD
 	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+=======
+	{	GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+>>>>>>> 3a952870e609bc274317b0663de1e44a666c6d2f
 		
 		music = musicSlider.value;
 		currentAudioClip = audioClips [(int)music];
-		GameObject gameObject = GameObject.FindGameObjectWithTag ("BackgroundMusic");
+		GameObject gameObject = GameObject.Find ("BG");
 		gameObject.GetComponent<AudioSource> ().clip = currentAudioClip;
 		gameObject.GetComponent<AudioSource> ().Play();
 		
 	}
 	
 	public void UpdateSprite ()
+<<<<<<< HEAD
 	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+=======
+	{	GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+>>>>>>> 3a952870e609bc274317b0663de1e44a666c6d2f
 		
 		characterIndex = characterSlider.value;
 		currentSprite = characterSprites [(int)characterIndex];
-		GameObject.FindWithTag ("CurrentSprite").GetComponent<SpriteRenderer> ().sprite = currentSprite;
+		GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer> ().sprite = currentSprite;
 		
 	}
 	
@@ -189,10 +210,10 @@ public class OptionsPanel : menuPanel {
 		switch (btn) {
 		case ButtonAction.returnToMain:
 		{
-			GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+			GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 			
-			GameObject.FindWithTag("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = false;
-			GameObject.FindGameObjectWithTag ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
+			GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = false;
+			GameObject.Find("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
@@ -206,7 +227,7 @@ public class OptionsPanel : menuPanel {
 			break;
 		case ButtonAction.options:
 		{
-			GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+			GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 			
 		
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
@@ -267,7 +288,7 @@ public class OptionsPanel : menuPanel {
 				
 			}
 			if(CheckIfChange(updateScrollBar,soundScrollbar.value)==true)
-				GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
+				GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 			count --;
 			if (count == 0)
 			{
@@ -284,6 +305,12 @@ public class OptionsPanel : menuPanel {
 
 	public override void TransitionIn()
 	{	
+		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
+
+		uiController.instance.MainPanel.PlayerNameText.gameObject.SetActive (true);
+
+		uiController.instance.MainPanel.playerName = PlayerPrefs.GetString ("playerProfile");
+
 		goldText.text = PlayerPrefs.GetInt ("gold").ToString();
 		//ratingText.text = "N/A";
 		ratingText.text = PlayerPrefs.GetInt ("rating").ToString();
