@@ -35,6 +35,8 @@ public class CameraController : MonoBehaviour
     }
     public void TransitionToMenu()
     {
+        if (cameraTransform.position == originalPosition)
+            return;
         uiController.instance.ShowTitle();
         cameraTransform.DOMove(originalPosition, transitionTime).SetEase(Ease.InOutSine);
         DOTween.To(x => mainCamera.orthographicSize = x, activeZoom, originalZoom, transitionTime).SetEase(Ease.InOutSine);

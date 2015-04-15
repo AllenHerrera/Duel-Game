@@ -32,6 +32,7 @@ public class socketController : MonoBehaviour
     public int playerPing { get; private set; }
     private int drawTime;
     private bool pingWarning = false;
+    public JSONObject leaderboard { get; private set; }
     void Start()
     {
         //set socket reference
@@ -77,21 +78,26 @@ public class socketController : MonoBehaviour
     private void ping(SocketIOEvent e)
     {
         socket.Emit("clientPing");
+
+       // StartCoroutine(pingtest());
+    }
+
+    private IEnumerator pingtest()//TEST PURPOSES
+    {
+        yield return new WaitForSeconds(1);
+        socket.Emit("clientPing");
     }
     private void receiveLeaderboard(SocketIOEvent e)
     {
         string data = string.Format("{0}", e.data["leaderboard"]);
-        JSONObject leaderboard = new JSONObject(data);
-        Debug.Log((leaderboard[0]));
+        JSONObject lb = new JSONObject(data);
+        leaderboard = lb;
+        uiController.instance.ShowPanel(uiController.instance.LeaderboardPanel);
     }
     private void pingResult(SocketIOEvent e)
     {
        playerPing= int.Parse(string.Format("{0}", e.data["ping"]));
-        if (playerPing > 500 && !pingWarning)
-        {
-            uiController.instance.ShowPanel(uiController.instance.PingPanel);
-            pingWarning = true;
-        }
+       uiController.instance.Ping = ""+playerPing;
     }
     private void receiveError(SocketIOEvent e)
     {
@@ -251,6 +257,12 @@ public class socketController : MonoBehaviour
     }
     public void challenge(string s)
     {
+        if (playerPing >= 500 && !pingWarning)
+        {
+            uiController.instance.ShowPanel(uiController.instance.PingPanel);
+            pingWarning = true;
+            return;
+        }
         challengedCode = s;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["code"] = s;
@@ -282,6 +294,12 @@ public class socketController : MonoBehaviour
     }
     public void findMatch()
     {
+        if (playerPing >= 500 && !pingWarning)
+        {
+            uiController.instance.ShowPanel(uiController.instance.PingPanel);
+            pingWarning = true;
+            return;
+        }
         var name = PlayerPrefs.GetString("playerProfile");
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["name"] = name;
@@ -302,6 +320,7 @@ public class socketController : MonoBehaviour
         int ts = (int)t.TotalMilliseconds;
         return ts;
     }
+
     #endregion
 }
 

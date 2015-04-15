@@ -621,8 +621,8 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
             socket.on('requestLeaderboard', function(){
                 console.log('requested leaderboard!');
                 var options = {
-                    "limit": 25,
-                    "sort": ['streak','desc']
+                    "limit": 10,
+                    "sort": [['streak','desc']]
                 };
                 db.collection('players').find({}, options).toArray(function(err, docs){
                     if(err) throw err;
