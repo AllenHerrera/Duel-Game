@@ -7,7 +7,6 @@ using DG.Tweening;
 public class mainPanel : menuPanel {
     private Text playerCode;
     private InputField challengeCodeField;
-	public GameObject Skeleton;
 	public Text PlayerNameText;
 	//private Text PlayerNameText = GameObject.Find ("PlayerNameText");
 	public string playerName{ 
@@ -19,7 +18,6 @@ public class mainPanel : menuPanel {
 		} 
 	}
     private string _challengeCode = "";
-	private SpriteRenderer currentSprite; // still needs to change to animated version
     public string challengeCode
     {
         get
@@ -38,13 +36,9 @@ public class mainPanel : menuPanel {
 
         base.Start();
 		PlayerNameText = GameObject.Find ("PlayerNameText").GetComponent<Text>();
-	
 		playerName = PlayerPrefs.GetString ("playerProfile");
-		
-		//Skeleton = GameObject.Find ("Skeleton");
         playerCode = GameObject.Find("PlayerCode").GetComponent<Text>();
         challengeCodeField = GameObject.Find("ChallengeCodeField").GetComponent<InputField>();
-		currentSprite = GameObject.Find ("CurrentSprite").GetComponent<SpriteRenderer> ();
 
     }
     protected override void ProcessButtonPress(ButtonAction btn)
@@ -68,8 +62,6 @@ public class mainPanel : menuPanel {
 			case ButtonAction.options:
 		    {		
 				Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-
-				currentSprite.enabled=true;
 				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 				uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
 				break;
@@ -83,7 +75,6 @@ public class mainPanel : menuPanel {
     public override void TransitionIn()
     {	
 
-		Skeleton.SetActive(true);
         playerCode.text = socketController.instance.playerCode;
         base.TransitionIn();
     }

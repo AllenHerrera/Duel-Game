@@ -203,11 +203,6 @@ public class OptionsPanel : menuPanel {
             }
             updateCharacterBar = true;
             characterIndex = characterSlider.value;
-
-
-            currentSprite = characterSprites[(int)characterIndex];
-            GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer>().sprite = currentSprite;
-
         }
     }
 	

@@ -24,7 +24,8 @@ public class gameController : MonoBehaviour
     //To be replaced by resource.load
     public AudioClip[] sounds = new AudioClip[3];
     public Sprite[] cowboySprites = new Sprite[4];
-    public SpriteRenderer player1, player2;
+    private animationController player1, player2;
+    //public SpriteRenderer player1, player2;
     private AudioSource audio;
     public animationController Player;
     //container of player and opponent sprites and animations
@@ -32,8 +33,8 @@ public class gameController : MonoBehaviour
 
     void Start()
     {
-        player1.sprite = cowboySprites[0];
-        player2.sprite = cowboySprites[0];
+        player1 = GameObject.Find("Player1").GetComponent<animationController>();
+        player2 = GameObject.Find("Player2").GetComponent<animationController>();
         audio = GetComponent<AudioSource>();
         currentState = gameState.inactive;
     }
@@ -48,9 +49,17 @@ public class gameController : MonoBehaviour
     }
     private IEnumerator gameOver()
     {
+        if (wonGame)
+            player1.animationChoice(animationController.chooseAnimations.Shoot);
+        else
+            player2.animationChoice(animationController.chooseAnimations.Dead);
         audio.clip = sounds[0];
         audio.Play();
         yield return new WaitForSeconds(.5f);
+        if(wonGame)
+            player2.animationChoice(animationController.chooseAnimations.Dead);
+        else
+            player1.animationChoice(animationController.chooseAnimations.Dead);
         audio.clip = sounds[1];
         audio.Play();
         yield return new WaitForSeconds(2.5f);
@@ -79,11 +88,10 @@ public class gameController : MonoBehaviour
     public void beginGame()
     {
         currentState = gameState.active;
-        player1.sprite = cowboySprites[0];
-        player2.sprite = cowboySprites[0];
         _playerState = playerState.idle;
         opponentState = playerState.idle;
-        Player.animationChoice(animationController.chooseAnimations.Idle);
+        player1.reset();
+        player2.reset();
         CameraController.instance.TransitionToGame();
     }
     public void recieveGameState(int newState, int newPlayerState, int newOpponentState, bool won)
@@ -96,27 +104,36 @@ public class gameController : MonoBehaviour
         switch (_playerState)
         {
             case playerState.idle:
-                Player.animationChoice(animationController.chooseAnimations.Idle);
+                player1.animationChoice(animationController.chooseAnimations.Idle);
                 break;
             case playerState.firing:
-                Player.animationChoice(animationController.chooseAnimations.Shoot);
-                break;
-            case playerState.dead:
-                Player.animationChoice(animationController.chooseAnimations.Dead);
+                player1.animationChoice(animationController.chooseAnimations.Shoot);
                 break;
             case playerState.jammed:
-                Player.animationChoice(animationController.chooseAnimations.Jam);
+                player1.animationChoice(animationController.chooseAnimations.Jam);
                 break;
-
-
+        }
+        switch (opponentState)
+        {
+            case playerState.idle:
+                player2.animationChoice(animationController.chooseAnimations.Idle);
+                break;
+            case playerState.firing:
+                player2.animationChoice(animationController.chooseAnimations.Shoot);
+                break;
+            case playerState.dead:
+                player2.animationChoice(animationController.chooseAnimations.Dead);
+                break;
+            case playerState.jammed:
+                player2.animationChoice(animationController.chooseAnimations.Jam);
+                break;
         }
         if ((_playerState == playerState.jammed) || (opponentState == playerState.jammed) || wasJammed)
         {
             audio.clip = sounds[2];
             audio.Play();
         }
-        player1.sprite = cowboySprites[(int)_playerState];
-        player2.sprite = cowboySprites[(int)opponentState];
+
         if (currentState == gameState.over)
         {
             inputController.instance.DisableInput();
@@ -129,9 +146,9 @@ public class gameController : MonoBehaviour
     }
     public void resetGameState()
     {
+        player1.reset();
+        player2.reset();
         CameraController.instance.TransitionToMenu();
-        player1.sprite = cowboySprites[0];
-        player2.sprite = null;
         currentState = gameState.inactive;    
     }
     #endregion    
