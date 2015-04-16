@@ -4134,7 +4134,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e352cc4b61c5a874e82846c2890f7ba1, type: 3}
   - {fileID: 21300000, guid: 0363d6fdac399d2459423efe51fd5205, type: 3}
   - {fileID: 21300000, guid: 7930595409e52844cb7086d32cbfd873, type: 3}
-  Player: {fileID: 0}
 --- !u!114 &892249713
 MonoBehaviour:
   m_ObjectHideFlags: 0

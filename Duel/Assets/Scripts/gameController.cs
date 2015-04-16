@@ -27,7 +27,6 @@ public class gameController : MonoBehaviour
     private animationController player1, player2;
     //public SpriteRenderer player1, player2;
     private AudioSource audio;
-    public animationController Player;
     //container of player and opponent sprites and animations
     private playerState _playerState, opponentState;
 
@@ -35,6 +34,7 @@ public class gameController : MonoBehaviour
     {
         player1 = GameObject.Find("Player1").GetComponent<animationController>();
         player2 = GameObject.Find("Player2").GetComponent<animationController>();
+        player2.gameObject.SetActive(false);
         audio = GetComponent<AudioSource>();
         currentState = gameState.inactive;
     }
@@ -90,6 +90,7 @@ public class gameController : MonoBehaviour
         currentState = gameState.active;
         _playerState = playerState.idle;
         opponentState = playerState.idle;
+        player2.gameObject.SetActive(true);
         player1.reset();
         player2.reset();
         CameraController.instance.TransitionToGame();
