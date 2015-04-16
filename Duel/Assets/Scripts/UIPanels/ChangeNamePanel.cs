@@ -45,7 +45,7 @@ protected override void ProcessButtonPress(ButtonAction btn)
 				GameObject.Find("ProfileMenuPlayerName").GetComponent<Text>().text =PlayerPrefs.GetString ("playerProfile");
 			// transition back to optionpanel
 				GameObject.Find ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
-				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
+//				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 			uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
 		}
 		else
@@ -54,7 +54,7 @@ protected override void ProcessButtonPress(ButtonAction btn)
 	case ButtonAction.quit:
 			GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 			GameObject.Find ("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = true;
-			GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
+//			GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 			// transition back to optionpanel without saving
 			uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
 		

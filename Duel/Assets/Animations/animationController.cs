@@ -10,10 +10,10 @@ public class animationController : MonoBehaviour
     bool clicked = false;
     int hatSetting;
     private SpriteRenderer torso, legs, hat, gun;
-    public Sprite[] torsoOptions = new Sprite[4];
-    public Sprite[] legsOptions = new Sprite[4];
-    public Sprite[] hatsOptions = new Sprite[4];
-    public Sprite[] gunsOptions = new Sprite[4];
+    public Sprite[] torsoOptions;
+    public Sprite[] legsOptions;
+    public Sprite[] hatsOptions;
+    public Sprite[] gunsOptions;
 
     public enum chooseAnimations { Idle, Shoot, Dead, Jam };
 
@@ -49,6 +49,12 @@ public class animationController : MonoBehaviour
         hat = GameObject.Find("hat" + playerNumber).GetComponent<SpriteRenderer>();
         legs = GameObject.Find("legs" + playerNumber).GetComponent<SpriteRenderer>();
         gun = GameObject.Find("gun" + playerNumber).GetComponent<SpriteRenderer>();
+
+		torsoOptions = Resources.LoadAll<Sprite> ("Vests");
+		legsOptions = Resources.LoadAll<Sprite> ("Pants");
+		hatsOptions = Resources.LoadAll<Sprite> ("Hats");
+		gunsOptions = Resources.LoadAll<Sprite> ("Guns");
+
         torso.sprite = torsoOptions[0];
         hat.sprite = hatsOptions[0];
         legs.sprite = legsOptions[0];

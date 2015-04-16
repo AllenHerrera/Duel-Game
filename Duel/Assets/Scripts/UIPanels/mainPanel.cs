@@ -62,7 +62,7 @@ public class mainPanel : menuPanel {
 			case ButtonAction.options:
 		    {		
 				Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
+//				GameObject.Find ("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-645, -290), 0.5f, true);
 				uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
 				break;
 			}
