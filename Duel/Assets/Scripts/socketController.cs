@@ -107,6 +107,7 @@ public class socketController : MonoBehaviour
     }
     private void playerDisconnect(SocketIOEvent e)
     {
+        gameController.instance.StopAllCoroutines();
         inputController.instance.DisableInput();
         errorMessage = "Your opponent has disconnected from the match.";
         uiController.instance.ShowPanel(uiController.instance.FailPanel);

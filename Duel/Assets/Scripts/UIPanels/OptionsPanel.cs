@@ -182,11 +182,7 @@ public class OptionsPanel : menuPanel {
 		GameObject.Find ("BG").GetComponent<AudioSource> ().mute = soundmute;
 	}
 	public void UpdateMusic()
-<<<<<<< HEAD
-	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
-=======
 	{	GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
->>>>>>> 3a952870e609bc274317b0663de1e44a666c6d2f
 		
 		music = musicSlider.value;
 		currentAudioClip = audioClips [(int)music];
@@ -195,31 +191,25 @@ public class OptionsPanel : menuPanel {
 		gameObject.GetComponent<AudioSource> ().Play();
 		
 	}
-	
-	public void UpdateSprite ()
-<<<<<<< HEAD
-<<<<<<< HEAD
-	{	//GameObject.FindGameObjectWithTag("OptionBtnSound").GetComponent<AudioSource>().Play();
-=======
-	{	GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
->>>>>>> 3a952870e609bc274317b0663de1e44a666c6d2f
-=======
-	{	
-		if (updateCharacterBar == false) {
-		
-			count2 = 12;
-		}
-		updateCharacterBar = true;
 
->>>>>>> 58ffc1d475e33cc33bd8850f60cd66461d555569
-		
-		characterIndex = characterSlider.value;
-	
+    public void UpdateSprite()
+    {
+        GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+        {
+            if (updateCharacterBar == false)
+            {
 
-		currentSprite = characterSprites [(int)characterIndex];
-		GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer> ().sprite = currentSprite;
-		
-	}
+                count2 = 12;
+            }
+            updateCharacterBar = true;
+            characterIndex = characterSlider.value;
+
+
+            currentSprite = characterSprites[(int)characterIndex];
+            GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer>().sprite = currentSprite;
+
+        }
+    }
 	
 	protected override void ProcessButtonPress(ButtonAction btn)
 	{
