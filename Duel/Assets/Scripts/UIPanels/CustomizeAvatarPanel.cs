@@ -42,9 +42,20 @@ public class CustomizeAvatarPanel : menuPanel {
 			PlayerPrefs.SetInt ("Pants", 0);
 		CurrentPantsIndex = PlayerPrefs.GetInt ("Pants");
 
+
 		avatar = GameObject.Find("Player1").GetComponent<animationController>();
 		 
 		optionpanelsound = GameObject.Find ("OptionsPanel");
+		SetPlayerSprite ();
+	}
+
+	public void SetPlayerSprite()
+	{
+		avatar.setHat (CurrentHatIndex);
+		avatar.setShirt (CurrentVestIndex);
+		avatar.setGuns (CurrenGunIndex);
+		avatar.setLegs (CurrentPantsIndex);
+
 	}
 	protected override void ProcessButtonPress(ButtonAction btn)
 	{
