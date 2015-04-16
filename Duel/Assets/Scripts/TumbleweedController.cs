@@ -25,15 +25,15 @@ public class TumbleweedController : MonoBehaviour {
 
 		tw = Instantiate(tumbleweed, new Vector3(15, -2.5f, 0), Quaternion.identity) as GameObject;
         var rigid = tw.GetComponent<Rigidbody2D>();
-        rigid.velocity = new Vector2(-5, 1);
+        rigid.velocity = new Vector2(Random.Range(-3,-5), 1);
 
 	}
 	void FixedUpdate(){
-        
 		var rigid = tw.GetComponent<Rigidbody2D> ();
 		count = count + 1; 
 		if (tw.transform.position.x < -11) {
 			tw.transform.position = new Vector2 (15, -2.5f);
+            rigid.velocity = new Vector2(-5, 1);
 		}
 
 		if (count>40 &&count <80) {
