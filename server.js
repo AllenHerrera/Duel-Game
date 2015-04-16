@@ -67,7 +67,11 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                 console.log('beginning game');
                 var opponentAppearance={};
                 if(game.player2 === null){
-                    opponentAppearance={hat:'0',vest:'0',gun:'0',pants:'0'};
+                    var hat = Math.floor(Math.random()*4)+'';
+                    var vest = Math.floor(Math.random()*4)+'';
+                    var gun = Math.floor(Math.random()*4)+'';
+                    var pants = Math.floor(Math.random()*4)+'';
+                    opponentAppearance={hat:hat,vest:vest,gun:gun,pants:pants};
                 }
                 else
                     opponentAppearance=game.player2.appearance;
