@@ -151,6 +151,8 @@ public class socketController : MonoBehaviour
     private void beginGame(SocketIOEvent e)
     {
         isChallenger = (string.Format("{0}",e.data["player1"]).Substring(1,4)==playerCode);
+        //Set enemy outfit
+        //gameController.instance.player2.set
         uiController.instance.ShowPanel(uiController.instance.PreGamePanel);
         uiController.instance.PreGamePanel.CountDown();
         gameController.instance.beginGame();

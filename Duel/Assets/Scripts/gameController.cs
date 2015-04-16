@@ -24,7 +24,8 @@ public class gameController : MonoBehaviour
     //To be replaced by resource.load
     public AudioClip[] sounds = new AudioClip[3];
     public Sprite[] cowboySprites = new Sprite[4];
-    private animationController player1, player2;
+    public animationController player1 { get; private set; }
+    public animationController player2 { get; private set; }
     //public SpriteRenderer player1, player2;
     private AudioSource audio;
     //container of player and opponent sprites and animations
@@ -53,9 +54,9 @@ public class gameController : MonoBehaviour
             player1.animationChoice(animationController.chooseAnimations.Shoot);
         else
             player2.animationChoice(animationController.chooseAnimations.Shoot);
+        yield return new WaitForSeconds(.5f);
         audio.clip = sounds[0];
         audio.Play();
-        yield return new WaitForSeconds(.5f);
         if(wonGame)
             player2.animationChoice(animationController.chooseAnimations.Dead);
         else

@@ -27,13 +27,13 @@ public class mainPanel : menuPanel {
         set
         {
             _challengeCode = value.ToUpper();
-            challengeCodeField.text = _challengeCode;
+            challengeCodeField.text = value.ToLower();
         }
     }
     protected override void Start()
     {
 
-
+        PlayerPrefs.DeleteAll();
         base.Start();
 		PlayerNameText = GameObject.Find ("PlayerNameText").GetComponent<Text>();
 		playerName = PlayerPrefs.GetString ("playerProfile");
@@ -75,7 +75,7 @@ public class mainPanel : menuPanel {
     public override void TransitionIn()
     {	
 
-        playerCode.text = socketController.instance.playerCode;
+        playerCode.text = socketController.instance.playerCode.ToLower();
         base.TransitionIn();
     }
     public override void TransitionOut()

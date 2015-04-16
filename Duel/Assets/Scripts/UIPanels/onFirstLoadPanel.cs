@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class onFirstLoadPanel : menuPanel {
 	private InputField playerNameField;
 	private string _playerName = null;
+    private GameObject TutorialPanel;
 	// Use this for initialization
 
 	public string playerName
@@ -23,6 +24,7 @@ public class onFirstLoadPanel : menuPanel {
 	protected override void Start()
 	{
 		base.Start();
+	    TutorialPanel = GameObject.Find("TutorialPanel");
 		playerNameField = GameObject.Find("EnterNameField").GetComponent<InputField>();
 	}
 
@@ -31,7 +33,7 @@ public class onFirstLoadPanel : menuPanel {
 		switch (btn)
 		{
 		case ButtonAction.returnToMain:
-			if (playerName != "")
+			if (_playerName != null && _playerName.Length>1)
 			{
 				PlayerPrefs.SetString ("playerProfile", playerName);
 				PlayerPrefs.SetInt ("wins", 0);
@@ -60,10 +62,17 @@ public class onFirstLoadPanel : menuPanel {
 			PlayerPrefs.SetInt ("firstLoad", 0);
 
 		Debug.Log ("new firstload: " + PlayerPrefs.GetInt ("firstLoad"));
-		if ( PlayerPrefs.GetString ("playerProfile") != "" ) {
-			uiController.instance.ShowPanel (uiController.instance.MainPanel);
-			return;
+	    if (PlayerPrefs.GetString("playerProfile") != "")
+	    {
+	        uiController.instance.ShowPanel(uiController.instance.MainPanel);
+	        return;
+	    }
+	    base.TransitionIn ();
 	}
-		base.TransitionIn ();
-	}
+
+    public override void TransitionOut()
+    {
+        base.TransitionOut();
+        TutorialPanel.SetActive(false);
+    }
 }
