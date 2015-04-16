@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 public class OptionsPanel : menuPanel {
+    private animationController player;
 	public Slider characterSlider;
 	public Slider musicSlider;
 	public Slider volumeSlider;
@@ -40,7 +41,7 @@ public class OptionsPanel : menuPanel {
 	
 	// Use this for initialization
 	void Start () {
-
+        player = GameObject.Find("Player1").GetComponent<animationController>();
 		//Debug.Log("savedVolume: " + PlayerPrefs.GetFloat("savedVolume"));
 		//Debug.Log("savedSound: " + PlayerPrefs.GetFloat("savedSound"));
 		Debug.Log("savedCharacter: " + PlayerPrefs.GetFloat("savedCharacter"));
@@ -50,8 +51,6 @@ public class OptionsPanel : menuPanel {
 		//Debug.Log ("wins is: " + PlayerPrefs.GetInt ("wins"));
 		//Debug.Log ("losses is: " + PlayerPrefs.GetInt ("losses"));
 		//Debug.Log ("firstloadvalue : " + PlayerPrefs.GetInt ("firstLoad"));
-
-
 		goldText =GameObject.Find("GoldNumber").GetComponent<Text>();
 		ratingText =GameObject.Find("RatingNumber").GetComponent<Text>();
 		winsText =GameObject.Find("WinsNumber").GetComponent<Text>();
