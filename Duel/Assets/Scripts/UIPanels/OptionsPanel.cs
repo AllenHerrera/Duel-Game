@@ -60,7 +60,7 @@ public class OptionsPanel : menuPanel {
 		volumeText =GameObject.Find("VolumeTextLabel").GetComponent<Text>();
 		soundText =GameObject.Find("SoundTextLabel").GetComponent<Text>();
 
-		characterSlider =GameObject.Find("CharacterSlider").GetComponent<Slider>();
+//		characterSlider =GameObject.Find("CharacterSlider").GetComponent<Slider>();
 		musicSlider =GameObject.Find("MusicSlider").GetComponent<Slider>();
 		volumeSlider =GameObject.Find("VolumeSlider").GetComponent<Slider>();
 		soundScrollbar =GameObject.Find("SoundScrollbar").GetComponent<Scrollbar>();
@@ -193,7 +193,7 @@ public class OptionsPanel : menuPanel {
 
     public void UpdateSprite()
     {
-        GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+        
         {
             if (updateCharacterBar == false)
             {
@@ -213,7 +213,7 @@ public class OptionsPanel : menuPanel {
 			GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
 			
 			GameObject.Find("CurrentSprite").GetComponent<SpriteRenderer> ().enabled = false;
-			GameObject.Find("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
+//			GameObject.Find("CharacterSlider").GetComponent<RectTransform> ().DOAnchorPos (new Vector2 (-745, -420), 0.6f, true);
 			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
 			PlayerPrefs.SetFloat ("savedMusic", music);
 			PlayerPrefs.SetFloat ("savedVolume", volume);
@@ -237,6 +237,20 @@ public class OptionsPanel : menuPanel {
 
 			
 			uiController.instance.ShowPanel (uiController.instance.ChangeNamePanel);
+			
+		}
+			break;
+
+		case ButtonAction.quit:
+		{ //transition to customize avatar
+			GameObject.Find("OptionsPanel").GetComponent<AudioSource>().Play();
+
+			PlayerPrefs.SetFloat ("savedCharacter", characterIndex);
+			PlayerPrefs.SetFloat ("savedMusic", music);
+			PlayerPrefs.SetFloat ("savedVolume", volume);
+
+			
+			uiController.instance.ShowPanel (uiController.instance.CustomizeAvatarPanel);
 			
 		}
 			break;
@@ -272,6 +286,10 @@ public class OptionsPanel : menuPanel {
 	public void ToChangeNamePanel()
 	{
 		ProcessButtonPress(ButtonAction.options);
+	}
+	public void ToCustomizeAvatarPanel()
+	{
+		ProcessButtonPress(ButtonAction.quit);
 	}
 	void Update()
 	{ 	
@@ -342,11 +360,15 @@ public class OptionsPanel : menuPanel {
 		goldText.text = PlayerPrefs.GetInt ("gold").ToString();
 		//ratingText.text = "N/A";
 		ratingText.text = PlayerPrefs.GetInt ("rating").ToString();
-		winsText.text = PlayerPrefs.GetInt ("wins").ToString();
+		winsText.text = ((float)PlayerPrefs.GetInt ("wins")).ToString();
 		lossesText.text = PlayerPrefs.GetInt ("losses").ToString();
 
-		if (PlayerPrefs.GetInt ("losses") + PlayerPrefs.GetInt ("wins") != 0)
-			winRatioText.text = ((((double)PlayerPrefs.GetInt ("wins") / (double)(PlayerPrefs.GetInt ("losses") + PlayerPrefs.GetInt ("wins"))) * 100).ToString () + "%");
+		if (PlayerPrefs.GetInt ("losses") + PlayerPrefs.GetInt ("wins") != 0) {
+
+			int temp= (int)(((double)PlayerPrefs.GetInt ("wins") / (double)(PlayerPrefs.GetInt ("losses") + PlayerPrefs.GetInt ("wins"))) * 100);
+			      
+			winRatioText.text = (temp.ToString()+ "%"); 
+		}
 		else
 			winRatioText.text = "N/A";
 

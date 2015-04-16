@@ -35,6 +35,7 @@ public class uiController : MonoBehaviour
     public leaderboardPanel LeaderboardPanel { get; private set; }
 	public Text Title { get; private set; }
     private Text PingText;
+	public CustomizeAvatarPanel CustomizeAvatarPanel{ get; private set; }
 
     public string Ping
     {
@@ -70,6 +71,7 @@ public class uiController : MonoBehaviour
         //set pregame, ingameUi & draw panels to inactive so it doesn't block other touch events
         PreGamePanel.gameObject.SetActive(false);
         DrawPanel.gameObject.SetActive(false);
+		CustomizeAvatarPanel = FindObjectOfType<CustomizeAvatarPanel>();
         //Tween in Title
     }
     #endregion
