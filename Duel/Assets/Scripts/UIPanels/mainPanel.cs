@@ -33,7 +33,7 @@ public class mainPanel : menuPanel {
     protected override void Start()
     {
 
-        PlayerPrefs.DeleteAll();
+        //PlayerPrefs.DeleteAll();
         base.Start();
 		PlayerNameText = GameObject.Find ("PlayerNameText").GetComponent<Text>();
 		playerName = PlayerPrefs.GetString ("playerProfile");

@@ -44,7 +44,7 @@ public class OptionsPanel : menuPanel {
         player = GameObject.Find("Player1").GetComponent<animationController>();
 		//Debug.Log("savedVolume: " + PlayerPrefs.GetFloat("savedVolume"));
 		//Debug.Log("savedSound: " + PlayerPrefs.GetFloat("savedSound"));
-		Debug.Log("savedCharacter: " + PlayerPrefs.GetFloat("savedCharacter"));
+		//Debug.Log("savedCharacter: " + PlayerPrefs.GetFloat("savedCharacter"));
 		//Debug.Log("savedMusic: " + PlayerPrefs.GetFloat("savedMusic"));
 		//Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 		//Debug.Log ("gold is: " + PlayerPrefs.GetInt ("gold"));

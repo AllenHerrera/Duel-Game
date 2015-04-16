@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using UnityEngine;
 using System.Collections;
 using SocketIO;
@@ -33,6 +34,7 @@ public class socketController : MonoBehaviour
     private int drawTime;
     private bool pingWarning = false;
     public JSONObject leaderboard { get; private set; }
+    private JSONObject player1Appearance, player2Appearance;
     void Start()
     {
         //set socket reference
@@ -56,6 +58,7 @@ public class socketController : MonoBehaviour
         socket.On("ping", ping);
         socket.On("pingResult", pingResult);
         socket.On("sendLeaderboard", receiveLeaderboard);
+        socket.On("sendAppearances", setAppearances);
         StartCoroutine(requestCode());
     }
     private IEnumerator requestCode()
@@ -74,12 +77,20 @@ public class socketController : MonoBehaviour
     {
         playerCode = string.Format("{0}", e.data["code"]).Substring(1, 4);
         uiController.instance.ShowPanel(uiController.instance.OnFirstLoadPanel);
+        updateAppearance();
     }
     private void ping(SocketIOEvent e)
     {
         socket.Emit("clientPing");
 
        // StartCoroutine(pingtest());
+    }
+    private void setAppearances(SocketIOEvent e)
+    {
+        string data = string.Format("{0}", e.data["player1"]);
+        player1Appearance = new JSONObject(data);
+        data = string.Format("{0}", e.data["player2"]);
+        player2Appearance = new JSONObject(data);
     }
 
     private IEnumerator pingtest()//TEST PURPOSES
@@ -152,7 +163,27 @@ public class socketController : MonoBehaviour
     {
         isChallenger = (string.Format("{0}",e.data["player1"]).Substring(1,4)==playerCode);
         //Set enemy outfit
-        //gameController.instance.player2.set
+        string gun, hat, vest, pants;
+        if (isChallenger) 
+        {
+            gun = string.Format("{0}", player2Appearance["gun"]).Substring(1, 1);
+            hat = string.Format("{0}", player2Appearance["hat"]).Substring(1, 1);
+            vest = string.Format("{0}", player2Appearance["vest"]).Substring(1, 1);
+            pants = string.Format("{0}", player2Appearance["pants"]).Substring(1, 1);  
+            
+        }
+        else
+        {
+            gun = string.Format("{0}", player1Appearance["gun"]).Substring(1,1);
+            hat = string.Format("{0}", player1Appearance["hat"]).Substring(1, 1);
+            vest = string.Format("{0}", player1Appearance["vest"]).Substring(1, 1);
+            pants = string.Format("{0}", player1Appearance["pants"]).Substring(1, 1);
+        }
+        gameController.instance.player2.gameObject.SetActive(true);
+        gameController.instance.player2.setGuns(int.Parse(gun));
+        gameController.instance.player2.setHat(int.Parse(hat));
+        gameController.instance.player2.setShirt(int.Parse(vest));
+        gameController.instance.player2.setLegs(int.Parse(pants));
         uiController.instance.ShowPanel(uiController.instance.PreGamePanel);
         uiController.instance.PreGamePanel.CountDown();
         gameController.instance.beginGame();
@@ -193,7 +224,6 @@ public class socketController : MonoBehaviour
     }
     private void gameUpdate(SocketIOEvent e)
     {
-        Debug.Log(e.data);
         int playerState;
         int opponentState;
         bool wonGame = false;
@@ -217,6 +247,17 @@ public class socketController : MonoBehaviour
     #endregion
     #region public methods
     //recieve inputs from UI/Gamecontroller and send them to server
+    public void updateAppearance()
+    {
+        int[] settings = CustomizeAvatarPanel.GetSpriteArray();
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["hat"] = settings[0].ToString();
+        data["vest"] = settings[1].ToString();
+        data["gun"] = settings[2].ToString();
+        data["pants"] = settings[3].ToString();
+        socket.Emit("updateAppearance", new JSONObject(data));
+
+    }
     public void processInput()
     {
         var delta = GetTimestamp() - drawTime;

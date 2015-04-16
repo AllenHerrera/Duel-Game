@@ -61,19 +61,11 @@ public class CustomizeAvatarPanel : menuPanel {
 	{
 		switch (btn) {
 		case ButtonAction.returnToMain:
-		
-
 			uiController.instance.ShowPanel (uiController.instance.MainPanel);
-			
-			
-		
 			break;
 		case ButtonAction.options:
-		
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 			uiController.instance.ShowPanel(uiController.instance.OptionsPanel);
-			
-		
 			break;
 		}
 	}
@@ -154,9 +146,7 @@ public class CustomizeAvatarPanel : menuPanel {
 		CurrentVestIndex = PlayerPrefs.GetInt ("Vest");
 		CurrenGunIndex = PlayerPrefs.GetInt ("Gun");
 		CurrentPantsIndex = PlayerPrefs.GetInt ("Pants");
-
 		toggles.SetActive (true);
-		//GameObject.Find ("hat0btn").SetActive (true);
 		base.TransitionIn();
 	}
 	public override void TransitionOut()
@@ -165,15 +155,14 @@ public class CustomizeAvatarPanel : menuPanel {
 		PlayerPrefs.SetInt ("Vest", CurrentVestIndex);
 		PlayerPrefs.SetInt ("Gun", CurrenGunIndex);
 		PlayerPrefs.SetInt ("Pants", CurrentPantsIndex);
-
+        socketController.instance.updateAppearance();
 		toggles.SetActive (false);
-		//GameObject.Find ("hat0btn").SetActive (false);
 		base.TransitionOut ();
 	}
 
 	public static int[] GetSpriteArray()
 	{
-		int [] CurrentSpriteArray = {PlayerPrefs.GetInt("Hats"),PlayerPrefs.GetInt("Vest"),PlayerPrefs.GetInt("Gun"),PlayerPrefs.GetInt("Pants")  };
+		int [] CurrentSpriteArray = {PlayerPrefs.GetInt("Hat"),PlayerPrefs.GetInt("Vest"),PlayerPrefs.GetInt("Gun"),PlayerPrefs.GetInt("Pants")  };
 		return CurrentSpriteArray;
 	}
 

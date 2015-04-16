@@ -54,14 +54,13 @@ public class onFirstLoadPanel : menuPanel {
 	}
 
 	public override void TransitionIn(){
-		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
-		Debug.Log ("og firstload: " + PlayerPrefs.GetInt ("firstLoad"));
+		//Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
+		//Debug.Log ("og firstload: " + PlayerPrefs.GetInt ("firstLoad"));
 		if (PlayerPrefs.GetInt ("firstLoad")!= null)
 			PlayerPrefs.SetInt ("firstLoad", (PlayerPrefs.GetInt ("firstLoad")+1));
 		else
 			PlayerPrefs.SetInt ("firstLoad", 0);
 
-		Debug.Log ("new firstload: " + PlayerPrefs.GetInt ("firstLoad"));
 	    if (PlayerPrefs.GetString("playerProfile") != "")
 	    {
 	        uiController.instance.ShowPanel(uiController.instance.MainPanel);

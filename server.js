@@ -64,12 +64,17 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
             //FUNCTIONS
             function beginGame(game)//After delay indicate to clients that they should begin game
             {
+                console.log('beginning game');
+                var opponentAppearance={};
+                if(game.player2 === null){
+                    opponentAppearance={hat:'0',vest:'0',gun:'0',pants:'0'};
+                }
+                else
+                    opponentAppearance=game.player2.appearance;
+                console.log({player1:game.player1.appearance, player2: opponentAppearance});
+                io.to(game.channel).emit('sendAppearances', {player1:game.player1.appearance, player2: opponentAppearance});
                 setTimeout(function () {
                     if (game !== undefined) {
-                        console.log('beginning game ');
-                        console.log(games[game.player1.code]);
-                        console.log(games[game.player2.code]);
-                        console.log('-----------------------');
                         var playerStatus = {player1: game.player1.code};
                         io.to(game.channel).emit('beginGame', playerStatus);
                         playGame({channel: game.channel});
@@ -282,6 +287,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                 players[playerCode].streak = 0;
                 players[playerCode].name = '----';
                 players[playerCode].dbId = '---';
+                players[playerCode].appearance={};//set apperance on any case of joining game
                 socket.emit('playerCodeCreated', {code: playerCode});
                 console.log('player code assigned: ' + code);
             });
@@ -458,6 +464,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                 games[playerCode] = game;
                 channels[channelCode] = game;
                 players[playerCode].isBusy = true;
+                beginGame(game);/*
                 setTimeout(function () {
                         if (games[playerCode] !== undefined) {
                             var playerStatus = {player1: games[playerCode].player1.code};
@@ -465,7 +472,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                             playGame({channel: games[playerCode].channel});
                         }
                     }
-                    , 3000);
+                    , 3000);*/
             });
             //Input Handling
             socket.on('processAIInput', function ()//Recieve input from AI, determine if jam or won and update gamestate on server and clients
@@ -627,6 +634,10 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                     console.log(docs);
                     socket.emit('sendLeaderboard', {leaderboard:docs});
                 });
+            });
+            socket.on('updateAppearance', function(data){
+                console.log(data);
+                players[playerCode].appearance=data;
             });
         }
     );
