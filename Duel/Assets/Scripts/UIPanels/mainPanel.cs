@@ -73,8 +73,7 @@ public class mainPanel : menuPanel {
         }
     }
     public override void TransitionIn()
-    {	
-
+    {
         playerCode.text = socketController.instance.playerCode.ToLower();
         base.TransitionIn();
     }

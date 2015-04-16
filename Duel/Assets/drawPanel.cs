@@ -6,9 +6,11 @@ using DG.Tweening;
 public class drawPanel : menuPanel
 {
     private Text DrawText;
+    private AudioSource sound;
     protected override void Start()
     {
         base.Start();
+        sound = GetComponent<AudioSource>();
         //override transition duration to be quicker
         transitionDuration = .3f;
         DrawText = GameObject.Find("DrawText").GetComponent<Text>();
@@ -27,6 +29,7 @@ public class drawPanel : menuPanel
         if (socketController.instance.distractionMessage != null)
         {
             DrawText.text = socketController.instance.distractionMessage;
+            sound.Play();
         }
         else
         {

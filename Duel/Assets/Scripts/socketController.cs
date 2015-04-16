@@ -161,6 +161,7 @@ public class socketController : MonoBehaviour
     }
     private void beginGame(SocketIOEvent e)
     {
+        distractionMessage = null;
         isChallenger = (string.Format("{0}",e.data["player1"]).Substring(1,4)==playerCode);
         //Set enemy outfit
         string gun, hat, vest, pants;
@@ -201,19 +202,9 @@ public class socketController : MonoBehaviour
 
     private void showDistraction(SocketIOEvent e)
     {
-        float proc = float.Parse(string.Format("{0}", e.data["value"]).Substring(1,3));
-        if(proc <.1f)
-            distractionMessage = "Dude!";
-        if(proc>=.1f && proc <.2f)
-            distractionMessage = "D'oh!";
-        if (proc >= .2f && proc < .3f)
-            distractionMessage = "Dang!";
-        if (proc >= .4f && proc < .5f)
-            distractionMessage = "Darn!";
-        if (proc >= .5f && proc < .6f)
-            distractionMessage = "Drat!";
-        if (proc >= .6f && proc < .67f)
-            distractionMessage = "Derp!";
+        string[] message = {"Dude!", "D'oh!", "Dang!", "Darn!", "Drat!", "Derp!"};
+        int index = UnityEngine.Random.Range(0, 5);
+        distractionMessage = message[index];
         uiController.instance.ShowPanel(uiController.instance.DrawPanel);
         if (vsAi)
             gameController.instance.promptAI(false);
