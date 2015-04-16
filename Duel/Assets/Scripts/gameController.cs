@@ -52,7 +52,7 @@ public class gameController : MonoBehaviour
         if (wonGame)
             player1.animationChoice(animationController.chooseAnimations.Shoot);
         else
-            player2.animationChoice(animationController.chooseAnimations.Dead);
+            player2.animationChoice(animationController.chooseAnimations.Shoot);
         audio.clip = sounds[0];
         audio.Play();
         yield return new WaitForSeconds(.5f);
