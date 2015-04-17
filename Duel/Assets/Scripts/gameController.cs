@@ -150,6 +150,7 @@ public class gameController : MonoBehaviour
     {
         player1.reset();
         player2.reset();
+        player2.gameObject.SetActive(false);
         CameraController.instance.TransitionToMenu();
         currentState = gameState.inactive;    
     }
