@@ -351,7 +351,6 @@ public class OptionsPanel : menuPanel {
 
 	public override void TransitionIn()
 	{	
-		Debug.Log ("Playername is: " + PlayerPrefs.GetString ("playerProfile"));
 
 		uiController.instance.MainPanel.PlayerNameText.gameObject.SetActive (false);
 
