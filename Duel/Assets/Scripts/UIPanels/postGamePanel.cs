@@ -47,6 +47,11 @@ public class postGamePanel : menuPanel
             OutcomeText.text = "You're the best! :)";
 			PlayerPrefs.SetInt("wins",(PlayerPrefs.GetInt("wins") + 1));
 			PlayerPrefs.SetInt("gold",(PlayerPrefs.GetInt("gold") + 2));
+			PlayerPrefs.SetInt("winStreak", PlayerPrefs.GetInt("winStreak")+1);
+			if (PlayerPrefs.GetInt("winStreak") > PlayerPrefs.GetInt("maxWinStreak"))
+			{ 
+				PlayerPrefs.SetInt("maxWinStreak", PlayerPrefs.GetInt("winStreak"));
+			}
         }
         else
         {
@@ -54,6 +59,7 @@ public class postGamePanel : menuPanel
             OutcomeText.text = "You're the worst! :(";
 			PlayerPrefs.SetInt("losses",(PlayerPrefs.GetInt("losses") + 1));
 			PlayerPrefs.SetInt("gold",(PlayerPrefs.GetInt("gold") + 1));
+			PlayerPrefs.SetInt("winStreak", 0);
         }
         base.TransitionIn();
     }
