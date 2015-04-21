@@ -63,6 +63,9 @@ public class postGamePanel : menuPanel
 				multiplier = spread/CPR; // relatively how big is that spread
 				gain =(int)((multiplier*spread)+ BasePointsWonLost);
 				PlayerPrefs.SetInt("rating", (CPR + gain));
+				OutcomeText.text += "\nCurrent Streak: " + PlayerPrefs.GetInt("winStreak").ToString() ;
+				OutcomeText.text += "\n ";
+				OutcomeText.text += "\n ";
 				OutcomeText.text += "\n+2 Gold ";
 				OutcomeText.text += "\n+ " + gain.ToString() + " Rating";
 			}
@@ -76,6 +79,9 @@ public class postGamePanel : menuPanel
 
 				if (PlayerPrefs.GetInt("rating")==0)
 					PlayerPrefs.SetInt("rating", 100);
+				OutcomeText.text += "\nCurrent Streak: " + PlayerPrefs.GetInt("winStreak").ToString() ;
+				OutcomeText.text += "\n ";
+				OutcomeText.text += "\n ";
 				OutcomeText.text += "\n+1 Gold ";
 				OutcomeText.text += "\n- " + gain.ToString() + " Rating";
 			}
@@ -90,8 +96,12 @@ public class postGamePanel : menuPanel
 
 				gain =(BasePointsWonLost);
 				PlayerPrefs.SetInt("rating", (CPR + gain));
+				OutcomeText.text += "\nCurrent Streak: " + PlayerPrefs.GetInt("winStreak").ToString() ;
+				OutcomeText.text += "\n ";
+				OutcomeText.text += "\n ";
 				OutcomeText.text += "\n+2 Gold ";
 				OutcomeText.text += "\n+ " + gain.ToString() + " Rating";
+
 
 			}
 
@@ -108,9 +118,13 @@ public class postGamePanel : menuPanel
 				{
 					loss =(int)(BasePointsWonLost);
 					PlayerPrefs.SetInt("rating", (CPR - loss));
+				
 				}
+				OutcomeText.text += "\nCurrent Streak: " + PlayerPrefs.GetInt("winStreak").ToString() ;
+				OutcomeText.text += "\n ";
+				OutcomeText.text += "\n ";
 				OutcomeText.text += "\n+1 Gold ";
-				OutcomeText.text += "\n- " + gain.ToString() + " Rating";
+				OutcomeText.text += "\n- " + loss.ToString() + " Rating";
 			}
 		}
 

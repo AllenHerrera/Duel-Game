@@ -23,7 +23,7 @@ public class onFirstLoadPanel : menuPanel {
 
 	protected override void Start()
 	{
-		PlayerPrefs.DeleteAll ();
+
 		base.Start();
 	    TutorialPanel = GameObject.Find("TutorialPanel");
 		playerNameField = GameObject.Find("EnterNameField").GetComponent<InputField>();

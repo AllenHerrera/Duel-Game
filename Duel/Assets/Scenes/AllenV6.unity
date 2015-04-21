@@ -5266,7 +5266,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22544496, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_Alpha
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8201338, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_Volume
@@ -5424,8 +5424,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: 104}
-  m_SizeDelta: {x: 400, y: 200}
+  m_AnchoredPosition: {x: 0, y: -50}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &829084376
 MonoBehaviour:
@@ -9191,7 +9191,7 @@ CanvasGroup:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1336440967}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
