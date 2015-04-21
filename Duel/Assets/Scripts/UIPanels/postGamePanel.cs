@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class postGamePanel : menuPanel
 {	
 	public int BasePointsWonLost;
+	public int OppRating;
     private Text OutcomeTitle, OutcomeText;
     protected override void Start()
     {
@@ -43,11 +44,15 @@ public class postGamePanel : menuPanel
     }
 	public void UpdateRating( int opponentRating)
 	{
+		OppRating = opponentRating;
+	}
+	public void ActuallyUpdateRating( int opponentRating)
+	{
 		int CPR = PlayerPrefs.GetInt("rating");
-		int gain;
-		double multiplier;
-		int spread;
-		int loss;
+		int gain=0;
+		double multiplier =1.0;
+		int spread =1;
+		int loss = 0;
 
 		if (CPR <= opponentRating) {
 
@@ -58,6 +63,8 @@ public class postGamePanel : menuPanel
 				multiplier = spread/CPR; // relatively how big is that spread
 				gain =(int)((multiplier*spread)+ BasePointsWonLost);
 				PlayerPrefs.SetInt("rating", (CPR + gain));
+				OutcomeText.text += "\n+2 Gold ";
+				OutcomeText.text += "\n+ " + gain.ToString() + " Rating";
 			}
 			else
 			{
@@ -69,6 +76,8 @@ public class postGamePanel : menuPanel
 
 				if (PlayerPrefs.GetInt("rating")==0)
 					PlayerPrefs.SetInt("rating", 100);
+				OutcomeText.text += "\n+1 Gold ";
+				OutcomeText.text += "\n- " + gain.ToString() + " Rating";
 			}
 		} 
 		else 
@@ -78,18 +87,30 @@ public class postGamePanel : menuPanel
 				//case when you beat someone lower than you
 				spread =(CPR - opponentRating);
 				multiplier = spread/CPR;
-				if (multiplier < .33)
+
 				gain =(BasePointsWonLost);
 				PlayerPrefs.SetInt("rating", (CPR + gain));
+				OutcomeText.text += "\n+2 Gold ";
+				OutcomeText.text += "\n+ " + gain.ToString() + " Rating";
 
 			}
 
-		else{
+			else{
 				//case when you lose to someone lower than you
+				if (opponentRating != 0)//who isnt a bot
+				{
 				spread =(CPR - opponentRating);
 				multiplier = spread/CPR;
 				loss =(int)((multiplier*spread)+ BasePointsWonLost);
 				PlayerPrefs.SetInt("rating", (CPR - loss));
+				}
+				else
+				{
+					loss =(int)(BasePointsWonLost);
+					PlayerPrefs.SetInt("rating", (CPR - loss));
+				}
+				OutcomeText.text += "\n+1 Gold ";
+				OutcomeText.text += "\n- " + gain.ToString() + " Rating";
 			}
 		}
 
@@ -101,6 +122,7 @@ public class postGamePanel : menuPanel
         {
             OutcomeTitle.text = "You Won!";
             OutcomeText.text = "You're the best! :)";
+
 			PlayerPrefs.SetInt("wins",(PlayerPrefs.GetInt("wins") + 1));
 			PlayerPrefs.SetInt("gold",(PlayerPrefs.GetInt("gold") + 2));
 			PlayerPrefs.SetInt("winStreak", PlayerPrefs.GetInt("winStreak")+1);
@@ -108,6 +130,7 @@ public class postGamePanel : menuPanel
 			{ 
 				PlayerPrefs.SetInt("maxWinStreak", PlayerPrefs.GetInt("winStreak"));
 			}
+			ActuallyUpdateRating(OppRating);
 
         }
         else
@@ -117,6 +140,7 @@ public class postGamePanel : menuPanel
 			PlayerPrefs.SetInt("losses",(PlayerPrefs.GetInt("losses") + 1));
 			PlayerPrefs.SetInt("gold",(PlayerPrefs.GetInt("gold") + 1));
 			PlayerPrefs.SetInt("winStreak", 0);
+			ActuallyUpdateRating(OppRating);
         }
         base.TransitionIn();
     }

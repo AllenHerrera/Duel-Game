@@ -9182,6 +9182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069a7ce1b39bef14495146d90da4a005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BasePointsWonLost: 0
+  OppRating: 0
 --- !u!225 &1336440970
 CanvasGroup:
   m_ObjectHideFlags: 0
