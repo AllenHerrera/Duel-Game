@@ -4143,55 +4143,75 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22410552, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22410552, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22437606, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22437606, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22437606, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22413788, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: .430000007
       objectReference: {fileID: 0}
     - target: {fileID: 22413788, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22489002, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: .430000007
       objectReference: {fileID: 0}
     - target: {fileID: 22489002, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: .430000007
       objectReference: {fileID: 0}
     - target: {fileID: 22489002, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22442622, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: .600000024
       objectReference: {fileID: 0}
     - target: {fileID: 22442622, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22442622, guid: cd8cec877636c9b4385be853622590ce, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472562, guid: cd8cec877636c9b4385be853622590ce, type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22472562, guid: cd8cec877636c9b4385be853622590ce, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22482726, guid: cd8cec877636c9b4385be853622590ce, type: 2}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22482726, guid: cd8cec877636c9b4385be853622590ce, type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22482726, guid: cd8cec877636c9b4385be853622590ce, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cd8cec877636c9b4385be853622590ce, type: 2}
@@ -4376,7 +4396,7 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 829084374}
---- !u!224 &829888815
+--- !u!224 &829888815 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 22432888, guid: 35df3445245949045b66e74cdbaba6dd,
     type: 2}
@@ -6319,7 +6339,7 @@ MonoBehaviour:
   influenceHead: .25
   zOrder: 0
   color: {r: 0, g: 1, b: 1, a: 1}
---- !u!224 &1084147485
+--- !u!224 &1084147485 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 22489704, guid: cd8cec877636c9b4385be853622590ce,
     type: 2}
@@ -9466,7 +9486,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a4bc1f443dc3e734db0fb7dae3ee6e95, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
---- !u!224 &1612005975
+--- !u!224 &1612005975 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 22468712, guid: b9293ff07bac0a74a9b89f1c82754c03,
     type: 2}
@@ -12248,10 +12268,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864b01ca41f38f444831775f4169b5e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vestsOptionsAvatar: []
-  pantsOptionsAvatar: []
-  hatsOptionsAvatar: []
-  gunsOptionsAvatar: []
 --- !u!225 &2135217280
 CanvasGroup:
   m_ObjectHideFlags: 0

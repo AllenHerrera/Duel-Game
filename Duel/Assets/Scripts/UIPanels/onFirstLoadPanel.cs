@@ -23,6 +23,7 @@ public class onFirstLoadPanel : menuPanel {
 
 	protected override void Start()
 	{
+
 		base.Start();
 	    TutorialPanel = GameObject.Find("TutorialPanel");
 		playerNameField = GameObject.Find("EnterNameField").GetComponent<InputField>();
@@ -38,7 +39,8 @@ public class onFirstLoadPanel : menuPanel {
 				PlayerPrefs.SetString ("playerProfile", playerName);
 				PlayerPrefs.SetInt ("wins", 0);
 				PlayerPrefs.SetInt ("losses", 0);
-				PlayerPrefs.SetInt ("rating", 0);
+				PlayerPrefs.SetInt ("rating", 100);
+				PlayerPrefs.SetInt ("gold", 0);
 				// transition to mainpanel
 
 				uiController.instance.ShowPanel(uiController.instance.MainPanel);

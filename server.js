@@ -66,6 +66,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
             {
                 console.log('beginning game');
                 var opponentAppearance={};
+                var p2Rating=0;
                 if(game.player2 === null){
                     var hat = Math.floor(Math.random()*4)+'';
                     var vest = Math.floor(Math.random()*4)+'';
@@ -73,10 +74,12 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                     var pants = Math.floor(Math.random()*4)+'';
                     opponentAppearance={hat:hat,vest:vest,gun:gun,pants:pants};
                 }
-                else
+                else{
                     opponentAppearance=game.player2.appearance;
-                console.log({player1:game.player1.appearance, player2: opponentAppearance});
-                io.to(game.channel).emit('sendAppearances', {player1:game.player1.appearance, player2: opponentAppearance});
+                    var p2Rating = game.player2.rating;
+                }
+                var p1Rating = game.player1.rating;
+                io.to(game.channel).emit('sendAppearances', {player1:game.player1.appearance, player2: opponentAppearance, player1Rating:p1Rating, player2Rating: p2Rating});
                 setTimeout(function () {
                     if (game !== undefined) {
                         var playerStatus = {player1: game.player1.code};
@@ -292,6 +295,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                 players[playerCode].name = '----';
                 players[playerCode].dbId = '---';
                 players[playerCode].appearance={};//set apperance on any case of joining game
+                players[playerCode].rating = 0;
                 socket.emit('playerCodeCreated', {code: playerCode});
                 console.log('player code assigned: ' + code);
             });
@@ -392,6 +396,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                     players[playerCode].name = data.name;
                     initializeRecord(players[playerCode]);
                 }
+                players[playerCode].rating = data.rating;
                 clearTimeouts();
                 //If there are users looking for match join their game
                 if (matchmaking.length > 0) {

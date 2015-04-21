@@ -32,6 +32,7 @@ public class OptionsPanel : menuPanel {
 	public Text winsText;
 	public Text lossesText;
 	public Text winRatioText;
+	public Text winStreakText;
 	
 	public Sprite[] characterSprites;
 	public Sprite currentSprite;
@@ -56,6 +57,7 @@ public class OptionsPanel : menuPanel {
 		winsText =GameObject.Find("WinsNumber").GetComponent<Text>();
 		lossesText =GameObject.Find("LossesNumber").GetComponent<Text>();
 		winRatioText =GameObject.Find("WinRateNumber").GetComponent<Text>();
+		winStreakText = GameObject.Find ("StreakNumber").GetComponent<Text> ();
 
 		volumeText =GameObject.Find("VolumeTextLabel").GetComponent<Text>();
 		soundText =GameObject.Find("SoundTextLabel").GetComponent<Text>();
@@ -86,6 +88,7 @@ public class OptionsPanel : menuPanel {
 	
 	public void loadSavedPlayerPrefs ()
 	{
+		winStreakText.text = PlayerPrefs.GetInt ("maxWinStreak").ToString ();;
 		CheckNullPlayerPrefs ();
 		GameObject.Find("ProfileMenuPlayerName").GetComponent<Text>().text =PlayerPrefs.GetString ("playerProfile");
 		//get saved music
@@ -141,6 +144,7 @@ public class OptionsPanel : menuPanel {
 		if (PlayerPrefs.GetInt("rating") == null) 
 		{
 			PlayerPrefs.SetInt("rating", 0);
+			PlayerPrefs.GetInt("rating");
 		}
 	}
 	public void _UpdateALL()
@@ -355,7 +359,9 @@ public class OptionsPanel : menuPanel {
 		uiController.instance.MainPanel.PlayerNameText.gameObject.SetActive (false);
 
 		uiController.instance.MainPanel.playerName = PlayerPrefs.GetString ("playerProfile");
+		GameObject.Find("ProfileMenuPlayerName").GetComponent<Text>().text =PlayerPrefs.GetString ("playerProfile");
 
+		winStreakText.text = PlayerPrefs.GetInt ("maxWinStreak").ToString();
 		goldText.text = PlayerPrefs.GetInt ("gold").ToString();
 		//ratingText.text = "N/A";
 		ratingText.text = PlayerPrefs.GetInt ("rating").ToString();
