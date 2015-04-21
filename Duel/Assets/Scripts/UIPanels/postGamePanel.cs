@@ -53,6 +53,8 @@ public class postGamePanel : menuPanel
 		double multiplier =1.0;
 		int spread =1;
 		int loss = 0;
+		if (PlayerPrefs.GetInt("rating")<=0)
+			PlayerPrefs.SetInt("rating", 100);
 
 		if (CPR <= opponentRating) {
 
@@ -77,8 +79,6 @@ public class postGamePanel : menuPanel
 				loss =(int)((multiplier*spread)+ BasePointsWonLost);
 				PlayerPrefs.SetInt("rating", (CPR - loss));
 
-				if (PlayerPrefs.GetInt("rating")==0)
-					PlayerPrefs.SetInt("rating", 100);
 				OutcomeText.text += "\nCurrent Streak: " + PlayerPrefs.GetInt("winStreak").ToString() ;
 				OutcomeText.text += "\n ";
 				OutcomeText.text += "\n ";

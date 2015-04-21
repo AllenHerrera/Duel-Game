@@ -785,7 +785,8 @@ public class CustomizeAvatarPanel : menuPanel {
 		CurrentVestIndex = PlayerPrefs.GetInt ("Vest");
 		CurrenGunIndex = PlayerPrefs.GetInt ("Gun");
 		CurrentPantsIndex = PlayerPrefs.GetInt ("Pants");
-		GameObject.Find ("AvatarTitle").GetComponent<Text> ().text = PlayerPrefs.GetString ("playerProfile");
+		GameObject.Find ("AvatarTitle").GetComponent<Text> ().text = "";
+		//GameObject.Find ("AvatarTitle").GetComponent<Text> ().text = PlayerPrefs.GetString ("playerProfile");
 		toggles.SetActive (true);
 		Shop.SetActive (true);
 		nullgoldtext.SetActive (false);
