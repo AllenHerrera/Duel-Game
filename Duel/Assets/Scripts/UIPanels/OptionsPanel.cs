@@ -144,6 +144,7 @@ public class OptionsPanel : menuPanel {
 		if (PlayerPrefs.GetInt("rating") == null) 
 		{
 			PlayerPrefs.SetInt("rating", 0);
+			PlayerPrefs.GetInt("rating");
 		}
 	}
 	public void _UpdateALL()

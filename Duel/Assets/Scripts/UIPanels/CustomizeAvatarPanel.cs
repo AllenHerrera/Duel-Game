@@ -62,7 +62,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	GameObject optionpanelsound;
 	// Use this for initialization
 	void Start () {
-		PlayerPrefs.DeleteAll ();
+
 		base.Start ();
 
 	
@@ -321,7 +321,7 @@ public class CustomizeAvatarPanel : menuPanel {
 
 	public void UpdateHatPlus1()
 	{
-	
+		nullgoldtext.SetActive (false);
 		if (CurrentHatIndex + 1 < hatsUnlockedCounter) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 			avatar.setHat (hatsIndex[CurrentHatIndex +1]);
@@ -338,6 +338,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdateHatMinus1()
 	{
+		nullgoldtext.SetActive (false);
 		if (CurrentHatIndex - 1 >= 0) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 			avatar.setHat (hatsIndex[CurrentHatIndex -1]);
@@ -353,6 +354,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdateVestPlus1()
 	{
+		nullgoldtext.SetActive (false);
 		if (CurrentVestIndex + 1 < vestsUnlockedCounter) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 			avatar.setShirt (vestsIndex[CurrentVestIndex +1]);
@@ -368,6 +370,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdateVestMinus1()
 	{
+		nullgoldtext.SetActive (false);
 		if (CurrentVestIndex - 1 >= 0) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 				avatar.setShirt (vestsIndex[CurrentVestIndex -1]);
@@ -383,6 +386,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdataeGunPlus1()
 	{
+		nullgoldtext.SetActive (false);
 		if (CurrenGunIndex + 1 < gunsUnlockedCounter) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 			avatar.setGuns (gunsIndex[CurrenGunIndex +1]);
@@ -398,6 +402,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdateGunMinus1()
 	{
+		nullgoldtext.SetActive (false);
 		if (CurrenGunIndex - 1 >= 0) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 				avatar.setGuns (gunsIndex[CurrenGunIndex -1]);
@@ -413,6 +418,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdatePantsPlus1()
 	{	
+		nullgoldtext.SetActive (false);
 		if (CurrentPantsIndex + 1 < pantsUnlockedCounter) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 				avatar.setLegs (pantsIndex[CurrentPantsIndex +1]);
@@ -428,6 +434,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void UpdatePantsMinus1()
 	{
+		nullgoldtext.SetActive (false);
 		if (CurrentPantsIndex - 1 >= 0) {
 			optionpanelsound.GetComponent<AudioSource> ().Play ();
 				avatar.setLegs (pantsIndex[CurrentPantsIndex -1]);
@@ -470,6 +477,7 @@ public class CustomizeAvatarPanel : menuPanel {
 			gold = gold - cost;
 			PlayerPrefs.SetInt ("gold", gold);
 			updateGold();
+			cost = 0;
 
 
 		} else {
@@ -736,12 +744,14 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void BuyGunBtn () {
 		
-		if ( PlayerPrefs.GetInt ("gun"+CurrenGunSaleIndex) == 0)
-		{
+		if (PlayerPrefs.GetInt ("gun" + CurrenGunSaleIndex) == 0) {
 			lockedText.text = "Unlocked";
-			PlayerPrefs.SetInt ("gun"+CurrenGunSaleIndex,1);
+			lockedText.color = Color.green;
+			PlayerPrefs.SetInt ("gun" + CurrenGunSaleIndex, 1);
+		} else {
+			lockedText.text = "Already Unlocked";
+			lockedText.color = Color.green;
 		}
-		else	lockedText.text = "Already Unlocked";
 	}
 
 	public void UpdatePantsShop () {
@@ -770,7 +780,7 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 
 	public override void TransitionIn()
-	{	PlayerPrefs.SetInt ("gold", 17);
+	{	
 		CurrentHatIndex = PlayerPrefs.GetInt ("Hat");
 		CurrentVestIndex = PlayerPrefs.GetInt ("Vest");
 		CurrenGunIndex = PlayerPrefs.GetInt ("Gun");
@@ -788,10 +798,10 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public override void TransitionOut()
 	{
-		PlayerPrefs.SetInt ("Hat", CurrentHatIndex);
-		PlayerPrefs.SetInt ("Vest", CurrentVestIndex);
-		PlayerPrefs.SetInt ("Gun", CurrenGunIndex);
-		PlayerPrefs.SetInt ("Pants", CurrentPantsIndex);
+		PlayerPrefs.SetInt ("Hat", hatsIndex[CurrentHatIndex]);
+		PlayerPrefs.SetInt ("Vest", vestsIndex[CurrentVestIndex]);
+		PlayerPrefs.SetInt ("Gun", gunsIndex[CurrenGunIndex]);
+		PlayerPrefs.SetInt ("Pants", pantsIndex[CurrentPantsIndex]);
         socketController.instance.updateAppearance();
 		toggles.SetActive (false);
 		nullgoldtext.SetActive (false);
