@@ -470,6 +470,7 @@ public class CustomizeAvatarPanel : menuPanel {
 			gold = gold - cost;
 			PlayerPrefs.SetInt ("gold", gold);
 			updateGold();
+			cost = 0;
 
 
 		} else {
@@ -736,12 +737,14 @@ public class CustomizeAvatarPanel : menuPanel {
 	}
 	public void BuyGunBtn () {
 		
-		if ( PlayerPrefs.GetInt ("gun"+CurrenGunSaleIndex) == 0)
-		{
+		if (PlayerPrefs.GetInt ("gun" + CurrenGunSaleIndex) == 0) {
 			lockedText.text = "Unlocked";
-			PlayerPrefs.SetInt ("gun"+CurrenGunSaleIndex,1);
+			lockedText.color = Color.green;
+			PlayerPrefs.SetInt ("gun" + CurrenGunSaleIndex, 1);
+		} else {
+			lockedText.text = "Already Unlocked";
+			lockedText.color = Color.green;
 		}
-		else	lockedText.text = "Already Unlocked";
 	}
 
 	public void UpdatePantsShop () {

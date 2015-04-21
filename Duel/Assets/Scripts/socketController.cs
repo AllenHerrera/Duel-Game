@@ -35,6 +35,7 @@ public class socketController : MonoBehaviour
     private bool pingWarning = false;
     public JSONObject leaderboard { get; private set; }
     private JSONObject player1Appearance, player2Appearance;
+    private int player1Rating, player2Rating;
     void Start()
     {
         //set socket reference
@@ -87,10 +88,16 @@ public class socketController : MonoBehaviour
     }
     private void setAppearances(SocketIOEvent e)
     {
+        Debug.Log(e.data);
         string data = string.Format("{0}", e.data["player1"]);
         player1Appearance = new JSONObject(data);
         data = string.Format("{0}", e.data["player2"]);
         player2Appearance = new JSONObject(data);
+        var s = string.Format("{0}", e.data["player1Rating"]);
+        player1Rating = int.Parse(string.Format("{0}", s).Substring(1,s.Length-2));
+        s = string.Format("{0}", e.data["player2Rating"]);
+        player2Rating = int.Parse(string.Format("{0}", s).Substring(1, s.Length - 2));
+
     }
 
     private IEnumerator pingtest()//TEST PURPOSES
@@ -179,6 +186,7 @@ public class socketController : MonoBehaviour
             hat = string.Format("{0}", player1Appearance["hat"]).Substring(1, 1);
             vest = string.Format("{0}", player1Appearance["vest"]).Substring(1, 1);
             pants = string.Format("{0}", player1Appearance["pants"]).Substring(1, 1);
+            //pass player 1 rating
         }
         gameController.instance.player2.gameObject.SetActive(true);
         gameController.instance.player2.setGuns(int.Parse(gun));
@@ -338,8 +346,10 @@ public class socketController : MonoBehaviour
             return;
         }
         var name = PlayerPrefs.GetString("playerProfile");
+        var rating = PlayerPrefs.GetInt("rating");
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["name"] = name;
+        data["rating"] = rating.ToString();
         inMatchmaking = true;
         socket.Emit("findMatch", new JSONObject(data));
         uiController.instance.ShowPanel(uiController.instance.ChallengingPanel);
