@@ -65,7 +65,8 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
             function beginGame(game)//After delay indicate to clients that they should begin game
             {
                 console.log('beginning game');
-                var opponentAppearance={};
+                var opponentAppearance = {};
+                var p1Rating = 0;
                 var p2Rating=0;
                 if(game.player2 === null){
                     var hat = Math.floor(Math.random()*4)+'';
@@ -78,7 +79,8 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                     opponentAppearance=game.player2.appearance;
                     var p2Rating = game.player2.rating;
                 }
-                var p1Rating = game.player1.rating;
+                if(game.player1Rating !== undefined)
+                    var p1Rating = game.player1.rating;
                 io.to(game.channel).emit('sendAppearances', {player1:game.player1.appearance, player2: opponentAppearance, player1Rating:p1Rating, player2Rating: p2Rating});
                 setTimeout(function () {
                     if (game !== undefined) {
@@ -115,7 +117,7 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
                     if (channels[data.channel].gameState === 1) {
                         delay = Math.random() * 15000;
                         var proc = Math.random().toFixed(2);
-                        if (proc > .66) {
+                        if (proc > .60) {
                             io.to(data.channel).emit('draw');
                             channels[data.channel].drawActive = true;
                             console.log('draw state entered');
@@ -392,12 +394,19 @@ MongoClient.connect("mongodb://localhost:27017/duelLeaderBoard", function (err, 
             //Matchmaking
             socket.on('findMatch', function (data)//Join a game in matchmaking queue or add a game to queue
             {
+                clearTimeouts();
                 if (players[playerCode].name !== data.name) {
                     players[playerCode].name = data.name;
                     initializeRecord(players[playerCode]);
                 }
+                if (data.rating === undefined) {
+                    var message = {};
+                    message.message = 'Please update your game if you want to use matchmaking.';
+                    socket.emit('connectionError', message);
+                    return;
+                }
+
                 players[playerCode].rating = data.rating;
-                clearTimeouts();
                 //If there are users looking for match join their game
                 if (matchmaking.length > 0) {
                     var game = matchmaking.shift();
