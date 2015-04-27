@@ -16,18 +16,6 @@ Instructions:
 Technology Stack:
 
 	front end: Unity
-	back end: Node.js & Socket.io 
+	back end: Node.js, MongoDB, Socket.io 
 	target platforms: PC, Mac, Linux, Android, IOS
-	
-Process Tool:
-
-	https://trello.com/b/409GLLCz/unitygame
-	
-Download Link:
-
-	https://app.box.com/s/at69l8reub1rtdcebn2qzeklvps6yhcb
-	
-Feedback Survey:
-
-	https://docs.google.com/forms/d/1qBNtOQoK6FyWL3px5rdtDCtKaS-W0gIQM5aaaaXHbsk/viewform?usp=send_form
 
